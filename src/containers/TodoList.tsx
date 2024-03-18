@@ -9,10 +9,12 @@ interface ITodoList {
 
 export const TodoList: FC<ITodoList> = ({ tasks }) => {
   return (
-    <div className="flex flex-col align-center">
-      <div className="bg-primary">+ Add Daily Tasks</div>
+    <div className="flex flex-col">
+      <div className="bg-primary flex justify-center py-3">
+        + Add Daily Tasks
+      </div>
       <Separator />
-      <div className="flex flex-col align-center">
+      <div className="flex flex-col">
         {tasks.map((task, i) => {
           if (i !== tasks.length - 1)
             return (

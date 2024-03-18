@@ -14,7 +14,7 @@ export const Button: FC<ButtonProps> = ({
   return (
     <button
       className={
-        'bg-secondary rounded-full inline  uppercase flex justify-center align-center ' +
+        'bg-secondary rounded-full inline  uppercase flex justify-center items-center ' +
         (small != null ? 'py-1 px-3 ' : 'py-2 px-5 ') +
         (containerClass ?? '')
       }

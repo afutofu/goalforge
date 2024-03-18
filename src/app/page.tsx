@@ -14,7 +14,7 @@ const Section: FC<SectionProps> = ({ children, className }) => {
   return (
     <section
       className={
-        'w-1/3 border-2 min-h-screen flex flex-col justify-start align-center py-5 px-20 z-20 ' +
+        'w-1/3 border-2 min-h-screen flex flex-col justify-start py-5 px-20 z-20 ' +
         className
       }
     >
