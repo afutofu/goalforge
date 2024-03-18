@@ -2,6 +2,7 @@ import React, { type FC } from 'react';
 
 import { Header } from '@/components/Header';
 import { Timer } from '@/containers/Timer';
+import { TodoList } from '@/containers/TodoList';
 import { Separator } from '@/components/Separator';
 
 interface SectionProps {
@@ -39,6 +40,15 @@ const Home = () => {
         <Separator />
 
         <Header title={'Daily Tasks'} />
+        <TodoList
+          tasks={[
+            { id: '1', name: 'Daily Task 1' },
+            { id: '2', name: 'Daily Task 2' },
+            { id: '3', name: 'Daily Task 3' },
+            { id: '4', name: 'Daily Task 4' },
+            { id: '5', name: 'Daily Task 5' },
+          ]}
+        />
         <Separator />
       </Section>
       <Section>
