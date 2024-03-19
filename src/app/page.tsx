@@ -1,9 +1,11 @@
 import React, { type FC } from 'react';
+import dayjs, { type Dayjs } from 'dayjs';
 
 import { Header } from '@/components/Header';
 import { Timer } from '@/containers/Timer';
 import { TodoList } from '@/containers/TodoList';
 import { Separator } from '@/components/Separator';
+import { TaskGraph } from '@/containers/TaskGraph';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -23,20 +25,28 @@ const Section: FC<SectionProps> = ({ children, className }) => {
   );
 };
 
+const MACRO_TODO_LIST_MAX_HEIGHT = 'calc(100% - 7.8rem)';
+
 const Home = () => {
+  const currentTime: Dayjs = dayjs();
+
   return (
     <main className="flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
+      {/* Left / Micro Section */}
       <Section>
         <Header title={'Hour Logger'} />
         <Separator />
       </Section>
-      <Section className="!px-12">
+
+      {/* Middle Section */}
+      <Section className="!px-12 !justify-between">
         <Header title={'GoalForge'} />
         <Timer />
         <Separator />
 
         <Header title={'Graph'} />
+        <TaskGraph />
         <Separator />
 
         <Header title={'Daily Tasks'} />
@@ -47,10 +57,15 @@ const Home = () => {
             { id: '3', name: 'Daily Task 3' },
             { id: '4', name: 'Daily Task 4' },
             { id: '5', name: 'Daily Task 5' },
+            { id: '6', name: 'Daily Task 6' },
+            { id: '7', name: 'Daily Task 7' },
+            { id: '8', name: 'Daily Task 8' },
+            { id: '9', name: 'Daily Task 9' },
           ]}
         />
-        <Separator />
       </Section>
+
+      {/* Right / Macro Section */}
       <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4">
         <div className="">
           <Header title={'Year Goals'} />
@@ -67,13 +82,15 @@ const Home = () => {
               { id: '5', name: 'Yearly Task 5' },
             ]}
             containerStyle={{
-              maxHeight: 'calc(100% - 8rem)',
+              maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
           />
         </div>
 
         <div className="">
-          <Header title={'Month Goals'} />
+          <Header
+            title={'Month Goals - ' + currentTime.month().toLocaleString()}
+          />
           <div className="bg-primary flex justify-center py-3">
             + Add Monthly Todo
           </div>
@@ -87,7 +104,7 @@ const Home = () => {
               { id: '5', name: 'Monthly Task 5' },
             ]}
             containerStyle={{
-              maxHeight: 'calc(100% - 8rem)',
+              maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
           />
         </div>
@@ -107,7 +124,7 @@ const Home = () => {
               { id: '5', name: 'Weekly Task 5' },
             ]}
             containerStyle={{
-              maxHeight: 'calc(100% - 8rem)',
+              maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
           />
         </div>
