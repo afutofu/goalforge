@@ -6,6 +6,7 @@ import { Timer } from '@/containers/Timer';
 import { TodoList } from '@/containers/TodoList';
 import { Separator } from '@/components/Separator';
 import { TaskGraph } from '@/containers/TaskGraph';
+import { HourActivityLogger } from '@/containers/HourActivityLogger';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -38,6 +39,7 @@ const Home = () => {
         <Header
           title={`Hour Logger - ${date.date()} ${date.format('MMM')} ${date.year()} `}
         />
+        <HourActivityLogger date={date} />
         <Separator />
       </Section>
 
