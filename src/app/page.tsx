@@ -1,5 +1,5 @@
 import React, { type FC } from 'react';
-import dayjs, { type Dayjs } from 'dayjs';
+import dayjs from '../../dayjs-config';
 
 import { Header } from '@/components/Header';
 import { Timer } from '@/containers/Timer';
@@ -25,17 +25,19 @@ const Section: FC<SectionProps> = ({ children, className }) => {
   );
 };
 
-const MACRO_TODO_LIST_MAX_HEIGHT = 'calc(100% - 7.8rem)';
+const MACRO_TODO_LIST_MAX_HEIGHT = 'calc(100% - 7.75rem)';
 
 const Home = () => {
-  const currentTime: Dayjs = dayjs();
+  const date = dayjs();
 
   return (
     <main className="flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
       {/* Left / Micro Section */}
       <Section>
-        <Header title={'Hour Logger'} />
+        <Header
+          title={`Hour Logger - ${date.date()} ${date.format('MMM')} ${date.year()} `}
+        />
         <Separator />
       </Section>
 
@@ -49,7 +51,7 @@ const Home = () => {
         <TaskGraph />
         <Separator />
 
-        <Header title={'Daily Tasks'} />
+        <Header title={'Daily Tasks - ' + date.date()} />
         <TodoList
           tasks={[
             { id: '1', name: 'Daily Task 1' },
@@ -68,7 +70,7 @@ const Home = () => {
       {/* Right / Macro Section */}
       <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4">
         <div className="">
-          <Header title={'Year Goals'} />
+          <Header title={'Year Goals - ' + date.format('YYYY')} />
           <div className="bg-primary flex justify-center py-3">
             + Add Yearly Todo
           </div>
@@ -88,9 +90,7 @@ const Home = () => {
         </div>
 
         <div className="">
-          <Header
-            title={'Month Goals - ' + currentTime.month().toLocaleString()}
-          />
+          <Header title={'Month Goals - ' + date.format('MMMM')} />
           <div className="bg-primary flex justify-center py-3">
             + Add Monthly Todo
           </div>
@@ -110,7 +110,12 @@ const Home = () => {
         </div>
 
         <div className="">
-          <Header title={'Week Goals'} className="flex-none" />
+          <Header
+            title={
+              'Week Goals - Week ' +
+              Math.ceil((date.date() / date.daysInMonth()) * 4)
+            }
+          />
           <div className="bg-primary flex justify-center py-3">
             + Add Weekly Todo
           </div>
