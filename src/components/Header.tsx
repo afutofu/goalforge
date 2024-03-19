@@ -1,11 +1,11 @@
 import React, { type FC } from 'react';
 
-interface HeaderProps {
+interface IHeader {
   title: string;
   className?: string;
 }
 
-export const Header: FC<HeaderProps> = ({ title, className }) => {
+export const Header: FC<IHeader> = ({ title, className }) => {
   return (
     <div className={'min-w-full mb-5 ' + (className ?? '')}>
       <p className="mb-3">{title}</p>

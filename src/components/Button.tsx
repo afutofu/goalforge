@@ -1,16 +1,12 @@
 import React, { type FC } from 'react';
 
-interface ButtonProps {
+interface IButton {
   children: string;
   small?: boolean;
   containerClass?: string;
 }
 
-export const Button: FC<ButtonProps> = ({
-  children,
-  small,
-  containerClass,
-}) => {
+export const Button: FC<IButton> = ({ children, small, containerClass }) => {
   return (
     <button
       className={

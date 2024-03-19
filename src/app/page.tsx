@@ -54,6 +54,8 @@ const Home = () => {
         <Separator />
 
         <Header title={'Daily Tasks - ' + date.date()} />
+        <div className="bg-primary flex justify-center py-3">+ Add Daily</div>
+        <Separator />
         <TodoList
           tasks={[
             { id: '1', name: 'Daily Task 1' },
@@ -74,7 +76,7 @@ const Home = () => {
         <div className="">
           <Header title={'Year Goals - ' + date.format('YYYY')} />
           <div className="bg-primary flex justify-center py-3">
-            + Add Yearly Todo
+            + Add Yearly
           </div>
           <Separator />
           <TodoList
@@ -94,7 +96,7 @@ const Home = () => {
         <div className="">
           <Header title={'Month Goals - ' + date.format('MMMM')} />
           <div className="bg-primary flex justify-center py-3">
-            + Add Monthly Todo
+            + Add Monthly
           </div>
           <Separator />
           <TodoList
@@ -119,7 +121,7 @@ const Home = () => {
             }
           />
           <div className="bg-primary flex justify-center py-3">
-            + Add Weekly Todo
+            + Add Weekly
           </div>
           <Separator />
           <TodoList
