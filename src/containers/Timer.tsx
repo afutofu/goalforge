@@ -29,7 +29,7 @@ export const Timer = () => {
 
   return (
     <div className="flex flex-col items-center bg-primary-light rounded-lg py-5">
-      <div className="flex flex-row justify-center items-center mb-5">
+      <div className="flex px-3 grid grid-cols-3 gap-2 mb-5">
         <Button small containerClass="mx-1">
           POMODORO
         </Button>
