@@ -1,4 +1,4 @@
-import React, { useState, type FC, useRef } from 'react';
+import React, { useState, type FC, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 
@@ -14,8 +14,8 @@ interface IFormInput {
 }
 
 export const AddTodo: FC<IAddTodoButton> = ({ children, inputPlaceHolder }) => {
-  const [open, setOpen] = useState(false);
-  const inputRef = useRef(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { register, handleSubmit, reset } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
@@ -24,33 +24,39 @@ export const AddTodo: FC<IAddTodoButton> = ({ children, inputPlaceHolder }) => {
     setOpen(false);
   };
 
+  useEffect(() => {
+    if (open) {
+      if (inputRef.current !== null) inputRef.current.focus();
+    }
+  }, [open]);
+
   return (
-    <div
-      className={clsx('relative flex justify-center w-full bg-primary z-0')}
-      onClick={() => {
-        setOpen(true);
-      }}
-    >
+    <div className={clsx('relative ')}>
       <div
-        className={clsx('px-3 py-2 w-full cursor-pointer z-10 outline-none', {
-          'opacity-0 z-0': open,
-        })}
+        className={clsx(
+          'px-3 py-2 w-full cursor-pointer z-20 outline-none bg-primary',
+          {
+            'opacity-0 z-0': open,
+          },
+        )}
+        onClick={() => {
+          setOpen(true);
+        }}
       >
         {children}
       </div>
       <form
         className={clsx(
-          'absolute bg-white cursor-auto text-black flex flex-col items-start px-4 py-5 w-full border-1 border-black',
-          { 'opacity-0': !open },
+          'absolute top-0 bg-white cursor-auto text-black flex flex-col items-start px-4 py-5 w-full border-1 border-black',
+          { hidden: !open },
         )}
         onSubmit={handleSubmit(onSubmit)}
       >
         <input
           className="outline-none mb-3 w-full"
           placeholder={inputPlaceHolder ?? 'Enter task...'}
-          {...register('taskName')}
+          {...register('taskName', { required: true, minLength: 1 })}
           ref={inputRef}
-          autoFocus
         />
         <div className="flex justify-end items-center w-full">
           <button
