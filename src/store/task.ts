@@ -6,26 +6,40 @@ interface ITaskStore {
   weekTasks: ITask[];
   monthTasks: ITask[];
   yearTasks: ITask[];
-  setDailyTasks: (tasks: ITask[]) => void;
+
+  setDayTasks: (tasks: ITask[]) => void;
   setWeekTasks: (tasks: ITask[]) => void;
   setMonthTasks: (tasks: ITask[]) => void;
   setYearTasks: (tasks: ITask[]) => void;
-  addDailyTask: (task: ITask) => void;
-  removeDailyTask: (taskID: string) => void;
+
+  addDayTask: (task: ITask) => void;
+  editDayTask: (taskID: string, editedTask: ITask) => void;
+  removeDayTask: (taskID: string) => void;
+
   addWeekTask: (task: ITask) => void;
+  editWeekTask: (taskID: string, editedTask: ITask) => void;
   removeWeekTask: (taskID: string) => void;
+
   addMonthTask: (task: ITask) => void;
+  editMonthTask: (taskID: string, editedTask: ITask) => void;
   removeMonthTask: (taskID: string) => void;
+
   addYearTask: (task: ITask) => void;
+  editYearTask: (taskID: string, editedTask: ITask) => void;
   removeYearTask: (taskID: string) => void;
 }
 
 export const useTaskStore = create<ITaskStore>((set, get) => ({
-  dayTasks: [],
-  setDailyTasks: (tasks: ITask[]) => {
+  dayTasks: new Array(10).fill(1).map((_, id) => ({
+    id: 'id' + id + Math.random(),
+    name: 'Day Task ' + id,
+    completed: Math.random() * 10 > 5,
+    createdAt: new Date(),
+  })),
+  setDayTasks: (tasks: ITask[]) => {
     set({ dayTasks: tasks });
   },
-  addDailyTask: (task: ITask) => {
+  addDayTask: (task: ITask) => {
     const currentTasks = get().dayTasks;
     set({ dayTasks: [...currentTasks, task] });
 
@@ -36,7 +50,18 @@ export const useTaskStore = create<ITaskStore>((set, get) => ({
     //     set({ dayTasks: currentTasks });
     //   });
   },
-  removeDailyTask: (taskID: string) => {
+  editDayTask: (taskID: string, editedTask: ITask) => {
+    const currentTasks = get().dayTasks;
+    set({
+      dayTasks: currentTasks.map((task) => {
+        if (task.id === taskID) {
+          return editedTask;
+        }
+        return task;
+      }),
+    });
+  },
+  removeDayTask: (taskID: string) => {
     const currentTasks = get().dayTasks;
     set({ dayTasks: currentTasks.filter((task) => task.id !== taskID) });
 
@@ -50,6 +75,17 @@ export const useTaskStore = create<ITaskStore>((set, get) => ({
   weekTasks: [],
   setWeekTasks: (tasks: ITask[]) => {
     set({ weekTasks: tasks });
+  },
+  editWeekTask: (taskID: string, editedTask: ITask) => {
+    const currentTasks = get().weekTasks;
+    set({
+      weekTasks: currentTasks.map((task) => {
+        if (task.id === taskID) {
+          return editedTask;
+        }
+        return task;
+      }),
+    });
   },
   addWeekTask: (task: ITask) => {
     const currentTasks = get().weekTasks;
@@ -73,10 +109,16 @@ export const useTaskStore = create<ITaskStore>((set, get) => ({
     // });
   },
 
-  monthTasks: [],
+  monthTasks: new Array(10).fill(1).map((_, id) => ({
+    id: 'id' + id + Math.random(),
+    name: 'Month Task ' + id,
+    completed: Math.random() * 10 > 5,
+    createdAt: new Date(),
+  })),
   setMonthTasks: (tasks: ITask[]) => {
     set({ monthTasks: tasks });
   },
+
   addMonthTask: (task: ITask) => {
     const currentTasks = get().monthTasks;
     set({ monthTasks: [...currentTasks, task] });
@@ -87,6 +129,17 @@ export const useTaskStore = create<ITaskStore>((set, get) => ({
     //     // Handle error and rollback the state update if needed
     //     set({ monthTasks: currentTasks });
     //   });
+  },
+  editMonthTask: (taskID: string, editedTask: ITask) => {
+    const currentTasks = get().monthTasks;
+    set({
+      monthTasks: currentTasks.map((task) => {
+        if (task.id === taskID) {
+          return editedTask;
+        }
+        return task;
+      }),
+    });
   },
   removeMonthTask: (taskID: string) => {
     const currentTasks = get().monthTasks;
@@ -113,6 +166,17 @@ export const useTaskStore = create<ITaskStore>((set, get) => ({
     //     // Handle error and rollback the state update if needed
     //     set({ yearTasks: currentTasks });
     //   });
+  },
+  editYearTask: (taskID: string, editedTask: ITask) => {
+    const currentTasks = get().yearTasks;
+    set({
+      yearTasks: currentTasks.map((task) => {
+        if (task.id === taskID) {
+          return editedTask;
+        }
+        return task;
+      }),
+    });
   },
   removeYearTask: (taskID: string) => {
     const currentTasks = get().yearTasks;

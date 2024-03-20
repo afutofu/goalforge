@@ -41,15 +41,20 @@ const Home = () => {
     weekTasks,
     monthTasks,
     yearTasks,
-    addDailyTask,
+    addDayTask,
+    editDayTask,
     addWeekTask,
+    editWeekTask,
     addMonthTask,
+    editMonthTask,
     addYearTask,
+    editYearTask,
   } = useTaskStore();
 
   return (
     <main className="flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
+
       {/* Left / Micro Section */}
       <Section>
         <Header
@@ -69,10 +74,10 @@ const Home = () => {
         <TaskGraph />
         <Separator />
 
-        <Header title={'Daily Tasks'} />
-        <AddTaskInput onAddTask={addDailyTask}>+ Add Daily</AddTaskInput>
+        <Header title={'Day Tasks'} />
+        <AddTaskInput onAddTask={addDayTask}>+ Add Day</AddTaskInput>
         <Separator />
-        <TodoList tasks={dayTasks} />
+        <TodoList tasks={dayTasks} onEditTask={editDayTask} />
       </Section>
 
       {/* Right / Macro Section */}
@@ -83,6 +88,7 @@ const Home = () => {
           <Separator />
           <TodoList
             tasks={yearTasks}
+            onEditTask={editYearTask}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
@@ -95,6 +101,7 @@ const Home = () => {
           <Separator />
           <TodoList
             tasks={monthTasks}
+            onEditTask={editMonthTask}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
@@ -112,6 +119,7 @@ const Home = () => {
           <Separator />
           <TodoList
             tasks={weekTasks}
+            onEditTask={editWeekTask}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
