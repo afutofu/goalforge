@@ -4,3 +4,9 @@ export interface ITask {
   completed: boolean;
   createdAt: Date;
 }
+
+export interface IActivityLog {
+  id: string;
+  name: string;
+  createdAt: Date;
+}

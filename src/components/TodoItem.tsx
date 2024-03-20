@@ -24,6 +24,15 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
 
   const { ref } = register('taskName');
 
+  const toggleComplete = () => {
+    const editedTask: ITask = {
+      ...task,
+      completed: !task.completed,
+    };
+
+    onEditTask(task.id, editedTask);
+  };
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     console.log(data);
 
@@ -60,10 +69,17 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
         })}
       >
         <div
-          className={clsx('p-4 rounded-full mr-3 bg-primary-light', {
-            '!bg-secondary': task.completed,
-          })}
-        ></div>
+          className={clsx(
+            'p-4 rounded-full mr-3 transition',
+            {
+              'bg-secondary hover:opacity-70': task.completed,
+            },
+            {
+              'bg-primary-light hover:bg-purple-300': !task.completed,
+            },
+          )}
+          onClick={toggleComplete}
+        />
         <span className="text-sm text-black font-bold">{task.name}</span>
         <KebabMenu
           onClick={() => {
