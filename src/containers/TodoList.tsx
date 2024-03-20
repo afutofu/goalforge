@@ -5,6 +5,7 @@ import { TodoItem } from '@/components/TodoItem';
 interface ITodoList {
   tasks: ITask[];
   onEditTask: (taskID: string, editedTask: ITask) => void;
+  onDeleteTask: (taskID: string) => void;
   containerClass?: string;
   containerStyle?: React.CSSProperties;
 }
@@ -12,6 +13,7 @@ interface ITodoList {
 export const TodoList: FC<ITodoList> = ({
   tasks,
   onEditTask,
+  onDeleteTask,
   containerClass,
   containerStyle,
 }) => {
@@ -24,7 +26,12 @@ export const TodoList: FC<ITodoList> = ({
     >
       {tasks.map((task, i) => {
         const todoItem = (
-          <TodoItem key={task.id} task={task} onEditTask={onEditTask} />
+          <TodoItem
+            key={task.id}
+            task={task}
+            onEditTask={onEditTask}
+            onDeleteTask={onDeleteTask}
+          />
         );
 
         if (i !== tasks.length - 1)

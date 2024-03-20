@@ -41,14 +41,21 @@ const Home = () => {
     weekTasks,
     monthTasks,
     yearTasks,
+
     addDayTask,
-    editDayTask,
     addWeekTask,
-    editWeekTask,
     addMonthTask,
-    editMonthTask,
     addYearTask,
+
+    editDayTask,
+    editWeekTask,
+    editMonthTask,
     editYearTask,
+
+    deleteDayTask,
+    deleteWeekTask,
+    deleteMonthTask,
+    deleteYearTask,
   } = useTaskStore();
 
   return (
@@ -77,7 +84,11 @@ const Home = () => {
         <Header title={'Day Tasks'} />
         <AddTaskInput onAddTask={addDayTask}>+ Add Day</AddTaskInput>
         <Separator />
-        <TodoList tasks={dayTasks} onEditTask={editDayTask} />
+        <TodoList
+          tasks={dayTasks}
+          onEditTask={editDayTask}
+          onDeleteTask={deleteDayTask}
+        />
       </Section>
 
       {/* Right / Macro Section */}
@@ -89,6 +100,7 @@ const Home = () => {
           <TodoList
             tasks={yearTasks}
             onEditTask={editYearTask}
+            onDeleteTask={deleteYearTask}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
@@ -102,6 +114,7 @@ const Home = () => {
           <TodoList
             tasks={monthTasks}
             onEditTask={editMonthTask}
+            onDeleteTask={deleteMonthTask}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
@@ -120,6 +133,7 @@ const Home = () => {
           <TodoList
             tasks={weekTasks}
             onEditTask={editWeekTask}
+            onDeleteTask={deleteWeekTask}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}

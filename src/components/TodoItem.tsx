@@ -9,13 +9,14 @@ import { Button } from './Button';
 interface ITodoItem {
   task: ITask;
   onEditTask: (taskID: string, editedTask: ITask) => void;
+  onDeleteTask: (taskID: string) => void;
 }
 
 interface IFormInput {
   taskName: string;
 }
 
-export const TodoItem: FC<ITodoItem> = ({ task, onEditTask }) => {
+export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -91,8 +92,8 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask }) => {
             className="mr-4 hover:underline text-gray-400"
             onClick={(e) => {
               e.stopPropagation();
+              onDeleteTask(task.id);
               setOpen(false);
-              setValue('taskName', task.name);
             }}
           >
             Delete
