@@ -34,7 +34,7 @@ export const AddTodo: FC<IAddTodoButton> = ({ children, inputPlaceHolder }) => {
     <div className={clsx('relative ')}>
       <div
         className={clsx(
-          'px-3 py-2 w-full cursor-pointer z-20 outline-none bg-primary',
+          'px-3 py-2 w-full cursor-pointer z-20 outline-none bg-primary flex justify-center items-center',
           {
             'opacity-0 z-0': open,
           },
