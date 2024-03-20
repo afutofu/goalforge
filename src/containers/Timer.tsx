@@ -18,14 +18,10 @@ export const Timer = () => {
         console.log(timer.current.format('mm:ss'));
       }, 1000);
     } else {
-      console.log('clear');
       clearInterval(timerInterval.current);
+      console.log('clear');
     }
   }, [started]);
-
-  useEffect(() => {
-    console.log(time);
-  }, [time]);
 
   return (
     <div className="flex flex-col items-center bg-primary-light rounded-lg py-5">

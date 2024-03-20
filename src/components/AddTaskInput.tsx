@@ -3,17 +3,24 @@ import clsx from 'clsx';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 
 import { Button } from './Button';
+import { type ITask } from '@/types';
+import dayjs from 'dayjs';
 
 interface IAddTodoButton {
   children: string;
   inputPlaceHolder?: string;
+  onAddTask: (task: ITask) => void;
 }
 
 interface IFormInput {
   taskName: string;
 }
 
-export const AddTodo: FC<IAddTodoButton> = ({ children, inputPlaceHolder }) => {
+export const AddTaskInput: FC<IAddTodoButton> = ({
+  children,
+  inputPlaceHolder,
+  onAddTask,
+}) => {
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -23,6 +30,17 @@ export const AddTodo: FC<IAddTodoButton> = ({ children, inputPlaceHolder }) => {
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     console.log(data);
+
+    const mockTask: ITask = {
+      id: 'taskID' + Math.random() + Math.random(),
+      name: data.taskName,
+      completed: false,
+      createdAt: dayjs().toDate(),
+    };
+
+    // setTimeout(() => {}, 200);
+
+    onAddTask(mockTask);
     reset();
     setOpen(false);
   };

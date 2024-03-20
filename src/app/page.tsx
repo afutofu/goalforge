@@ -11,7 +11,7 @@ import { TodoList } from '@/containers/TodoList';
 import { Separator } from '@/components/Separator';
 import { TaskGraph } from '@/containers/TaskGraph';
 import { HourActivityLogger } from '@/containers/HourActivityLogger';
-import { AddTodo } from '@/components/AddTodo';
+import { AddTaskInput } from '@/components/AddTaskInput';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -36,7 +36,16 @@ const MACRO_TODO_LIST_MAX_HEIGHT = 'calc(100% - 7.75rem)';
 const Home = () => {
   const date = dayjs();
 
-  const { dayTasks, weekTasks, monthTasks, yearTasks } = useTaskStore();
+  const {
+    dayTasks,
+    weekTasks,
+    monthTasks,
+    yearTasks,
+    addDailyTask,
+    addWeekTask,
+    addMonthTask,
+    addYearTask,
+  } = useTaskStore();
 
   return (
     <main className="flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
@@ -51,7 +60,7 @@ const Home = () => {
       </Section>
 
       {/* Middle Section */}
-      <Section className="!px-12 !justify-between">
+      <Section className="!px-12">
         <Header title={'GoalForge'} />
         <Timer />
         <Separator />
@@ -61,7 +70,7 @@ const Home = () => {
         <Separator />
 
         <Header title={'Daily Tasks'} />
-        <AddTodo>+ Add Daily</AddTodo>
+        <AddTaskInput onAddTask={addDailyTask}>+ Add Daily</AddTaskInput>
         <Separator />
         <TodoList tasks={dayTasks} />
       </Section>
@@ -70,7 +79,7 @@ const Home = () => {
       <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4 z-20">
         <div className="">
           <Header title={'Year Tasks - ' + date.format('YYYY')} />
-          <AddTodo>+ Add Yearly</AddTodo>
+          <AddTaskInput onAddTask={addYearTask}>+ Add Yearly</AddTaskInput>
           <Separator />
           <TodoList
             tasks={yearTasks}
@@ -82,7 +91,7 @@ const Home = () => {
 
         <div className="">
           <Header title={'Month Tasks - ' + date.format('MMMM')} />
-          <AddTodo>+ Add Monthly</AddTodo>
+          <AddTaskInput onAddTask={addMonthTask}>+ Add Monthly</AddTaskInput>
           <Separator />
           <TodoList
             tasks={monthTasks}
@@ -99,7 +108,7 @@ const Home = () => {
               Math.ceil((date.date() / date.daysInMonth()) * 4)
             }
           />
-          <AddTodo>+ Add Weekly</AddTodo>
+          <AddTaskInput onAddTask={addWeekTask}>+ Add Weekly</AddTaskInput>
           <Separator />
           <TodoList
             tasks={weekTasks}
