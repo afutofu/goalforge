@@ -1,3 +1,5 @@
+'use client';
+
 import React, { type FC } from 'react';
 import dayjs from '../../dayjs-config';
 
@@ -7,6 +9,7 @@ import { TodoList } from '@/containers/TodoList';
 import { Separator } from '@/components/Separator';
 import { TaskGraph } from '@/containers/TaskGraph';
 import { HourActivityLogger } from '@/containers/HourActivityLogger';
+import { AddTodo } from '@/components/AddTodo';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -53,8 +56,8 @@ const Home = () => {
         <TaskGraph />
         <Separator />
 
-        <Header title={'Daily Tasks - ' + date.date()} />
-        <div className="bg-primary flex justify-center py-3">+ Add Daily</div>
+        <Header title={'Daily Tasks'} />
+        <AddTodo>+ Add Daily</AddTodo>
         <Separator />
         <TodoList
           tasks={[
@@ -72,12 +75,10 @@ const Home = () => {
       </Section>
 
       {/* Right / Macro Section */}
-      <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4">
+      <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4 z-20">
         <div className="">
           <Header title={'Year Goals - ' + date.format('YYYY')} />
-          <div className="bg-primary flex justify-center py-3">
-            + Add Yearly
-          </div>
+          <AddTodo>+ Add Yearly</AddTodo>
           <Separator />
           <TodoList
             tasks={[
@@ -95,9 +96,7 @@ const Home = () => {
 
         <div className="">
           <Header title={'Month Goals - ' + date.format('MMMM')} />
-          <div className="bg-primary flex justify-center py-3">
-            + Add Monthly
-          </div>
+          <AddTodo>+ Add Monthly</AddTodo>
           <Separator />
           <TodoList
             tasks={[
@@ -120,9 +119,7 @@ const Home = () => {
               Math.ceil((date.date() / date.daysInMonth()) * 4)
             }
           />
-          <div className="bg-primary flex justify-center py-3">
-            + Add Weekly
-          </div>
+          <AddTodo>+ Add Weekly</AddTodo>
           <Separator />
           <TodoList
             tasks={[
