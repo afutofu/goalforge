@@ -15,9 +15,12 @@ interface IFormInput {
 
 export const AddTodo: FC<IAddTodoButton> = ({ children, inputPlaceHolder }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { register, handleSubmit, reset } = useForm<IFormInput>();
+
+  const { ref } = register('taskName');
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     console.log(data);
     reset();
@@ -47,7 +50,7 @@ export const AddTodo: FC<IAddTodoButton> = ({ children, inputPlaceHolder }) => {
       </div>
       <form
         className={clsx(
-          'absolute top-0 bg-white cursor-auto text-black flex flex-col items-start px-4 py-5 w-full border-1 border-black',
+          'absolute top-0 bg-white cursor-auto text-black flex flex-col items-start px-4 py-5 w-full border-1 border-black z-20',
           { hidden: !open },
         )}
         onSubmit={handleSubmit(onSubmit)}
@@ -56,7 +59,10 @@ export const AddTodo: FC<IAddTodoButton> = ({ children, inputPlaceHolder }) => {
           className="outline-none mb-3 w-full"
           placeholder={inputPlaceHolder ?? 'Enter task...'}
           {...register('taskName', { required: true, minLength: 1 })}
-          ref={inputRef}
+          ref={(e) => {
+            ref(e);
+            inputRef.current = e;
+          }}
         />
         <div className="flex justify-end items-center w-full">
           <button
