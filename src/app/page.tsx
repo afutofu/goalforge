@@ -3,6 +3,8 @@
 import React, { type FC } from 'react';
 import dayjs from '../../dayjs-config';
 
+import { useTaskStore } from '@/store/task';
+
 import { Header } from '@/components/Header';
 import { Timer } from '@/containers/Timer';
 import { TodoList } from '@/containers/TodoList';
@@ -34,6 +36,8 @@ const MACRO_TODO_LIST_MAX_HEIGHT = 'calc(100% - 7.75rem)';
 const Home = () => {
   const date = dayjs();
 
+  const { dayTasks, weekTasks, monthTasks, yearTasks } = useTaskStore();
+
   return (
     <main className="flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
@@ -59,35 +63,17 @@ const Home = () => {
         <Header title={'Daily Tasks'} />
         <AddTodo>+ Add Daily</AddTodo>
         <Separator />
-        <TodoList
-          tasks={[
-            { id: '1', name: 'Daily Task 1' },
-            { id: '2', name: 'Daily Task 2' },
-            { id: '3', name: 'Daily Task 3' },
-            { id: '4', name: 'Daily Task 4' },
-            { id: '5', name: 'Daily Task 5' },
-            { id: '6', name: 'Daily Task 6' },
-            { id: '7', name: 'Daily Task 7' },
-            { id: '8', name: 'Daily Task 8' },
-            { id: '9', name: 'Daily Task 9' },
-          ]}
-        />
+        <TodoList tasks={dayTasks} />
       </Section>
 
       {/* Right / Macro Section */}
       <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4 z-20">
         <div className="">
-          <Header title={'Year Goals - ' + date.format('YYYY')} />
+          <Header title={'Year Tasks - ' + date.format('YYYY')} />
           <AddTodo>+ Add Yearly</AddTodo>
           <Separator />
           <TodoList
-            tasks={[
-              { id: '1', name: 'Yearly Task 1' },
-              { id: '2', name: 'Yearly Task 2' },
-              { id: '3', name: 'Yearly Task 3' },
-              { id: '4', name: 'Yearly Task 4' },
-              { id: '5', name: 'Yearly Task 5' },
-            ]}
+            tasks={yearTasks}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
@@ -95,17 +81,11 @@ const Home = () => {
         </div>
 
         <div className="">
-          <Header title={'Month Goals - ' + date.format('MMMM')} />
+          <Header title={'Month Tasks - ' + date.format('MMMM')} />
           <AddTodo>+ Add Monthly</AddTodo>
           <Separator />
           <TodoList
-            tasks={[
-              { id: '1', name: 'Monthly Task 1' },
-              { id: '2', name: 'Monthly Task 2' },
-              { id: '3', name: 'Monthly Task 3' },
-              { id: '4', name: 'Monthly Task 4' },
-              { id: '5', name: 'Monthly Task 5' },
-            ]}
+            tasks={monthTasks}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
@@ -115,20 +95,14 @@ const Home = () => {
         <div className="">
           <Header
             title={
-              'Week Goals - Week ' +
+              'Week Tasks - Week ' +
               Math.ceil((date.date() / date.daysInMonth()) * 4)
             }
           />
           <AddTodo>+ Add Weekly</AddTodo>
           <Separator />
           <TodoList
-            tasks={[
-              { id: '1', name: 'Weekly Task 1' },
-              { id: '2', name: 'Weekly Task 2' },
-              { id: '3', name: 'Weekly Task 3' },
-              { id: '4', name: 'Weekly Task 4' },
-              { id: '5', name: 'Weekly Task 5' },
-            ]}
+            tasks={weekTasks}
             containerStyle={{
               maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
             }}
