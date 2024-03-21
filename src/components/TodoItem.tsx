@@ -106,7 +106,7 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
-              handleSubmit(onSubmit)();
+              void handleSubmit(onSubmit)();
             }
           }}
         />

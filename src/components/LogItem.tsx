@@ -84,7 +84,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
-              handleSubmit(onSubmit)();
+              void handleSubmit(onSubmit)();
             }
           }}
         />
