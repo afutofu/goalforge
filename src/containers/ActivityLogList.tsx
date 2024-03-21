@@ -20,7 +20,6 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
       }
       logsToday.push(activityLogs[i]);
     }
-
     return logsToday;
   }, [activityLogs, today]);
 

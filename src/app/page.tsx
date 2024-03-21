@@ -68,7 +68,7 @@ const Home = () => {
 
       {/* Left / Micro Section */}
       <Section>
-        <Header>{`Hour Logger - ${date.date()} ${date.format('MMM')} ${date.year()} `}</Header>
+        <Header>{`Activity Logger - ${date.date()} ${date.format('MMM')} ${date.year()} `}</Header>
         <HourActivityLogger date={date} onAddActivityLog={addActivityLog} />
         <Separator />
         <ActivityLogList activityLogs={activityLogs} />

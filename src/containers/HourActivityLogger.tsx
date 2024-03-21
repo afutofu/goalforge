@@ -1,6 +1,6 @@
 import { type IActivityLog } from '@/types';
-import { type Dayjs } from 'dayjs';
-import React, { useMemo, type FC } from 'react';
+import dayjs, { type Dayjs } from 'dayjs';
+import React, { type FC, useRef, useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 
 interface IHourActivityLogger {
@@ -17,34 +17,21 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({
   onAddActivityLog,
 }) => {
   const { register, handleSubmit, reset } = useForm<IFormInput>();
+  const timer = useRef<Dayjs>(dayjs());
+  const [time, setTime] = useState<string>(timer.current.format('hh:mm A'));
 
-  const timeString = useMemo(() => {
-    const currentHour = date.hour();
-    const isAfternoon = currentHour >= 12;
+  useEffect(() => {
+    const timerInterval = setInterval(() => {
+      timer.current = dayjs();
+      setTime(timer.current.format('hh:mm A'));
+    }, 1000);
 
-    if (isAfternoon) {
-      const currentHourPM = currentHour - 12;
-      if (currentHourPM === 0) {
-        return '12:00 PM - 12:59 PM';
-      } else if (currentHourPM < 10) {
-        return '0' + currentHourPM + ':00 PM - 0' + currentHourPM + ':59 PM';
-      } else {
-        return currentHourPM + ':00 PM - ' + currentHourPM + ':59 PM';
-      }
-    } else {
-      if (currentHour === 0) {
-        return '12:00 AM - 12:59 AM';
-      } else if (currentHour < 10) {
-        return '0' + currentHour + ':00 AM - 0' + currentHour + ':59 AM';
-      } else {
-        return currentHour + ':00 AM - ' + currentHour + ':59 AM';
-      }
-    }
-  }, [date]);
+    return () => {
+      clearInterval(timerInterval);
+    };
+  }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
-
     const newActivityLog: IActivityLog = {
       id: 'id-' + Math.random() + Math.random(),
       text: data.activityName,
@@ -61,10 +48,10 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col items-center bg-primary-light rounded-lg py-7"
     >
-      <div className="text-primary font-bold mb-2 text-lg">{timeString}</div>
+      <div className="text-primary font-bold mb-3 text-3xl">{time}</div>
       <input
         className="rounded-full py-3 px-3 text-center text-xs text-black placeholder:uppercase placeholder:font-bold"
-        placeholder="Log Hour Activity..."
+        placeholder="Log Current Activity..."
         {...register('activityName', { required: true })}
       />
     </form>
