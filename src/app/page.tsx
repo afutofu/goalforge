@@ -12,6 +12,8 @@ import { Separator } from '@/components/Separator';
 import { TaskGraph } from '@/containers/TaskGraph';
 import { HourActivityLogger } from '@/containers/HourActivityLogger';
 import { AddTaskInput } from '@/components/AddTaskInput';
+import { useActivityLogStore } from '@/store/activityLog';
+import { ActivityLogList } from '@/containers/ActivityLogList';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -58,30 +60,31 @@ const Home = () => {
     deleteYearTask,
   } = useTaskStore();
 
+  const { activityLogs, addActivityLog } = useActivityLogStore();
+
   return (
     <main className="flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
 
       {/* Left / Micro Section */}
       <Section>
-        <Header
-          title={`Hour Logger - ${date.date()} ${date.format('MMM')} ${date.year()} `}
-        />
-        <HourActivityLogger date={date} />
+        <Header>{`Hour Logger - ${date.date()} ${date.format('MMM')} ${date.year()} `}</Header>
+        <HourActivityLogger date={date} onAddActivityLog={addActivityLog} />
         <Separator />
+        <ActivityLogList activityLogs={activityLogs} />
       </Section>
 
       {/* Middle Section */}
       <Section className="!px-12">
-        <Header title={'GoalForge'} />
+        <Header>GoalForge</Header>
         <Timer />
         <Separator />
 
-        <Header title={'Selected Task - Not Selected '} />
+        <Header>{'Selected Task - Not Selected '}</Header>
         <TaskGraph />
         <Separator />
 
-        <Header title={'Day Tasks'} />
+        <Header>Day Tasks</Header>
         <AddTaskInput onAddTask={addDayTask}>+ Add Day</AddTaskInput>
         <Separator />
         <TodoList
@@ -94,7 +97,7 @@ const Home = () => {
       {/* Right / Macro Section */}
       <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4 z-20">
         <div className="">
-          <Header title={'Year Tasks - ' + date.format('YYYY')} />
+          <Header>{'Year Tasks - ' + date.format('YYYY')}</Header>
           <AddTaskInput onAddTask={addYearTask}>+ Add Yearly</AddTaskInput>
           <Separator />
           <TodoList
@@ -108,7 +111,7 @@ const Home = () => {
         </div>
 
         <div className="">
-          <Header title={'Month Tasks - ' + date.format('MMMM')} />
+          <Header>{'Month Tasks - ' + date.format('MMMM')}</Header>
           <AddTaskInput onAddTask={addMonthTask}>+ Add Monthly</AddTaskInput>
           <Separator />
           <TodoList
@@ -122,12 +125,10 @@ const Home = () => {
         </div>
 
         <div className="">
-          <Header
-            title={
-              'Week Tasks - Week ' +
-              Math.ceil((date.date() / date.daysInMonth()) * 4)
-            }
-          />
+          <Header>
+            {'Week Tasks - Week ' +
+              Math.ceil((date.date() / date.daysInMonth()) * 4)}
+          </Header>
           <AddTaskInput onAddTask={addWeekTask}>+ Add Weekly</AddTaskInput>
           <Separator />
           <TodoList

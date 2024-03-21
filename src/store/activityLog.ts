@@ -4,7 +4,7 @@ import { create } from 'zustand';
 
 interface IActivityLogStore {
   // Initial activityLog
-  activityLog: IActivityLog[];
+  activityLogs: IActivityLog[];
 
   // Setting activityLog
   setActivityLog: (activityLog: IActivityLog[]) => void;
@@ -24,23 +24,21 @@ interface IActivityLogStore {
 
 export const useActivityLogStore = create<IActivityLogStore>((set, get) => ({
   // Initial activityLog
-  activityLog: new Array(10).fill(1).map((_, id) => ({
+  activityLogs: new Array(10).fill(1).map((_, id) => ({
     id: 'id' + id + Math.random(),
-    name: 'Random activity' + id,
-    createdAt: dayjs()
-      .subtract(10 - id, 'hour')
-      .toDate(),
+    name: 'Random activity ' + (10 - id),
+    createdAt: dayjs().subtract(id, 'hour').toDate(),
   })),
 
   // Set activityLog
-  setActivityLog: (activityLog: IActivityLog[]) => {
-    set({ activityLog });
+  setActivityLog: (activityLogs: IActivityLog[]) => {
+    set({ activityLogs });
   },
 
   // Add activityLog
   addActivityLog: (activityLog: IActivityLog) => {
-    const currentactivityLog = get().activityLog;
-    set({ activityLog: [...currentactivityLog, activityLog] });
+    const currentactivityLog = get().activityLogs;
+    set({ activityLogs: [...currentactivityLog, activityLog] });
 
     // Make your API call to add the activityLog
     // api.addTask(activityLog)
@@ -51,9 +49,9 @@ export const useActivityLogStore = create<IActivityLogStore>((set, get) => ({
   },
   // Edit activityLog
   editActivityLog: (activityLogID: string, editedActivityLog: IActivityLog) => {
-    const currentactivityLog = get().activityLog;
+    const currentactivityLog = get().activityLogs;
     set({
-      activityLog: currentactivityLog.map((activityLog) => {
+      activityLogs: currentactivityLog.map((activityLog) => {
         if (activityLog.id === activityLogID) {
           return editedActivityLog;
         }
@@ -64,9 +62,9 @@ export const useActivityLogStore = create<IActivityLogStore>((set, get) => ({
 
   // Delete activityLog
   deleteActivityLog: (activityLogID: string) => {
-    const currentactivityLog = get().activityLog;
+    const currentactivityLog = get().activityLogs;
     set({
-      activityLog: currentactivityLog.filter(
+      activityLogs: currentactivityLog.filter(
         (activityLog) => activityLog.id !== activityLogID,
       ),
     });

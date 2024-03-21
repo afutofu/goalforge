@@ -1,11 +1,23 @@
+import { type IActivityLog } from '@/types';
 import { type Dayjs } from 'dayjs';
 import React, { useMemo, type FC } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 
 interface IHourActivityLogger {
   date: Dayjs;
+  onAddActivityLog: (activityLog: IActivityLog) => void;
 }
 
-export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
+interface IFormInput {
+  activityName: string;
+}
+
+export const HourActivityLogger: FC<IHourActivityLogger> = ({
+  date,
+  onAddActivityLog,
+}) => {
+  const { register, handleSubmit, reset } = useForm<IFormInput>();
+
   const timeString = useMemo(() => {
     const currentHour = date.hour();
     const isAfternoon = currentHour >= 12;
@@ -26,13 +38,31 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
     }
   }, [date]);
 
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    console.log(data);
+
+    const newActivityLog: IActivityLog = {
+      id: 'id-' + Math.random() + Math.random(),
+      name: data.activityName,
+      createdAt: new Date(),
+    };
+
+    onAddActivityLog(newActivityLog);
+
+    reset();
+  };
+
   return (
-    <div className="flex flex-col items-center bg-primary-light rounded-lg py-7">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col items-center bg-primary-light rounded-lg py-7"
+    >
       <div className="text-primary font-bold mb-2 text-lg">{timeString}</div>
       <input
         className="rounded-full py-2 px-3 text-center text-xs text-black placeholder:uppercase placeholder:font-bold"
         placeholder="Log Hour Activity..."
+        {...register('activityName', { required: true })}
       />
-    </div>
+    </form>
   );
 };
