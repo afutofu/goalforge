@@ -64,9 +64,12 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
       )}
     >
       <div
-        className={clsx('px-3 py-2 pr-5 flex items-center cursor-pointer', {
-          hidden: open,
-        })}
+        className={clsx(
+          'group px-3 py-2 pr-5 flex items-center cursor-pointer',
+          {
+            hidden: open,
+          },
+        )}
       >
         <div
           className={clsx(
@@ -82,6 +85,7 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
         />
         <span className="text-sm text-black font-bold">{task.name}</span>
         <KebabMenu
+          className="opacity-0 group-hover:opacity-100"
           onClick={() => {
             setOpen(true);
           }}
