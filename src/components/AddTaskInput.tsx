@@ -1,6 +1,7 @@
 import React, { useState, type FC, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 import { useForm, type SubmitHandler } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from './Button';
 import { type ITask } from '@/types';
@@ -32,7 +33,7 @@ export const AddTaskInput: FC<IAddTodoButton> = ({
     console.log(data);
 
     const mockTask: ITask = {
-      id: 'taskID' + Math.random() + Math.random(),
+      id: uuidv4(),
       name: data.taskName,
       completed: false,
       createdAt: dayjs().toDate(),

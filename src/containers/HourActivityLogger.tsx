@@ -3,6 +3,8 @@ import dayjs, { type Dayjs } from 'dayjs';
 import React, { type FC, useRef, useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 
+import { v4 as uuidv4 } from 'uuid';
+
 interface IHourActivityLogger {
   date: Dayjs;
   onAddActivityLog: (activityLog: IActivityLog) => void;
@@ -33,7 +35,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     const newActivityLog: IActivityLog = {
-      id: 'id-' + Math.random() + Math.random(),
+      id: uuidv4(),
       text: data.activityName,
       createdAt: new Date(),
     };

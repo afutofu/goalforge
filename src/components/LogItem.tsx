@@ -1,11 +1,11 @@
 import { type IActivityLog } from '@/types';
 import clsx from 'clsx';
-import React, { useState, type FC, useRef } from 'react';
+import React, { useState, type FC, useRef, useEffect } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Button } from './Button';
 import { useActivityLogStore } from '@/store/activityLog';
 
-interface ILogItem {
+interface ILogItem extends React.ComponentPropsWithoutRef<'div'> {
   log: IActivityLog;
 }
 
@@ -13,25 +13,28 @@ interface IFormInput {
   logText: string;
 }
 
-export const LogItem: FC<ILogItem> = ({ log }) => {
+export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { register, handleSubmit, reset, setValue } = useForm<IFormInput>();
+  const { register, handleSubmit, reset, setValue } = useForm<IFormInput>({
+    defaultValues: {
+      logText: log.text,
+    },
+  });
 
   const { editActivityLog, deleteActivityLog } = useActivityLogStore();
 
   const { ref } = register('logText');
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log('edit log', data);
-
     const editedLog: IActivityLog = {
       ...log,
       text: data.logText,
     };
 
     if (data.logText !== log.text) {
+      console.log('edit log', data);
       editActivityLog(log.id, editedLog);
     }
 
@@ -39,9 +42,19 @@ export const LogItem: FC<ILogItem> = ({ log }) => {
     setOpen(false);
   };
 
+  useEffect(() => {
+    if (open && inputRef.current !== null) inputRef.current.focus();
+    setValue('logText', log.text);
+  }, [open]);
+
   return (
     <div
-      className={clsx('flex items-center', { 'mb-1': !open }, { 'mb-2': open })}
+      className={clsx(
+        'flex items-center cursor-pointer',
+        { 'mb-1': !open },
+        { 'mb-2': open },
+      )}
+      {...props}
     >
       <div
         className={clsx('bg-white p-[3px] rounded-full mr-3', { hidden: open })}
@@ -63,11 +76,16 @@ export const LogItem: FC<ILogItem> = ({ log }) => {
       >
         <input
           className="outline-none mb-3 w-full"
-          defaultValue={log.text}
           {...register('logText', { required: true, minLength: 1 })}
           ref={(e) => {
             ref(e);
             inputRef.current = e;
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleSubmit(onSubmit)();
+            }
           }}
         />
         <div className="flex justify-between items-center w-full">
@@ -89,7 +107,6 @@ export const LogItem: FC<ILogItem> = ({ log }) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setOpen(false);
-                setValue('logText', log.text);
               }}
             >
               Cancel

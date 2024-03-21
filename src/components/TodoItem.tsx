@@ -34,14 +34,13 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
   };
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log('edit task', data);
-
     const editedTask: ITask = {
       ...task,
       name: data.taskName,
     };
 
     if (data.taskName !== task.name) {
+      console.log('edit task', data);
       onEditTask(task.id, editedTask);
     }
 
@@ -50,9 +49,8 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
   };
 
   useEffect(() => {
-    if (open) {
-      if (inputRef.current !== null) inputRef.current.focus();
-    }
+    if (open && inputRef.current !== null) inputRef.current.focus();
+    setValue('taskName', task.name);
   }, [open]);
 
   return (
@@ -100,11 +98,16 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
       >
         <input
           className="outline-none mb-3 w-full"
-          defaultValue={task.name}
           {...register('taskName', { required: true, minLength: 1 })}
           ref={(e) => {
             ref(e);
             inputRef.current = e;
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleSubmit(onSubmit)();
+            }
           }}
         />
         <div className="flex justify-between items-center w-full">
@@ -126,7 +129,6 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setOpen(false);
-                setValue('taskName', task.name);
               }}
             >
               Cancel
