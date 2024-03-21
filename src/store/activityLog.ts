@@ -24,9 +24,9 @@ interface IActivityLogStore {
 
 export const useActivityLogStore = create<IActivityLogStore>((set, get) => ({
   // Initial activityLog
-  activityLogs: new Array(10).fill(1).map((_, id) => ({
+  activityLogs: new Array(30).fill(1).map((_, id) => ({
     id: 'id' + id + Math.random(),
-    name: 'Random activity ' + (10 - id),
+    name: 'Random activity ' + (30 - id),
     createdAt: dayjs().subtract(id, 'hour').toDate(),
   })),
 
@@ -38,7 +38,7 @@ export const useActivityLogStore = create<IActivityLogStore>((set, get) => ({
   // Add activityLog
   addActivityLog: (activityLog: IActivityLog) => {
     const currentactivityLog = get().activityLogs;
-    set({ activityLogs: [...currentactivityLog, activityLog] });
+    set({ activityLogs: [activityLog, ...currentactivityLog] });
 
     // Make your API call to add the activityLog
     // api.addTask(activityLog)
