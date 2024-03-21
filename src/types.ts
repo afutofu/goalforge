@@ -7,6 +7,6 @@ export interface ITask {
 
 export interface IActivityLog {
   id: string;
-  name: string;
+  text: string;
   createdAt: Date;
 }

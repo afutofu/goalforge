@@ -24,13 +24,17 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({
 
     if (isAfternoon) {
       const currentHourPM = currentHour - 12;
-      if (currentHourPM < 10) {
+      if (currentHourPM === 0) {
+        return '12:00 PM - 12:59 PM';
+      } else if (currentHourPM < 10) {
         return '0' + currentHourPM + ':00 PM - 0' + currentHourPM + ':59 PM';
       } else {
         return currentHourPM + ':00 PM - ' + currentHourPM + ':59 PM';
       }
     } else {
-      if (currentHour < 10) {
+      if (currentHour === 0) {
+        return '12:00 AM - 12:59 AM';
+      } else if (currentHour < 10) {
         return '0' + currentHour + ':00 AM - 0' + currentHour + ':59 AM';
       } else {
         return currentHour + ':00 AM - ' + currentHour + ':59 AM';
@@ -43,7 +47,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({
 
     const newActivityLog: IActivityLog = {
       id: 'id-' + Math.random() + Math.random(),
-      name: data.activityName,
+      text: data.activityName,
       createdAt: new Date(),
     };
 
@@ -59,7 +63,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({
     >
       <div className="text-primary font-bold mb-2 text-lg">{timeString}</div>
       <input
-        className="rounded-full py-2 px-3 text-center text-xs text-black placeholder:uppercase placeholder:font-bold"
+        className="rounded-full py-3 px-3 text-center text-xs text-black placeholder:uppercase placeholder:font-bold"
         placeholder="Log Hour Activity..."
         {...register('activityName', { required: true })}
       />

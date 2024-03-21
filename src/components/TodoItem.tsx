@@ -34,7 +34,7 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
   };
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
+    console.log('edit task', data);
 
     const editedTask: ITask = {
       ...task,
@@ -111,6 +111,7 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
           <button
             className="mr-4 hover:underline text-gray-400"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onDeleteTask(task.id);
               setOpen(false);
@@ -122,6 +123,7 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
             <button
               className="mr-4 hover:underline text-gray-400"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 setOpen(false);
                 setValue('taskName', task.name);

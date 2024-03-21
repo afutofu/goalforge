@@ -1,4 +1,5 @@
 import { Header } from '@/components/Header';
+import { LogItem } from '@/components/LogItem';
 import { Separator } from '@/components/Separator';
 import { type IActivityLog } from '@/types';
 import dayjs from 'dayjs';
@@ -14,7 +15,6 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
   const activityLogsToday = useMemo(() => {
     const logsToday = [];
     for (let i = 0; i < activityLogs.length; i++) {
-      console.log(today.day() !== dayjs(activityLogs[i].createdAt).day());
       if (today.day() !== dayjs(activityLogs[i].createdAt).day()) {
         break;
       }
@@ -68,16 +68,11 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
       return (
         <>
           {headerWithSpacing}
-          <div className="flex items-center mb-1">
-            <div className="bg-white p-[3px] rounded-full mr-3"></div>
-            <span>{log.name}</span>
-          </div>
+          <LogItem log={log} />
         </>
       );
     });
   }, [activityLogsToday]);
-
-  console.log(activityLogsToday);
 
   return (
     <div className="flex flex-col overflow-y-scroll no-scrollbar ">

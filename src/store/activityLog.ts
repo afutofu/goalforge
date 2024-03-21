@@ -26,7 +26,7 @@ export const useActivityLogStore = create<IActivityLogStore>((set, get) => ({
   // Initial activityLog
   activityLogs: new Array(30).fill(1).map((_, id) => ({
     id: 'id' + id + Math.random(),
-    name: 'Random activity ' + (30 - id),
+    text: 'Random activity ' + (30 - id),
     createdAt: dayjs().subtract(id, 'hour').toDate(),
   })),
 
