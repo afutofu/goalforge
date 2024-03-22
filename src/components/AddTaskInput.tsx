@@ -56,7 +56,7 @@ export const AddTaskInput: FC<IAddTodoButton> = ({
     <div className={clsx('relative ')}>
       <div
         className={clsx(
-          'px-3 py-2 w-full cursor-pointer z-20 outline-none bg-primary flex justify-center items-center',
+          'px-3 py-2 w-full cursor-pointer z-20 outline-none bg-primary flex justify-center items-center hover:shadow-xl transition',
           {
             'opacity-0 z-0': open,
           },

@@ -56,7 +56,7 @@ export const PreferencesModal: FC<IPreferencesModal> = ({ onClose }) => {
   return (
     <Modal onClose={onClose}>
       <div
-        className="bg-white flex flex-col p-8 py-6 shadow rounded-lg w-1/5 text-black"
+        className="bg-white flex flex-col p-8 py-6 shadow-xl rounded-lg w-1/5 text-black"
         onClick={(e) => {
           e.stopPropagation();
         }}
