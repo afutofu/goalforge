@@ -2,6 +2,7 @@
 
 import React, { useState, type FC } from 'react';
 import dayjs from '../../dayjs-config';
+import Image from 'next/image';
 
 import { useTaskStore } from '@/store/task';
 
@@ -35,6 +36,8 @@ const Section: FC<SectionProps> = ({ children, className }) => {
 };
 
 const MACRO_TODO_LIST_MAX_HEIGHT = 'calc(100% - 7.75rem)';
+const ICON_BUTTON_CLASSNAMES =
+  'w-7 h-7 bg-white rounded-md p-1 pointer-cursor border-white border-[1px] hover:border-primary hover:bg-primary-light transition';
 
 const Home = () => {
   const date = dayjs();
@@ -92,12 +95,21 @@ const Home = () => {
             <p>GoalForge</p>
             <div className="flex items-center">
               <button
-                className="mr-3 w-7 h-7 bg-white rounded-md p-1 pointer-cursor"
+                className={ICON_BUTTON_CLASSNAMES + ' mr-3'}
                 onClick={() => {
                   setOpenPreferencesModal(true);
                 }}
-              ></button>
-              <button className="w-7 h-7 bg-white rounded-md p-1 pointer-cursor"></button>
+              >
+                <Image
+                  src="/icons/preferences.png"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ width: '100%', height: 'auto' }} // optional
+                  alt="Picture of the author"
+                />
+              </button>
+              <button className={ICON_BUTTON_CLASSNAMES}></button>
             </div>
           </div>
         </Header>
