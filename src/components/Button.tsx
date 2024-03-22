@@ -27,7 +27,7 @@ export const Button: FC<IButton> = ({
       }
       {...props}
     >
-      <span className={'font-bold ' + (small != null ? 'text-2xs' : 'text-xs')}>
+      <span className={'font-bold ' + (small != null ? 'text-2xs' : 'text-sm')}>
         {children}
       </span>
     </button>

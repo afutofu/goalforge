@@ -10,3 +10,9 @@ export interface IActivityLog {
   text: string;
   createdAt: Date;
 }
+
+export interface IPreferences {
+  pomodoroLength: Date;
+  shortBreakLength: Date;
+  longBreakLength: Date;
+}

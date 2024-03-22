@@ -47,7 +47,11 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
         latestHour = dayjs(log.createdAt).hour();
       }
 
-      const header = <Header className="!mb-2">{timePM(latestHour)}</Header>;
+      const header = (
+        <Header className="!mb-2" titleClassName="!text-md !font-medium !mb-2">
+          {timePM(latestHour)}
+        </Header>
+      );
 
       const headerWithSpacing = newHour ? (
         first ? (

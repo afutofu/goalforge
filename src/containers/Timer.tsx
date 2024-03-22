@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/Button';
 import dayjs, { type Dayjs } from 'dayjs';
@@ -9,43 +9,51 @@ import { TIMER_TYPE } from '@/constants';
 export const Timer = () => {
   const [timerType, setTimerType] = useState<string>(TIMER_TYPE.POMODORO);
   const [started, setStarted] = useState<boolean>(false);
+  const [paused, setPaused] = useState<boolean>(false);
 
   const timerInterval = useRef<NodeJS.Timeout>();
 
-  const { pomodoroTimerLength, shortBreakLength, longBreakLength } =
-    usePreferencesStore();
+  const { preferences } = usePreferencesStore();
 
-  const timer = useRef<Dayjs>(dayjs(pomodoroTimerLength));
+  const { pomodoroLength, shortBreakLength, longBreakLength } = preferences;
+
+  const timer = useRef<Dayjs>(dayjs(pomodoroLength));
   const [time, setTime] = useState<string>(timer.current.format('mm:ss'));
 
   const pauseTimer = useCallback(() => {
-    setStarted(false);
+    setPaused(true);
     clearInterval(timerInterval.current);
   }, []);
 
-  const resePomodoroTimer = useCallback(() => {
-    pauseTimer();
-    timer.current = dayjs(pomodoroTimerLength);
+  const resetTimer = useCallback(() => {
+    setStarted(false);
+    setPaused(true);
+    clearInterval(timerInterval.current);
+  }, []);
+
+  const resetPomodoroTimer = useCallback(() => {
+    resetTimer();
+    timer.current = dayjs(pomodoroLength);
     setTime(timer.current.format('mm:ss'));
     setTimerType(TIMER_TYPE.POMODORO);
-  }, [pauseTimer, pomodoroTimerLength]);
+  }, [resetTimer, pomodoroLength]);
 
   const resetShortBreakTimer = useCallback(() => {
-    pauseTimer();
+    resetTimer();
     timer.current = dayjs(shortBreakLength);
     setTime(timer.current.format('mm:ss'));
     setTimerType(TIMER_TYPE.SHORT_BREAK);
-  }, [pauseTimer, shortBreakLength]);
+  }, [resetTimer, shortBreakLength]);
 
   const resetLongBreakTimer = useCallback(() => {
-    pauseTimer();
+    resetTimer();
     timer.current = dayjs(longBreakLength);
     setTime(timer.current.format('mm:ss'));
     setTimerType(TIMER_TYPE.LONG_BREAK);
-  }, [longBreakLength, pauseTimer]);
+  }, [longBreakLength, resetTimer]);
 
-  const startTimer = useCallback(() => {
-    setStarted(true);
+  const resumeTimer = useCallback(() => {
+    setPaused(false);
     timerInterval.current = setInterval(() => {
       timer.current = timer.current.subtract(1, 'second');
       setTime(timer.current.format('mm:ss'));
@@ -63,14 +71,36 @@ export const Timer = () => {
             timerType === TIMER_TYPE.SHORT_BREAK ||
             timerType === TIMER_TYPE.LONG_BREAK
           ) {
-            resePomodoroTimer(); // If timer was a break, switch to pomodoro
+            resetPomodoroTimer(); // If timer was a break, switch to pomodoro
           } else {
             resetShortBreakTimer(); // Else if timer was a pomodoro, switch to short break
           }
         }, 1000);
       }
     }, 1000);
-  }, [resePomodoroTimer, resetShortBreakTimer, timerType]);
+  }, [resetPomodoroTimer, resetShortBreakTimer, timerType]);
+
+  const startTimer = useCallback(() => {
+    setStarted(true);
+    resumeTimer();
+  }, [resumeTimer]);
+
+  // If each of the timer length is changed when not started, reset to change display
+  // For pomodoro
+  useEffect(() => {
+    if (timerType === TIMER_TYPE.POMODORO && !started) resetPomodoroTimer();
+  }, [pomodoroLength, resetPomodoroTimer]);
+
+  // For short break
+  useEffect(() => {
+    if (timerType === TIMER_TYPE.SHORT_BREAK && !started)
+      resetShortBreakTimer();
+  }, [shortBreakLength, resetShortBreakTimer]);
+
+  // For long break
+  useEffect(() => {
+    if (timerType === TIMER_TYPE.LONG_BREAK && !started) resetLongBreakTimer();
+  }, [longBreakLength, resetLongBreakTimer]);
 
   return (
     <div className="flex flex-col items-center bg-primary-light rounded-lg py-5">
@@ -78,7 +108,7 @@ export const Timer = () => {
         <Button
           small
           selected={timerType === TIMER_TYPE.POMODORO}
-          onClick={resePomodoroTimer}
+          onClick={resetPomodoroTimer}
         >
           POMODORO
         </Button>
@@ -103,11 +133,16 @@ export const Timer = () => {
       <div className="flex justify-center items-center">
         <Button
           onClick={() => {
-            if (started) pauseTimer();
-            else startTimer();
+            if (started && paused) {
+              resumeTimer();
+            } else if (started && !paused) {
+              pauseTimer();
+            } else {
+              startTimer();
+            }
           }}
         >
-          {started ? 'PAUSE' : 'START'}
+          {started ? (paused ? 'RESUME' : 'PAUSE') : 'START'}
         </Button>
       </div>
     </div>

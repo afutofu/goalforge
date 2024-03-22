@@ -1,6 +1,6 @@
 'use client';
 
-import React, { type FC } from 'react';
+import React, { useState, type FC } from 'react';
 import dayjs from '../../dayjs-config';
 
 import { useTaskStore } from '@/store/task';
@@ -14,6 +14,7 @@ import { HourActivityLogger } from '@/containers/HourActivityLogger';
 import { AddTaskInput } from '@/components/AddTaskInput';
 import { useActivityLogStore } from '@/store/activityLog';
 import { ActivityLogList } from '@/containers/ActivityLogList';
+import { PreferencesModal } from '@/containers/PreferencesModal';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -62,9 +63,19 @@ const Home = () => {
 
   const { activityLogs, addActivityLog } = useActivityLogStore();
 
+  const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
+
   return (
-    <main className="flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
+    <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
+
+      {openPreferencesModal && (
+        <PreferencesModal
+          onClose={() => {
+            setOpenPreferencesModal(false);
+          }}
+        />
+      )}
 
       {/* Left / Micro Section */}
       <Section>
@@ -76,7 +87,20 @@ const Home = () => {
 
       {/* Middle Section */}
       <Section className="!px-12">
-        <Header>GoalForge</Header>
+        <Header>
+          <div className="flex justify-between items-center">
+            <p>GoalForge</p>
+            <div className="flex items-center">
+              <button
+                className="mr-3 w-7 h-7 bg-white rounded-md p-1 pointer-cursor"
+                onClick={() => {
+                  setOpenPreferencesModal(true);
+                }}
+              ></button>
+              <button className="w-7 h-7 bg-white rounded-md p-1 pointer-cursor"></button>
+            </div>
+          </div>
+        </Header>
         <Timer />
         <Separator />
 
