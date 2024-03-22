@@ -80,9 +80,10 @@ const Home = () => {
         <Timer />
         <Separator />
 
-        <Header>{'Selected Task - Not Selected '}</Header>
+        {/* TODO: Create task timer for selected tasks and integrate with chartjs */}
+        {/* <Header>{'Selected Task - Not Selected '}</Header>
         <TaskGraph />
-        <Separator />
+        <Separator /> */}
 
         <Header>Day Tasks</Header>
         <AddTaskInput onAddTask={addDayTask}>+ Add Day</AddTaskInput>
