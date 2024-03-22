@@ -9,7 +9,7 @@ import { Header } from '@/components/Header';
 import { Timer } from '@/containers/Timer';
 import { TodoList } from '@/containers/TodoList';
 import { Separator } from '@/components/Separator';
-import { TaskGraph } from '@/containers/TaskGraph';
+// import { TaskGraph } from '@/containers/TaskGraph';
 import { HourActivityLogger } from '@/containers/HourActivityLogger';
 import { AddTaskInput } from '@/components/AddTaskInput';
 import { useActivityLogStore } from '@/store/activityLog';
