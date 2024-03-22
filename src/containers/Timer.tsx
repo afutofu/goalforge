@@ -1,24 +1,75 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import { Button } from '@/components/Button';
 import dayjs, { type Dayjs } from 'dayjs';
 import { usePreferencesStore } from '@/store/preferences';
 
 import { TIMER_TYPE } from '@/constants';
+import { useTimerStore } from '@/store/timer';
+
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 export const Timer = () => {
-  const [timerType, setTimerType] = useState<string>(TIMER_TYPE.POMODORO);
-  const [started, setStarted] = useState<boolean>(false);
-  const [paused, setPaused] = useState<boolean>(false);
-
-  const timerInterval = useRef<NodeJS.Timeout>();
+  const {
+    timerType,
+    started,
+    paused,
+    time,
+    setTimerType,
+    setStarted,
+    setPaused,
+    setTime,
+  } = useTimerStore();
 
   const { preferences } = usePreferencesStore();
-
   const { pomodoroLength, shortBreakLength, longBreakLength } = preferences;
 
+  const timerInterval = useRef<NodeJS.Timeout>();
   const timer = useRef<Dayjs>(dayjs(pomodoroLength));
-  const [time, setTime] = useState<string>(timer.current.format('mm:ss'));
+
+  useEffect(() => {
+    const timerStateSerialized = localStorage.getItem('timerStore');
+
+    if (timerStateSerialized == null) return;
+
+    const timerState: {
+      started: boolean,
+      paused: boolean,
+      timerType: string,
+      time: string,
+    } = JSON.parse(timerStateSerialized).state;
+
+    const { started, paused, timerType, time } = timerState;
+
+    // Initialize timerType if empty (first time loading)
+    if (timerType === '') {
+      setTimerType(TIMER_TYPE.POMODORO);
+    }
+
+    if (started) {
+      // If the timer is started, conditionally load up previous time
+      if (time === '') {
+        // If first time loading
+        timer.current = dayjs(pomodoroLength, 'mm:ss');
+      } else {
+        // time taken from localStorage
+        timer.current = dayjs(time, 'mm:ss');
+      }
+
+      // Check pause state
+      if (!paused) {
+        // If not paused, then resume the timer
+        resumeTimer();
+      } else {
+        pauseTimer();
+      }
+    }
+
+    return () => {
+      clearInterval(timerInterval.current);
+    };
+  }, []);
 
   const pauseTimer = useCallback(() => {
     setPaused(true);
@@ -55,6 +106,7 @@ export const Timer = () => {
   const resumeTimer = useCallback(() => {
     setPaused(false);
     timerInterval.current = setInterval(() => {
+      console.log(timer.current);
       timer.current = timer.current.subtract(1, 'second');
       setTime(timer.current.format('mm:ss'));
 
