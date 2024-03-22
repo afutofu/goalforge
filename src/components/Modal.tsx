@@ -9,9 +9,10 @@ interface IModal {
 export const Modal: FC<IModal> = ({ children, onClose, className = '' }) => {
   return (
     <div
-      className="absolute top-0 left-0 w-screen h-screen z-50 flex justify-center items-center"
+      className="absolute top-0 left-0 w-screen z-30 h-screen flex justify-center items-center  "
       onClick={onClose}
     >
+      <div className="absolute top-0 left-0 w-screen h-screen bg-black opacity-40"></div>
       {children}
     </div>
   );
