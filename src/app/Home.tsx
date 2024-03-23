@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, type FC } from 'react';
+import React, { useState, type FC, useMemo } from 'react';
 import dayjs from '../../dayjs-config';
 import Image from 'next/image';
 
@@ -16,6 +16,9 @@ import { AddTaskInput } from '@/components/AddTaskInput';
 import { useActivityLogStore } from '@/store/activityLog';
 import { ActivityLogList } from '@/containers/ActivityLogList';
 import { PreferencesModal } from '@/containers/PreferencesModal';
+import { ProfileModal } from '@/containers/ProfileModal';
+import { useSession } from 'next-auth/react';
+import clsx from 'clsx';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -26,7 +29,7 @@ const Section: FC<SectionProps> = ({ children, className }) => {
   return (
     <section
       className={
-        'relative w-1/3 border-2 h-screen flex flex-col justify-start py-5 px-20 z-20 ' +
+        'relative w-1/3 border-none h-screen flex flex-col justify-start py-5 px-20 z-20 ' +
         className
       }
     >
@@ -67,6 +70,16 @@ const Home = () => {
   const { activityLogs, addActivityLog } = useActivityLogStore();
 
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+
+  const { data: session } = useSession();
+
+  const profileImgSrc: string = useMemo(() => {
+    if (session?.user != null) {
+      return session.user.image + '';
+    }
+    return '/icons/profile.svg';
+  }, [session]);
 
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
@@ -76,6 +89,14 @@ const Home = () => {
         <PreferencesModal
           onClose={() => {
             setOpenPreferencesModal(false);
+          }}
+        />
+      )}
+
+      {openProfileModal && (
+        <ProfileModal
+          onClose={() => {
+            setOpenProfileModal(false);
           }}
         />
       )}
@@ -109,9 +130,17 @@ const Home = () => {
                   alt="Picture of the author"
                 />
               </button>
-              <button className={ICON_BUTTON_CLASSNAMES}>
+              <button
+                className={clsx(ICON_BUTTON_CLASSNAMES, {
+                  '!p-0 overflow-hidden': session != null,
+                })}
+                onClick={() => {
+                  setOpenProfileModal(true);
+                }}
+              >
                 <Image
-                  src="/icons/profile.svg"
+                  loader={() => profileImgSrc}
+                  src={profileImgSrc}
                   width={0}
                   height={0}
                   sizes="100vw"
