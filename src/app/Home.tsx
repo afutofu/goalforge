@@ -131,7 +131,7 @@ const Home = () => {
         <Separator /> */}
 
         <Header>Day Tasks</Header>
-        <AddTaskInput onAddTask={addDayTask}>+ Add Day</AddTaskInput>
+        <AddTaskInput onAddTask={addDayTask}>+ Add Day Task</AddTaskInput>
         <Separator />
         <TodoList
           tasks={dayTasks}
@@ -144,7 +144,7 @@ const Home = () => {
       <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4 z-20">
         <div className="">
           <Header>{'Year Tasks - ' + date.format('YYYY')}</Header>
-          <AddTaskInput onAddTask={addYearTask}>+ Add Yearly</AddTaskInput>
+          <AddTaskInput onAddTask={addYearTask}>+ Add Year Task</AddTaskInput>
           <Separator />
           <TodoList
             tasks={yearTasks}
@@ -158,7 +158,7 @@ const Home = () => {
 
         <div className="">
           <Header>{'Month Tasks - ' + date.format('MMMM')}</Header>
-          <AddTaskInput onAddTask={addMonthTask}>+ Add Monthly</AddTaskInput>
+          <AddTaskInput onAddTask={addMonthTask}>+ Add Month Task</AddTaskInput>
           <Separator />
           <TodoList
             tasks={monthTasks}
@@ -175,7 +175,7 @@ const Home = () => {
             {'Week Tasks - Week ' +
               Math.ceil((date.date() / date.daysInMonth()) * 4)}
           </Header>
-          <AddTaskInput onAddTask={addWeekTask}>+ Add Weekly</AddTaskInput>
+          <AddTaskInput onAddTask={addWeekTask}>+ Add Week Task</AddTaskInput>
           <Separator />
           <TodoList
             tasks={weekTasks}
