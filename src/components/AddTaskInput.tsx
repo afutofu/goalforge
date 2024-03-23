@@ -56,7 +56,7 @@ export const AddTaskInput: FC<IAddTodoButton> = ({
     <div className={clsx('relative ')}>
       <div
         className={clsx(
-          'px-3 py-2 w-full cursor-pointer z-20 outline-none bg-primary flex justify-center items-center hover:shadow-xl transition',
+          'px-3 py-2 w-full cursor-pointer z-20 outline-none bg-secondary text-primary-light font-medium flex justify-center items-center hover:shadow-xl hover:bg-primary transition',
           {
             'opacity-0 z-0': open,
           },
@@ -69,7 +69,7 @@ export const AddTaskInput: FC<IAddTodoButton> = ({
       </div>
       <form
         className={clsx(
-          'absolute top-0 bg-white cursor-auto rounded-lg shadow text-black flex flex-col items-start px-4 py-5 w-full border-1 border-black z-20',
+          'absolute top-0 bg-white cursor-auto rounded-lg shadow text-black flex flex-col px-4 py-5 w-full border-1 border-black z-20',
           { hidden: !open },
         )}
         onSubmit={handleSubmit(onSubmit)}
