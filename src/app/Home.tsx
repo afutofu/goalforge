@@ -1,10 +1,8 @@
 'use client';
 
-import React, { useState, type FC, useMemo, useEffect } from 'react';
+import React, { useState, type FC, useMemo } from 'react';
 import dayjs from '../../dayjs-config';
 import Image from 'next/image';
-
-import { useQuery } from 'react-query';
 
 import { useTaskStore } from '@/store/task';
 
@@ -49,22 +47,18 @@ const Home = () => {
   const date = dayjs();
 
   const {
-    dayTasks,
     weekTasks,
     monthTasks,
     yearTasks,
 
-    addDayTask,
     addWeekTask,
     addMonthTask,
     addYearTask,
 
-    editDayTask,
     editWeekTask,
     editMonthTask,
     editYearTask,
 
-    deleteDayTask,
     deleteWeekTask,
     deleteMonthTask,
     deleteYearTask,

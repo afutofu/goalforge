@@ -5,6 +5,10 @@ export interface ITask {
   createdAt: Date;
 }
 
+export interface IGetTasks {
+  data: ITask[];
+}
+
 export interface IActivityLog {
   id: string;
   text: string;
