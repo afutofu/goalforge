@@ -5,6 +5,8 @@ import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { TodoList } from './TodoList';
 import { type IGetTasks } from '@/types';
+import { tasks } from '@/api/endpoints';
+import axios from 'axios';
 
 const DayTaskList = () => {
   const { dayTasks, setDayTasks, addDayTask, editDayTask, deleteDayTask } =
@@ -17,9 +19,7 @@ const DayTaskList = () => {
   } = useQuery<IGetTasks>({
     queryKey: ['getDayTasks'],
     queryFn: async () =>
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/day`).then(
-        async (res) => await res.json(),
-      ),
+      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${tasks.day}`),
   });
 
   useEffect(() => {
