@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, type FC, useMemo } from 'react';
+import React, { useState, type FC, useMemo, useEffect } from 'react';
 import dayjs from '../../dayjs-config';
 import Image from 'next/image';
+
+import { useQuery } from 'react-query';
 
 import { useTaskStore } from '@/store/task';
 
@@ -19,6 +21,7 @@ import { PreferencesModal } from '@/containers/PreferencesModal';
 import { ProfileModal } from '@/containers/ProfileModal';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
+import DayTaskList from '@/containers/DayTaskList';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -140,6 +143,7 @@ const Home = () => {
               >
                 <Image
                   loader={() => profileImgSrc}
+                  unoptimized
                   src={profileImgSrc}
                   width={0}
                   height={0}
@@ -160,13 +164,7 @@ const Home = () => {
         <Separator /> */}
 
         <Header>Day Tasks</Header>
-        <AddTaskInput onAddTask={addDayTask}>+ Add Day Task</AddTaskInput>
-        <Separator />
-        <TodoList
-          tasks={dayTasks}
-          onEditTask={editDayTask}
-          onDeleteTask={deleteDayTask}
-        />
+        <DayTaskList />
       </Section>
 
       {/* Right / Macro Section */}
