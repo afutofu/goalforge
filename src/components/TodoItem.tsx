@@ -10,13 +10,19 @@ interface ITodoItem {
   task: ITask;
   onEditTask: (taskID: string, editedTask: ITask) => void;
   onDeleteTask: (taskID: string) => void;
+  className?: string;
 }
 
 interface IFormInput {
   taskName: string;
 }
 
-export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
+export const TodoItem: FC<ITodoItem> = ({
+  task,
+  onEditTask,
+  onDeleteTask,
+  className = '',
+}) => {
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -59,6 +65,7 @@ export const TodoItem: FC<ITodoItem> = ({ task, onEditTask, onDeleteTask }) => {
         'bg-white',
         { 'rounded-full': !open },
         { 'rounded-lg': open },
+        className,
       )}
     >
       <div

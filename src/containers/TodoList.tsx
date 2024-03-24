@@ -25,23 +25,15 @@ export const TodoList: FC<ITodoList> = ({
       style={containerStyle}
     >
       {tasks.map((task, i) => {
-        const todoItem = (
+        return (
           <TodoItem
             key={task.id}
             task={task}
             onEditTask={onEditTask}
             onDeleteTask={onDeleteTask}
+            className={i !== tasks.length - 1 ? 'mb-2' : ''}
           />
         );
-
-        if (i !== tasks.length - 1)
-          return (
-            <>
-              {todoItem}
-              <div className="mb-2"></div>
-            </>
-          );
-        else return todoItem;
       })}
     </div>
   );
