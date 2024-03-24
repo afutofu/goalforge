@@ -4,15 +4,11 @@ import React, { useState, type FC, useMemo } from 'react';
 import dayjs from '../../dayjs-config';
 import Image from 'next/image';
 
-import { useTaskStore } from '@/store/task';
-
 import { Header } from '@/components/Header';
 import { Timer } from '@/containers/Timer';
-import { TodoList } from '@/containers/TodoList';
 import { Separator } from '@/components/Separator';
 // import { TaskGraph } from '@/containers/TaskGraph';
 import { HourActivityLogger } from '@/containers/HourActivityLogger';
-import { AddTaskInput } from '@/components/AddTaskInput';
 import { useActivityLogStore } from '@/store/activityLog';
 import { ActivityLogList } from '@/containers/ActivityLogList';
 import { PreferencesModal } from '@/containers/PreferencesModal';
@@ -20,6 +16,9 @@ import { ProfileModal } from '@/containers/ProfileModal';
 import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import DayTaskList from '@/containers/DayTaskList';
+import MonthTaskList from '@/containers/MonthTaskList';
+import WeekTaskList from '@/containers/WeekTaskList';
+import YearTaskList from '@/containers/YearTaskList';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -39,30 +38,11 @@ const Section: FC<SectionProps> = ({ children, className }) => {
   );
 };
 
-const MACRO_TODO_LIST_MAX_HEIGHT = 'calc(100% - 7.75rem)';
 const ICON_BUTTON_CLASSNAMES =
   'w-7 h-7 bg-white rounded-md p-1 pointer-cursor border-white border-[1px] hover:border-primary hover:bg-primary-light transition';
 
 const Home = () => {
   const date = dayjs();
-
-  const {
-    weekTasks,
-    monthTasks,
-    yearTasks,
-
-    addWeekTask,
-    addMonthTask,
-    addYearTask,
-
-    editWeekTask,
-    editMonthTask,
-    editYearTask,
-
-    deleteWeekTask,
-    deleteMonthTask,
-    deleteYearTask,
-  } = useTaskStore();
 
   const { activityLogs, addActivityLog } = useActivityLogStore();
 
@@ -164,48 +144,20 @@ const Home = () => {
       {/* Right / Macro Section */}
       <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4 z-20">
         <div className="">
-          <Header>{'Year Tasks - ' + date.format('YYYY')}</Header>
-          <AddTaskInput onAddTask={addYearTask}>+ Add Year Task</AddTaskInput>
-          <Separator />
-          <TodoList
-            tasks={yearTasks}
-            onEditTask={editYearTask}
-            onDeleteTask={deleteYearTask}
-            containerStyle={{
-              maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
-            }}
-          />
+          <Header>{`Year Tasks - ${date.format('YYYY')}`}</Header>
+          <YearTaskList />
         </div>
 
         <div className="">
-          <Header>{'Month Tasks - ' + date.format('MMMM')}</Header>
-          <AddTaskInput onAddTask={addMonthTask}>+ Add Month Task</AddTaskInput>
-          <Separator />
-          <TodoList
-            tasks={monthTasks}
-            onEditTask={editMonthTask}
-            onDeleteTask={deleteMonthTask}
-            containerStyle={{
-              maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
-            }}
-          />
+          <Header>{`Month Tasks - ${date.format('MMMM')}`}</Header>
+          <MonthTaskList />
         </div>
 
         <div className="">
           <Header>
-            {'Week Tasks - Week ' +
-              Math.ceil((date.date() / date.daysInMonth()) * 4)}
+            {`Week Tasks - Week ${Math.ceil((date.date() / date.daysInMonth()) * 4)}`}
           </Header>
-          <AddTaskInput onAddTask={addWeekTask}>+ Add Week Task</AddTaskInput>
-          <Separator />
-          <TodoList
-            tasks={weekTasks}
-            onEditTask={editWeekTask}
-            onDeleteTask={deleteWeekTask}
-            containerStyle={{
-              maxHeight: MACRO_TODO_LIST_MAX_HEIGHT,
-            }}
-          />
+          <WeekTaskList />
         </div>
       </Section>
     </main>
