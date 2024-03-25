@@ -1,16 +1,13 @@
 import React, { useState, type FC, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from './Button';
-import { type ITask } from '@/types';
-import dayjs from 'dayjs';
 
 interface IAddTodoButton {
   children: string;
   inputPlaceHolder?: string;
-  onAddTask: (task: ITask) => void;
+  onAddTaskName: (taskName: string) => void;
 }
 
 interface IFormInput {
@@ -20,7 +17,7 @@ interface IFormInput {
 export const AddTaskInput: FC<IAddTodoButton> = ({
   children,
   inputPlaceHolder,
-  onAddTask,
+  onAddTaskName,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -30,18 +27,7 @@ export const AddTaskInput: FC<IAddTodoButton> = ({
   const { ref } = register('taskName');
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
-
-    const mockTask: ITask = {
-      id: uuidv4(),
-      name: data.taskName,
-      completed: false,
-      createdAt: dayjs().toDate(),
-    };
-
-    // setTimeout(() => {}, 200);
-
-    onAddTask(mockTask);
+    onAddTaskName(data.taskName);
     reset();
     setOpen(false);
   };

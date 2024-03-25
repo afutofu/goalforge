@@ -2,7 +2,7 @@ export interface ITask {
   id: string;
   name: string;
   completed: boolean;
-  period: number;
+  period?: number;
   createdAt: Date;
 }
 

@@ -1,36 +1,47 @@
 import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
-import React, { useEffect } from 'react';
-import { useQuery } from 'react-query';
+import React from 'react';
+import { useMutation } from 'react-query';
 import { TodoList } from './TodoList';
-import { type IGetTasks } from '@/types';
+import { type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 
 const DayTaskList = () => {
-  const { dayTasks, setDayTasks, addDayTask, editDayTask, deleteDayTask } =
-    useTaskStore();
+  const { dayTasks, addDayTask, editDayTask, deleteDayTask } = useTaskStore();
 
-  const {
-    // isPending,
-    // error,
-    data: fetchedDayTasks,
-  } = useQuery<IGetTasks>({
-    queryKey: ['getDayTasks'],
-    queryFn: async () =>
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${tasks.day}`),
+  // Add task
+  const addDayTaskMutation = useMutation(async (newTask: ITask) => {
+    return await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}${tasks.addTask}`,
+      newTask,
+    );
   });
 
-  useEffect(() => {
-    if (fetchedDayTasks?.data != null) {
-      setDayTasks(fetchedDayTasks.data);
-    }
-  }, [fetchedDayTasks]);
+  const onAddTask = (taskName: string) => {
+    const newTask: ITask = {
+      id: uuidv4(),
+      name: taskName,
+      completed: false,
+      period: 1,
+      createdAt: dayjs().toDate(),
+    };
+
+    // Optimistically add the task to the UI
+    addDayTask(newTask);
+
+    // Revert back the task if the API call fails
+    addDayTaskMutation.mutateAsync(newTask).catch(() => {
+      deleteDayTask(newTask.id);
+    });
+  };
 
   return (
     <div>
-      <AddTaskInput onAddTask={addDayTask}>+ Add Day Task</AddTaskInput>
+      <AddTaskInput onAddTaskName={onAddTask}>+ Add Day Task</AddTaskInput>
       <Separator />
       <TodoList
         tasks={dayTasks}

@@ -1,37 +1,49 @@
 import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
-import React, { useEffect } from 'react';
-import { useQuery } from 'react-query';
+import React from 'react';
+import { useMutation } from 'react-query';
 import { TodoList } from './TodoList';
-import { type IGetTasks } from '@/types';
+import { type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
 import axios from 'axios';
 import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
+import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 
 const YearTaskList = () => {
-  const { yearTasks, setYearTasks, addYearTask, editYearTask, deleteYearTask } =
+  const { yearTasks, addYearTask, editYearTask, deleteYearTask } =
     useTaskStore();
 
-  const {
-    // isPending,
-    // error,
-    data: fetchedYearTasks,
-  } = useQuery<IGetTasks>({
-    queryKey: ['getYearTasks'],
-    queryFn: async () =>
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${tasks.year}`),
+  // Add task
+  const addYearTaskMutation = useMutation(async (newTask: ITask) => {
+    return await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}${tasks.addTask}`,
+      newTask,
+    );
   });
 
-  useEffect(() => {
-    if (fetchedYearTasks?.data != null) {
-      setYearTasks(fetchedYearTasks.data);
-    }
-  }, [fetchedYearTasks]);
+  const onAddTask = (taskName: string) => {
+    const newTask: ITask = {
+      id: uuidv4(),
+      name: taskName,
+      completed: false,
+      period: 1,
+      createdAt: dayjs().toDate(),
+    };
+
+    // Optimistically add the task to the UI
+    addYearTask(newTask);
+
+    // Revert back the task if the API call fails
+    addYearTaskMutation.mutateAsync(newTask).catch(() => {
+      deleteYearTask(newTask.id);
+    });
+  };
 
   return (
     <div>
-      <AddTaskInput onAddTask={addYearTask}>+ Add Year Task</AddTaskInput>
+      <AddTaskInput onAddTaskName={onAddTask}>+ Add Year Task</AddTaskInput>
       <Separator />
       <TodoList
         tasks={yearTasks}
