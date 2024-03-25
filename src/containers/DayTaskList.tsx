@@ -43,26 +43,58 @@ const DayTaskList = () => {
   };
 
   // Delete task
-  const { mutate: mutateTaskDelete } = useMutation(async (taskID: string) => {
-    const currentDayTasks = dayTasks;
+  const { mutate: mutateTaskDelete } = useMutation({
+    mutationFn: async (taskID) => {
+      const URL =
+        `${process.env.NEXT_PUBLIC_API_URL}${tasks.deleteTask}`.replace(
+          ':taskID',
+          taskID,
+        );
+      return await axios.delete(URL);
+    },
+    onMutate: async (taskID: string) => {
+      await queryClient.cancelQueries('tasks');
 
-    deleteDayTask(taskID);
+      // Snapshot the previous value
+      const previousTasks: ITask[] | null | undefined =
+        queryClient.getQueryData('tasks');
 
-    const URL = `${process.env.NEXT_PUBLIC_API_URL}${tasks.deleteTask}`.replace(
-      ':taskID',
-      taskID,
-    );
+      // Optimistically delete the task from Zustand state
+      deleteDayTask(taskID);
 
-    await axios
-      .delete(URL)
-      .then(() => {
-        void queryClient.invalidateQueries('tasks');
-      })
-      .catch(() => {
-        // Revert back the task if the API call fails
-        setDayTasks(currentDayTasks);
-      });
+      return { previousTasks };
+    },
+    onError: (_error, _taskID, context) => {
+      // Rollback the optimistic update
+      if (context?.previousTasks != null) {
+        setDayTasks(context.previousTasks);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries('tasks');
+    },
   });
+
+  //   useMutation(async (taskID: string) => {
+  //     const currentDayTasks = dayTasks;
+
+  //     deleteDayTask(taskID);
+
+  //     const URL = `${process.env.NEXT_PUBLIC_API_URL}${tasks.deleteTask}`.replace(
+  //       ':taskID',
+  //       taskID,
+  //     );
+
+  //     await axios
+  //       .delete(URL)
+  //       .then(() => {
+  //         void queryClient.invalidateQueries('tasks');
+  //       })
+  //       .catch(() => {
+  //         // Revert back the task if the API call fails
+  //         setDayTasks(currentDayTasks);
+  //       });
+  //   });
 
   return (
     <div>
