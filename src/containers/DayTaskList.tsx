@@ -2,7 +2,7 @@ import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
 import React from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from './TodoList';
 import { type IGetTasks, type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
@@ -25,11 +25,12 @@ const DayTaskList = () => {
       );
     },
     onMutate: async (newTask: ITask) => {
-      await queryClient.cancelQueries('tasks');
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined =
-        queryClient.getQueryData('tasks');
+      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+        'tasks',
+      ]);
 
       // Optimistically delete the task from Zustand state
       addDayTask(newTask);
@@ -42,8 +43,8 @@ const DayTaskList = () => {
         setTasks(context.previousTasks.data);
       }
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries('tasks');
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 
@@ -59,6 +60,44 @@ const DayTaskList = () => {
     mutateDayTaskAdd(newTask);
   };
 
+  interface IEditTaskMutation {
+    taskID: string;
+    task: ITask;
+  }
+
+  // Edit task
+  const { mutate: mutateDayTaskEdit } = useMutation({
+    mutationFn: async ({ taskID, task }: IEditTaskMutation) => {
+      const URL = `${process.env.NEXT_PUBLIC_API_URL}${tasks.editTask}`.replace(
+        ':taskID',
+        taskID,
+      );
+      return await axios.put(URL, task);
+    },
+    onMutate: async ({ taskID, task }: IEditTaskMutation) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+
+      // Snapshot the previous value
+      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+        'tasks',
+      ]);
+
+      // Optimistically delete the task from Zustand state
+      editDayTask(taskID, task);
+
+      return { previousTasks };
+    },
+    onError: (_error, _taskID, context) => {
+      // Rollback the optimistic update
+      if (context?.previousTasks != null) {
+        setTasks(context.previousTasks.data);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+
   // Delete task
   const { mutate: mutateDayTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
@@ -70,11 +109,12 @@ const DayTaskList = () => {
       return await axios.delete(URL);
     },
     onMutate: async (taskID: string) => {
-      await queryClient.cancelQueries('tasks');
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined =
-        queryClient.getQueryData('tasks');
+      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+        'tasks',
+      ]);
 
       // Optimistically delete the task from Zustand state
       deleteDayTask(taskID);
@@ -87,8 +127,8 @@ const DayTaskList = () => {
         setTasks(context.previousTasks.data);
       }
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries('tasks');
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 
@@ -98,7 +138,9 @@ const DayTaskList = () => {
       <Separator />
       <TodoList
         tasks={dayTasks}
-        onEditTask={editDayTask}
+        onEditTask={(taskID: string, task: ITask) => {
+          mutateDayTaskEdit({ taskID, task });
+        }}
         onDeleteTask={(taskID: string) => {
           mutateDayTaskDelete(taskID);
         }}

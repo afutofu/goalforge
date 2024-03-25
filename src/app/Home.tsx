@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, type FC, useMemo } from 'react';
+import React, { useState, type FC, useMemo, useEffect } from 'react';
 import dayjs from '../../dayjs-config';
 import Image from 'next/image';
 
@@ -19,8 +19,8 @@ import DayTaskList from '@/containers/DayTaskList';
 import MonthTaskList from '@/containers/MonthTaskList';
 import WeekTaskList from '@/containers/WeekTaskList';
 import YearTaskList from '@/containers/YearTaskList';
-import { useQuery } from 'react-query';
-import { type IGetTasks } from '@/types';
+import { useQuery } from '@tanstack/react-query';
+import { type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
 import axios from 'axios';
 import { useTaskStore } from '@/store/task';
@@ -66,16 +66,19 @@ const Home = () => {
   }, [session]);
 
   // Fetch and initialize task data from the API
-  useQuery<IGetTasks>({
+  const { data: allTasksQuery, isSuccess } = useQuery<ITask[]>({
     queryKey: ['tasks'],
     queryFn: async () =>
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${tasks.getAll}`),
-    onSuccess: (data) => {
-      if (data?.data != null) {
-        setTasks(data.data);
-      }
-    },
+      await axios
+        .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${tasks.getAll}`)
+        .then((res) => res.data),
   });
+
+  useEffect(() => {
+    if (isSuccess === true && allTasksQuery != null) {
+      setTasks(allTasksQuery as ITask[]);
+    }
+  }, [isSuccess, allTasksQuery, setTasks]);
 
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
