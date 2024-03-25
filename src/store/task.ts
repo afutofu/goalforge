@@ -39,12 +39,24 @@ export const useTaskStore = create<ITaskStore>()(
   persist(
     (set, get) => ({
       // Initial tasks
-      dayTasks: [],
-      weekTasks: [],
-      monthTasks: [],
-      yearTasks: [],
+      dayTasks: [] as ITask[],
+      weekTasks: [] as ITask[],
+      monthTasks: [] as ITask[],
+      yearTasks: [] as ITask[],
 
       // Set tasks (for initial tasks from the API)
+      setDayTasks: (tasks: ITask[]) => {
+        set({ dayTasks: tasks });
+      },
+      setWeekTasks: (tasks: ITask[]) => {
+        set({ weekTasks: tasks });
+      },
+      setMonthTasks: (tasks: ITask[]) => {
+        set({ monthTasks: tasks });
+      },
+      setYearTasks: (tasks: ITask[]) => {
+        set({ yearTasks: tasks });
+      },
       setTasks: (tasks: ITask[]) => {
         const dayTasks: ITask[] = [];
         const weekTasks: ITask[] = [];
@@ -70,18 +82,6 @@ export const useTaskStore = create<ITaskStore>()(
         set({ weekTasks });
         set({ monthTasks });
         set({ yearTasks });
-      },
-      setDayTasks: (tasks: ITask[]) => {
-        set({ dayTasks: tasks });
-      },
-      setWeekTasks: (tasks: ITask[]) => {
-        set({ weekTasks: tasks });
-      },
-      setMonthTasks: (tasks: ITask[]) => {
-        set({ monthTasks: tasks });
-      },
-      setYearTasks: (tasks: ITask[]) => {
-        set({ yearTasks: tasks });
       },
 
       // Add tasks
@@ -180,42 +180,18 @@ export const useTaskStore = create<ITaskStore>()(
       deleteDayTask: (taskID: string) => {
         const currentTasks = get().dayTasks;
         set({ dayTasks: currentTasks.filter((task) => task.id !== taskID) });
-
-        // Make your API call to add the task
-        // api.deleteTask(task).catch((error) => {
-        //   // Handle error and rollback the state update if needed
-        //   set({ dayTasks: currentTasks });
-        // });
       },
       deleteWeekTask: (taskID: string) => {
         const currentTasks = get().weekTasks;
         set({ weekTasks: currentTasks.filter((task) => task.id !== taskID) });
-
-        // Make your API call to add the task
-        // api.deleteTask(task).catch((error) => {
-        //   // Handle error and rollback the state update if needed
-        //   set({ weekTasks: currentTasks });
-        // });
       },
       deleteMonthTask: (taskID: string) => {
         const currentTasks = get().monthTasks;
         set({ monthTasks: currentTasks.filter((task) => task.id !== taskID) });
-
-        // Make your API call to add the task
-        // api.deleteTask(task).catch((error) => {
-        //   // Handle error and rollback the state update if needed
-        //   set({ monthTasks: currentTasks });
-        // });
       },
       deleteYearTask: (taskID: string) => {
         const currentTasks = get().yearTasks;
         set({ yearTasks: currentTasks.filter((task) => task.id !== taskID) });
-
-        // Make your API call to add the task
-        // api.deleteTask(task).catch((error) => {
-        //   // Handle error and rollback the state update if needed
-        //   set({ yearTasks: currentTasks });
-        // });
       },
     }),
     { name: 'taskStore' },

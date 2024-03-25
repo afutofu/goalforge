@@ -6,4 +6,6 @@ export const tasks = {
   getYear: '/api/v1/tasks?period=4',
 
   addTask: '/api/v1/tasks',
+
+  deleteTask: '/api/v1/tasks/:taskID',
 };

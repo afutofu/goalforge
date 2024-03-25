@@ -66,15 +66,11 @@ const Home = () => {
   }, [session]);
 
   // Fetch and initialize task data from the API
-  const {
-    // isPending,
-    // error,
-    data,
-  } = useQuery<IGetTasks>({
-    queryKey: ['getTasks'],
+  useQuery<IGetTasks>({
+    queryKey: ['tasks'],
     queryFn: async () =>
       await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${tasks.getAll}`),
-    onSuccess: () => {
+    onSuccess: (data) => {
       if (data?.data != null) {
         setTasks(data.data);
       }

@@ -2,7 +2,7 @@ import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
 import React from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { TodoList } from './TodoList';
 import { type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
@@ -11,7 +11,10 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 
 const DayTaskList = () => {
-  const { dayTasks, addDayTask, editDayTask, deleteDayTask } = useTaskStore();
+  const { dayTasks, setDayTasks, addDayTask, editDayTask, deleteDayTask } =
+    useTaskStore();
+
+  const queryClient = useQueryClient();
 
   // Add task
   const addDayTaskMutation = useMutation(async (newTask: ITask) => {
@@ -39,6 +42,28 @@ const DayTaskList = () => {
     });
   };
 
+  // Delete task
+  const { mutate: mutateTaskDelete } = useMutation(async (taskID: string) => {
+    const currentDayTasks = dayTasks;
+
+    deleteDayTask(taskID);
+
+    const URL = `${process.env.NEXT_PUBLIC_API_URL}${tasks.deleteTask}`.replace(
+      ':taskID',
+      taskID,
+    );
+
+    await axios
+      .delete(URL)
+      .then(() => {
+        void queryClient.invalidateQueries('tasks');
+      })
+      .catch(() => {
+        // Revert back the task if the API call fails
+        setDayTasks(currentDayTasks);
+      });
+  });
+
   return (
     <div>
       <AddTaskInput onAddTaskName={onAddTask}>+ Add Day Task</AddTaskInput>
@@ -46,7 +71,9 @@ const DayTaskList = () => {
       <TodoList
         tasks={dayTasks}
         onEditTask={editDayTask}
-        onDeleteTask={deleteDayTask}
+        onDeleteTask={(taskID: string) => {
+          mutateTaskDelete(taskID);
+        }}
       />
     </div>
   );
