@@ -4,7 +4,7 @@ import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { TodoList } from './TodoList';
-import { type ITask } from '@/types';
+import { type IGetTasks, type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
 import axios from 'axios';
 import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 
 const YearTaskList = () => {
-  const { yearTasks, setYearTasks, addYearTask, editYearTask, deleteYearTask } =
+  const { yearTasks, setTasks, addYearTask, editYearTask, deleteYearTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
@@ -29,7 +29,7 @@ const YearTaskList = () => {
       await queryClient.cancelQueries('tasks');
 
       // Snapshot the previous value
-      const previousTasks: ITask[] | null | undefined =
+      const previousTasks: IGetTasks | undefined =
         queryClient.getQueryData('tasks');
 
       // Optimistically delete the task from Zustand state
@@ -40,7 +40,7 @@ const YearTaskList = () => {
     onError: (_error, _newTask, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setYearTasks(context.previousTasks);
+        setTasks(context.previousTasks.data);
       }
     },
     onSuccess: () => {
@@ -60,6 +60,39 @@ const YearTaskList = () => {
     mutateYearTaskAdd(newTask);
   };
 
+  // Delete task
+  const { mutate: mutateYearTaskDelete } = useMutation({
+    mutationFn: async (taskID) => {
+      const URL =
+        `${process.env.NEXT_PUBLIC_API_URL}${tasks.deleteTask}`.replace(
+          ':taskID',
+          taskID,
+        );
+      return await axios.delete(URL);
+    },
+    onMutate: async (taskID: string) => {
+      await queryClient.cancelQueries('tasks');
+
+      // Snapshot the previous value
+      const previousTasks: IGetTasks | undefined =
+        queryClient.getQueryData('tasks');
+
+      // Optimistically delete the task from Zustand state
+      deleteYearTask(taskID);
+
+      return { previousTasks };
+    },
+    onError: (_error, _taskID, context) => {
+      // Rollback the optimistic update
+      if (context?.previousTasks != null) {
+        setTasks(context.previousTasks.data);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries('tasks');
+    },
+  });
+
   return (
     <div>
       <AddTaskInput onAddTaskName={onAddTask}>+ Add Year Task</AddTaskInput>
@@ -67,7 +100,9 @@ const YearTaskList = () => {
       <TodoList
         tasks={yearTasks}
         onEditTask={editYearTask}
-        onDeleteTask={deleteYearTask}
+        onDeleteTask={(taskID: string) => {
+          mutateYearTaskDelete(taskID);
+        }}
         containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
       />
     </div>

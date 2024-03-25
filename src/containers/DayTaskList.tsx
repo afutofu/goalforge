@@ -4,14 +4,14 @@ import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { TodoList } from './TodoList';
-import { type ITask } from '@/types';
+import { type IGetTasks, type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 
 const DayTaskList = () => {
-  const { dayTasks, setDayTasks, addDayTask, editDayTask, deleteDayTask } =
+  const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
@@ -28,7 +28,7 @@ const DayTaskList = () => {
       await queryClient.cancelQueries('tasks');
 
       // Snapshot the previous value
-      const previousTasks: ITask[] | null | undefined =
+      const previousTasks: IGetTasks | undefined =
         queryClient.getQueryData('tasks');
 
       // Optimistically delete the task from Zustand state
@@ -39,7 +39,7 @@ const DayTaskList = () => {
     onError: (_error, _newTask, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setDayTasks(context.previousTasks);
+        setTasks(context.previousTasks.data);
       }
     },
     onSuccess: () => {
@@ -73,7 +73,7 @@ const DayTaskList = () => {
       await queryClient.cancelQueries('tasks');
 
       // Snapshot the previous value
-      const previousTasks: ITask[] | null | undefined =
+      const previousTasks: IGetTasks | undefined =
         queryClient.getQueryData('tasks');
 
       // Optimistically delete the task from Zustand state
@@ -84,34 +84,13 @@ const DayTaskList = () => {
     onError: (_error, _taskID, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setDayTasks(context.previousTasks);
+        setTasks(context.previousTasks.data);
       }
     },
     onSuccess: () => {
       void queryClient.invalidateQueries('tasks');
     },
   });
-
-  //   useMutation(async (taskID: string) => {
-  //     const currentDayTasks = dayTasks;
-
-  //     deleteDayTask(taskID);
-
-  //     const URL = `${process.env.NEXT_PUBLIC_API_URL}${tasks.deleteTask}`.replace(
-  //       ':taskID',
-  //       taskID,
-  //     );
-
-  //     await axios
-  //       .delete(URL)
-  //       .then(() => {
-  //         void queryClient.invalidateQueries('tasks');
-  //       })
-  //       .catch(() => {
-  //         // Revert back the task if the API call fails
-  //         setDayTasks(currentDayTasks);
-  //       });
-  //   });
 
   return (
     <div>
