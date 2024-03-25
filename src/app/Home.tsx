@@ -19,6 +19,11 @@ import DayTaskList from '@/containers/DayTaskList';
 import MonthTaskList from '@/containers/MonthTaskList';
 import WeekTaskList from '@/containers/WeekTaskList';
 import YearTaskList from '@/containers/YearTaskList';
+import { useQuery } from 'react-query';
+import { type IGetTasks } from '@/types';
+import { tasks } from '@/api/endpoints';
+import axios from 'axios';
+import { useTaskStore } from '@/store/task';
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -51,12 +56,30 @@ const Home = () => {
 
   const { data: session } = useSession();
 
+  const { setTasks } = useTaskStore();
+
   const profileImgSrc: string = useMemo(() => {
     if (session?.user != null) {
       return session.user.image + '';
     }
     return '/icons/profile.svg';
   }, [session]);
+
+  // Fetch and initialize task data from the API
+  const {
+    // isPending,
+    // error,
+    data,
+  } = useQuery<IGetTasks>({
+    queryKey: ['getTasks'],
+    queryFn: async () =>
+      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${tasks.getAll}`),
+    onSuccess: () => {
+      if (data?.data != null) {
+        setTasks(data.data);
+      }
+    },
+  });
 
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">

@@ -10,6 +10,7 @@ interface ITaskStore {
   yearTasks: ITask[];
 
   // Setting tasks
+  setTasks: (tasks: ITask[]) => void;
   setDayTasks: (tasks: ITask[]) => void;
   setWeekTasks: (tasks: ITask[]) => void;
   setMonthTasks: (tasks: ITask[]) => void;
@@ -43,7 +44,33 @@ export const useTaskStore = create<ITaskStore>()(
       monthTasks: [],
       yearTasks: [],
 
-      // Set tasks
+      // Set tasks (for initial tasks from the API)
+      setTasks: (tasks: ITask[]) => {
+        const dayTasks: ITask[] = [];
+        const weekTasks: ITask[] = [];
+        const monthTasks: ITask[] = [];
+        const yearTasks: ITask[] = [];
+
+        tasks.forEach((task) => {
+          if (task.period === 1) {
+            dayTasks.push(task);
+          }
+          if (task.period === 2) {
+            weekTasks.push(task);
+          }
+          if (task.period === 3) {
+            monthTasks.push(task);
+          }
+          if (task.period === 4) {
+            yearTasks.push(task);
+          }
+        });
+
+        set({ dayTasks });
+        set({ weekTasks });
+        set({ monthTasks });
+        set({ yearTasks });
+      },
       setDayTasks: (tasks: ITask[]) => {
         set({ dayTasks: tasks });
       },
