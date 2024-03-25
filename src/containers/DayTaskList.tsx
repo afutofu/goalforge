@@ -17,11 +17,34 @@ const DayTaskList = () => {
   const queryClient = useQueryClient();
 
   // Add task
-  const addDayTaskMutation = useMutation(async (newTask: ITask) => {
-    return await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}${tasks.addTask}`,
-      newTask,
-    );
+  const { mutate: mutateDayTaskAdd } = useMutation({
+    mutationFn: async (newTask) => {
+      return await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}${tasks.addTask}`,
+        newTask,
+      );
+    },
+    onMutate: async (newTask: ITask) => {
+      await queryClient.cancelQueries('tasks');
+
+      // Snapshot the previous value
+      const previousTasks: ITask[] | null | undefined =
+        queryClient.getQueryData('tasks');
+
+      // Optimistically delete the task from Zustand state
+      addDayTask(newTask);
+
+      return { previousTasks };
+    },
+    onError: (_error, _newTask, context) => {
+      // Rollback the optimistic update
+      if (context?.previousTasks != null) {
+        setDayTasks(context.previousTasks);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries('tasks');
+    },
   });
 
   const onAddTask = (taskName: string) => {
@@ -33,17 +56,11 @@ const DayTaskList = () => {
       createdAt: dayjs().toDate(),
     };
 
-    // Optimistically add the task to the UI
-    addDayTask(newTask);
-
-    // Revert back the task if the API call fails
-    addDayTaskMutation.mutateAsync(newTask).catch(() => {
-      deleteDayTask(newTask.id);
-    });
+    mutateDayTaskAdd(newTask);
   };
 
   // Delete task
-  const { mutate: mutateTaskDelete } = useMutation({
+  const { mutate: mutateDayTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
       const URL =
         `${process.env.NEXT_PUBLIC_API_URL}${tasks.deleteTask}`.replace(
@@ -104,7 +121,7 @@ const DayTaskList = () => {
         tasks={dayTasks}
         onEditTask={editDayTask}
         onDeleteTask={(taskID: string) => {
-          mutateTaskDelete(taskID);
+          mutateDayTaskDelete(taskID);
         }}
       />
     </div>

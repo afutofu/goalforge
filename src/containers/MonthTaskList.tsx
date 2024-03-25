@@ -2,7 +2,7 @@ import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
 import React from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { TodoList } from './TodoList';
 import { type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
@@ -12,15 +12,45 @@ import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 
 const MonthTaskList = () => {
-  const { monthTasks, addMonthTask, editMonthTask, deleteMonthTask } =
-    useTaskStore();
+  const {
+    monthTasks,
+    setMonthTasks,
+    addMonthTask,
+    editMonthTask,
+    deleteMonthTask,
+  } = useTaskStore();
+
+  const queryClient = useQueryClient();
 
   // Add task
-  const addMonthTaskMutation = useMutation(async (newTask: ITask) => {
-    return await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}${tasks.addTask}`,
-      newTask,
-    );
+  const { mutate: mutateMonthTaskAdd } = useMutation({
+    mutationFn: async (newTask) => {
+      return await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}${tasks.addTask}`,
+        newTask,
+      );
+    },
+    onMutate: async (newTask: ITask) => {
+      await queryClient.cancelQueries('tasks');
+
+      // Snapshot the previous value
+      const previousTasks: ITask[] | null | undefined =
+        queryClient.getQueryData('tasks');
+
+      // Optimistically delete the task from Zustand state
+      addMonthTask(newTask);
+
+      return { previousTasks };
+    },
+    onError: (_error, _newTask, context) => {
+      // Rollback the optimistic update
+      if (context?.previousTasks != null) {
+        setMonthTasks(context.previousTasks);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries('tasks');
+    },
   });
 
   const onAddTask = (taskName: string) => {
@@ -28,22 +58,16 @@ const MonthTaskList = () => {
       id: uuidv4(),
       name: taskName,
       completed: false,
-      period: 1,
+      period: 3,
       createdAt: dayjs().toDate(),
     };
 
-    // Optimistically add the task to the UI
-    addMonthTask(newTask);
-
-    // Revert back the task if the API call fails
-    addMonthTaskMutation.mutateAsync(newTask).catch(() => {
-      deleteMonthTask(newTask.id);
-    });
+    mutateMonthTaskAdd(newTask);
   };
 
   return (
     <div>
-      <AddTaskInput onAddTaskName={onAddTask}>+ Add Day Task</AddTaskInput>
+      <AddTaskInput onAddTaskName={onAddTask}>+ Add Month Task</AddTaskInput>
       <Separator />
       <TodoList
         tasks={monthTasks}
