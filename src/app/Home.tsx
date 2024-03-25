@@ -75,10 +75,10 @@ const Home = () => {
   });
 
   useEffect(() => {
-    if (isSuccess === true && allTasksQuery != null) {
-      setTasks(allTasksQuery as ITask[]);
+    if (isSuccess && allTasksQuery != null) {
+      setTasks(allTasksQuery);
     }
-  }, [isSuccess, allTasksQuery, setTasks]);
+  }, [isSuccess]);
 
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">

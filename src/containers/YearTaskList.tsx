@@ -2,14 +2,15 @@ import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
 import React from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from './TodoList';
-import { type IGetTasks, type ITask } from '@/types';
+import { type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
 import axios from 'axios';
 import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
+import { type IGetTasks, type IEditTaskMutation } from '@/api/responseTypes';
 
 const YearTaskList = () => {
   const { yearTasks, setTasks, addYearTask, editYearTask, deleteYearTask } =
@@ -26,11 +27,12 @@ const YearTaskList = () => {
       );
     },
     onMutate: async (newTask: ITask) => {
-      await queryClient.cancelQueries('tasks');
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined =
-        queryClient.getQueryData('tasks');
+      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+        'tasks',
+      ]);
 
       // Optimistically delete the task from Zustand state
       addYearTask(newTask);
@@ -44,7 +46,7 @@ const YearTaskList = () => {
       }
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries('tasks');
+      void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 
@@ -60,6 +62,41 @@ const YearTaskList = () => {
     mutateYearTaskAdd(newTask);
   };
 
+  // Edit task
+  const { mutate: mutateYearTaskEdit } = useMutation({
+    mutationFn: async ({ taskID, task }: IEditTaskMutation) => {
+      const URL = `${process.env.NEXT_PUBLIC_API_URL}${tasks.editTask}`.replace(
+        ':taskID',
+        taskID,
+      );
+      return await axios.put(URL, task);
+    },
+    onMutate: async ({ taskID, task }: IEditTaskMutation) => {
+      await queryClient.cancelQueries({ queryKey: [{ queryKey: ['tasks'] }] });
+
+      // Snapshot the previous value
+      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+        { queryKey: ['tasks'] },
+      ]);
+
+      // Optimistically delete the task from Zustand state
+      editYearTask(taskID, task);
+
+      return { previousTasks };
+    },
+    onError: (_error, _taskID, context) => {
+      // Rollback the optimistic update
+      if (context?.previousTasks != null) {
+        setTasks(context.previousTasks.data);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: [{ queryKey: ['tasks'] }],
+      });
+    },
+  });
+
   // Delete task
   const { mutate: mutateYearTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
@@ -71,11 +108,12 @@ const YearTaskList = () => {
       return await axios.delete(URL);
     },
     onMutate: async (taskID: string) => {
-      await queryClient.cancelQueries('tasks');
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined =
-        queryClient.getQueryData('tasks');
+      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+        'tasks',
+      ]);
 
       // Optimistically delete the task from Zustand state
       deleteYearTask(taskID);
@@ -89,7 +127,7 @@ const YearTaskList = () => {
       }
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries('tasks');
+      void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 
@@ -99,7 +137,9 @@ const YearTaskList = () => {
       <Separator />
       <TodoList
         tasks={yearTasks}
-        onEditTask={editYearTask}
+        onEditTask={(taskID: string, task: ITask) => {
+          mutateYearTaskEdit({ taskID, task });
+        }}
         onDeleteTask={(taskID: string) => {
           mutateYearTaskDelete(taskID);
         }}

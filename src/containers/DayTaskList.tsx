@@ -4,11 +4,12 @@ import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from './TodoList';
-import { type IGetTasks, type ITask } from '@/types';
+import { type ITask } from '@/types';
 import { tasks } from '@/api/endpoints';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import { type IEditTaskMutation, type IGetTasks } from '@/api/responseTypes';
 
 const DayTaskList = () => {
   const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
@@ -59,11 +60,6 @@ const DayTaskList = () => {
 
     mutateDayTaskAdd(newTask);
   };
-
-  interface IEditTaskMutation {
-    taskID: string;
-    task: ITask;
-  }
 
   // Edit task
   const { mutate: mutateDayTaskEdit } = useMutation({
