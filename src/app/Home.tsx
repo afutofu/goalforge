@@ -24,6 +24,9 @@ import { type IActivityLog, type ITask } from '@/types';
 import { taskEndpoint, activityLogEndpoint } from '@/api/endpoints';
 import axios from 'axios';
 import { useTaskStore } from '@/store/task';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 interface SectionProps {
   children: JSX.Element[] | JSX.Element;
@@ -49,9 +52,7 @@ const ICON_BUTTON_CLASSNAMES =
 const Home = () => {
   const date = dayjs();
 
-  const { activityLogs, setActivityLogs, addActivityLog } =
-    useActivityLogStore();
-
+  const { activityLogs, setActivityLogs } = useActivityLogStore();
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
@@ -90,7 +91,7 @@ const Home = () => {
       queryFn: async () =>
         await axios
           // eslint-disable-next-line prettier/prettier
-          .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}`)
+          .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
           .then((res) => res.data),
     });
 
@@ -123,7 +124,7 @@ const Home = () => {
       {/* Left / Micro Section */}
       <Section>
         <Header>{`Activity Logger - ${date.date()} ${date.format('MMM')} ${date.year()} `}</Header>
-        <HourActivityLogger date={date} onAddActivityLog={addActivityLog} />
+        <HourActivityLogger date={date} />
         <Separator />
         <ActivityLogList activityLogs={activityLogs} />
       </Section>

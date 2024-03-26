@@ -9,7 +9,7 @@ export interface ITask {
 export interface IActivityLog {
   id: string;
   text: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface IPreferences {

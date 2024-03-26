@@ -6,10 +6,18 @@ export const taskEndpoint = {
   getYear: '/api/v1/tasks?period=4',
 
   addTask: '/api/v1/tasks',
+
   editTask: '/api/v1/tasks/:taskID',
+
   deleteTask: '/api/v1/tasks/:taskID',
 };
 
 export const activityLogEndpoint = {
   getDay: '/api/v1/activity-logs',
+
+  addLog: '/api/v1/activity-logs',
+
+  editActivityLog: '/api/v1/activity-logs/:activityLogID',
+
+  deleteActivityLog: '/api/v1/activity-logs/:activityLogID',
 };
