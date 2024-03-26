@@ -9,7 +9,7 @@ import { taskEndpoint } from '@/api/endpoints';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
-import { type IEditTaskMutation, type IGetTasks } from '@/api/responseTypes';
+import { type IEditTaskMutation } from '@/api/responseTypes';
 
 const DayTaskList = () => {
   const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
@@ -29,9 +29,8 @@ const DayTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
-        'tasks',
-      ]);
+      const previousTasks: { data: ITask[] } | undefined =
+        queryClient.getQueryData(['tasks']);
 
       // Optimistically delete the task from Zustand state
       addDayTask(newTask);
@@ -75,9 +74,8 @@ const DayTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
-        'tasks',
-      ]);
+      const previousTasks: { data: ITask[] } | undefined =
+        queryClient.getQueryData(['tasks']);
 
       // Optimistically delete the task from Zustand state
       editDayTask(taskID, task);
@@ -109,9 +107,8 @@ const DayTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
-        'tasks',
-      ]);
+      const previousTasks: { data: ITask[] } | undefined =
+        queryClient.getQueryData(['tasks']);
 
       // Optimistically delete the task from Zustand state
       deleteDayTask(taskID);
