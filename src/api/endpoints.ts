@@ -1,4 +1,4 @@
-export const tasks = {
+export const taskEndpoint = {
   getAll: '/api/v1/tasks?period=0',
   getDay: '/api/v1/tasks?period=1',
   getWeek: '/api/v1/tasks?period=2',
@@ -8,4 +8,8 @@ export const tasks = {
   addTask: '/api/v1/tasks',
   editTask: '/api/v1/tasks/:taskID',
   deleteTask: '/api/v1/tasks/:taskID',
+};
+
+export const activityLogEndpoint = {
+  getDay: '/api/v1/activity-logs',
 };

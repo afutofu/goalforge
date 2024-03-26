@@ -5,7 +5,7 @@ import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from './TodoList';
 import { type ITask } from '@/types';
-import { tasks } from '@/api/endpoints';
+import { taskEndpoint } from '@/api/endpoints';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
@@ -21,7 +21,7 @@ const DayTaskList = () => {
   const { mutate: mutateDayTaskAdd } = useMutation({
     mutationFn: async (newTask) => {
       return await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}${tasks.addTask}`,
+        `${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.addTask}`,
         newTask,
       );
     },
@@ -64,10 +64,11 @@ const DayTaskList = () => {
   // Edit task
   const { mutate: mutateDayTaskEdit } = useMutation({
     mutationFn: async ({ taskID, task }: IEditTaskMutation) => {
-      const URL = `${process.env.NEXT_PUBLIC_API_URL}${tasks.editTask}`.replace(
-        ':taskID',
-        taskID,
-      );
+      const URL =
+        `${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.editTask}`.replace(
+          ':taskID',
+          taskID,
+        );
       return await axios.put(URL, task);
     },
     onMutate: async ({ taskID, task }: IEditTaskMutation) => {
@@ -98,7 +99,7 @@ const DayTaskList = () => {
   const { mutate: mutateDayTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
       const URL =
-        `${process.env.NEXT_PUBLIC_API_URL}${tasks.deleteTask}`.replace(
+        `${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.deleteTask}`.replace(
           ':taskID',
           taskID,
         );
