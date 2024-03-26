@@ -7,7 +7,7 @@ interface IActivityLogStore {
   activityLogs: IActivityLog[];
 
   // Setting activityLog
-  setActivityLog: (activityLog: IActivityLog[]) => void;
+  setActivityLogs: (activityLog: IActivityLog[]) => void;
 
   // Adding activityLog
   addActivityLog: (activityLog: IActivityLog) => void;
@@ -29,7 +29,7 @@ export const useActivityLogStore = create<IActivityLogStore>()(
       activityLogs: [],
 
       // Set activityLog
-      setActivityLog: (activityLogs: IActivityLog[]) => {
+      setActivityLogs: (activityLogs: IActivityLog[]) => {
         set({ activityLogs });
       },
 

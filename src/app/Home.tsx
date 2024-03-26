@@ -20,8 +20,8 @@ import MonthTaskList from '@/containers/MonthTaskList';
 import WeekTaskList from '@/containers/WeekTaskList';
 import YearTaskList from '@/containers/YearTaskList';
 import { useQuery } from '@tanstack/react-query';
-import { type ITask } from '@/types';
-import { tasks } from '@/api/endpoints';
+import { type IActivityLog, type ITask } from '@/types';
+import { taskEndpoint, activityLogEndpoint } from '@/api/endpoints';
 import axios from 'axios';
 import { useTaskStore } from '@/store/task';
 
@@ -49,7 +49,8 @@ const ICON_BUTTON_CLASSNAMES =
 const Home = () => {
   const date = dayjs();
 
-  const { activityLogs, addActivityLog } = useActivityLogStore();
+  const { activityLogs, setActivityLogs, addActivityLog } =
+    useActivityLogStore();
 
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
@@ -66,19 +67,38 @@ const Home = () => {
   }, [session]);
 
   // Fetch and initialize task data from the API
-  const { data: allTasksQuery, isSuccess } = useQuery<ITask[]>({
+  // eslint-disable-next-line prettier/prettier
+  const { data: allTasksQuery, isSuccess: isFetchTasksSucess } = useQuery<ITask[]>({
     queryKey: ['tasks'],
     queryFn: async () =>
       await axios
-        .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${tasks.getAll}`)
+        // eslint-disable-next-line prettier/prettier
+        .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`)
         .then((res) => res.data),
   });
 
   useEffect(() => {
-    if (isSuccess && allTasksQuery != null) {
+    if (isFetchTasksSucess && allTasksQuery != null) {
       setTasks(allTasksQuery);
     }
-  }, [isSuccess]);
+  }, [isFetchTasksSucess]);
+
+  // Fetch and initialize acitivity log from the API
+  const { data: allActivityLogsQuery, isSuccess: isFetchActivityLogsSuccess } =
+    useQuery<IActivityLog[]>({
+      queryKey: ['activity-logs'],
+      queryFn: async () =>
+        await axios
+          // eslint-disable-next-line prettier/prettier
+          .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}`)
+          .then((res) => res.data),
+    });
+
+  useEffect(() => {
+    if (isFetchActivityLogsSuccess && allActivityLogsQuery != null) {
+      setActivityLogs(allActivityLogsQuery);
+    }
+  }, [isFetchActivityLogsSuccess]);
 
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
