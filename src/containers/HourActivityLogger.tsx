@@ -1,4 +1,8 @@
+import { activityLogEndpoint } from '@/api/endpoints';
+import { useActivityLogStore } from '@/store/activityLog';
 import { type IActivityLog } from '@/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import dayjs, { type Dayjs } from 'dayjs';
 import React, { type FC, useRef, useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -7,20 +11,23 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface IHourActivityLogger {
   date: Dayjs;
-  onAddActivityLog: (activityLog: IActivityLog) => void;
 }
 
 interface IFormInput {
   activityName: string;
 }
 
-export const HourActivityLogger: FC<IHourActivityLogger> = ({
-  date,
-  onAddActivityLog,
-}) => {
+export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
   const { register, handleSubmit, reset } = useForm<IFormInput>();
   const timer = useRef<Dayjs>(dayjs());
   const [time, setTime] = useState<string>(timer.current.format('hh:mm A'));
+  const queryClient = useQueryClient();
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const { ref } = register('activityName');
+
+  const { setActivityLogs, addActivityLog } = useActivityLogStore();
 
   useEffect(() => {
     const timerInterval = setInterval(() => {
@@ -33,14 +40,49 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({
     };
   }, []);
 
+  // Add task
+  const { mutate: mutateDayTaskAdd } = useMutation({
+    mutationFn: async (newTask) => {
+      return await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.addLog}`,
+        newTask,
+      );
+    },
+    onMutate: async (newTask: IActivityLog) => {
+      await queryClient.cancelQueries({ queryKey: ['activity-logs'] });
+
+      // Snapshot the previous value
+      const previousTasks: { data: IActivityLog[] } | undefined =
+        queryClient.getQueryData(['activity-logs']);
+
+      // Optimistically delete the task from Zustand state
+      addActivityLog(newTask);
+
+      inputRef.current?.blur();
+
+      return { previousTasks };
+    },
+    onError: (_error, _newTask, context) => {
+      // Rollback the optimistic update
+      inputRef.current?.focus();
+
+      if (context?.previousTasks != null) {
+        setActivityLogs(context.previousTasks.data);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['activity-logs'] });
+    },
+  });
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     const newActivityLog: IActivityLog = {
       id: uuidv4(),
       text: data.activityName,
-      createdAt: new Date(),
+      createdAt: dayjs().utc().format(),
     };
 
-    onAddActivityLog(newActivityLog);
+    mutateDayTaskAdd(newActivityLog);
 
     reset();
   };
@@ -55,6 +97,10 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({
         className="rounded-full py-3 px-3 text-center text-xs text-black placeholder:uppercase placeholder:font-bold"
         placeholder="Log Current Activity..."
         {...register('activityName', { required: true })}
+        ref={(e) => {
+          ref(e);
+          inputRef.current = e;
+        }}
       />
     </form>
   );
