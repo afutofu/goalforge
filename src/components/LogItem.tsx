@@ -52,7 +52,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
       await queryClient.cancelQueries({ queryKey: ['activity-logs'] });
 
       // Snapshot the previous value
-      const previousActivityLogs: { data: IActivityLog[] } | undefined =
+      const previousActivityLogs: IActivityLog[] | undefined =
         queryClient.getQueryData(['activity-logs']);
 
       // Optimistically delete the activityLog from Zustand state
@@ -63,7 +63,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
     onError: (_error, _variables, context) => {
       // Rollback the optimistic update
       if (context?.previousActivityLogs != null) {
-        setActivityLogs(context.previousActivityLogs.data);
+        setActivityLogs(context.previousActivityLogs);
       }
     },
     onSuccess: () => {

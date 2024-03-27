@@ -29,8 +29,9 @@ const DayTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: { data: ITask[] } | undefined =
-        queryClient.getQueryData(['tasks']);
+      const previousTasks: ITask[] | undefined = queryClient.getQueryData([
+        'tasks',
+      ]);
 
       // Optimistically delete the task from Zustand state
       addDayTask(newTask);
@@ -40,7 +41,7 @@ const DayTaskList = () => {
     onError: (_error, _newTask, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setTasks(context.previousTasks.data);
+        setTasks(context.previousTasks);
       }
     },
     onSettled: () => {
@@ -74,8 +75,9 @@ const DayTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: { data: ITask[] } | undefined =
-        queryClient.getQueryData(['tasks']);
+      const previousTasks: ITask[] | undefined = queryClient.getQueryData([
+        'tasks',
+      ]);
 
       // Optimistically delete the task from Zustand state
       editDayTask(taskID, task);
@@ -85,7 +87,7 @@ const DayTaskList = () => {
     onError: (_error, _taskID, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setTasks(context.previousTasks.data);
+        setTasks(context.previousTasks);
       }
     },
     onSuccess: () => {
@@ -107,8 +109,9 @@ const DayTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: { data: ITask[] } | undefined =
-        queryClient.getQueryData(['tasks']);
+      const previousTasks: ITask[] | undefined = queryClient.getQueryData([
+        'tasks',
+      ]);
 
       // Optimistically delete the task from Zustand state
       deleteDayTask(taskID);
@@ -118,7 +121,7 @@ const DayTaskList = () => {
     onError: (_error, _taskID, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setTasks(context.previousTasks.data);
+        setTasks(context.previousTasks);
       }
     },
     onSettled: () => {

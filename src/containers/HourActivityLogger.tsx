@@ -52,7 +52,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
       await queryClient.cancelQueries({ queryKey: ['activity-logs'] });
 
       // Snapshot the previous value
-      const previousTasks: { data: IActivityLog[] } | undefined =
+      const previousTasks: IActivityLog[] | undefined =
         queryClient.getQueryData(['activity-logs']);
 
       // Optimistically delete the task from Zustand state
@@ -67,7 +67,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
       inputRef.current?.focus();
 
       if (context?.previousTasks != null) {
-        setActivityLogs(context.previousTasks.data);
+        setActivityLogs(context.previousTasks);
       }
     },
     onSettled: () => {

@@ -10,7 +10,7 @@ import axios from 'axios';
 import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
-import { type IGetTasks, type IEditTaskMutation } from '@/api/responseTypes';
+import { type IEditTaskMutation } from '@/api/responseTypes';
 
 const WeekTaskList = () => {
   const { weekTasks, setTasks, addWeekTask, editWeekTask, deleteWeekTask } =
@@ -30,7 +30,7 @@ const WeekTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+      const previousTasks: ITask[] | undefined = queryClient.getQueryData([
         'tasks',
       ]);
 
@@ -42,7 +42,7 @@ const WeekTaskList = () => {
     onError: (_error, _newTask, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setTasks(context.previousTasks.data);
+        setTasks(context.previousTasks);
       }
     },
     onSettled: () => {
@@ -76,7 +76,7 @@ const WeekTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+      const previousTasks: ITask[] | undefined = queryClient.getQueryData([
         'tasks',
       ]);
 
@@ -88,7 +88,7 @@ const WeekTaskList = () => {
     onError: (_error, _taskID, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setTasks(context.previousTasks.data);
+        setTasks(context.previousTasks);
       }
     },
     onSuccess: () => {
@@ -110,7 +110,7 @@ const WeekTaskList = () => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 
       // Snapshot the previous value
-      const previousTasks: IGetTasks | undefined = queryClient.getQueryData([
+      const previousTasks: ITask[] | undefined = queryClient.getQueryData([
         'tasks',
       ]);
 
@@ -122,7 +122,7 @@ const WeekTaskList = () => {
     onError: (_error, _taskID, context) => {
       // Rollback the optimistic update
       if (context?.previousTasks != null) {
-        setTasks(context.previousTasks.data);
+        setTasks(context.previousTasks);
       }
     },
     onSettled: () => {
