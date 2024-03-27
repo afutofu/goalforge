@@ -69,10 +69,10 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
       first = false;
 
       return (
-        <>
+        <div key={log.id}>
           {headerWithSpacing}
           <LogItem log={log} />
-        </>
+        </div>
       );
     });
   }, [activityLogsToday]);
