@@ -15,23 +15,21 @@ interface IProfileModal {
   onClose: () => void;
 }
 
-// interface IPreferencesForm {
-//   pomodoroLength: number;
-//   shortBreakLength: number;
-//   longBreakLength: number;
+// interface IProfileForm {
+//   username: string;
+//   email: string;
+//   password: string;
+//   re_password: string;
 // }
 
 export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
-  //   const { register, handleSubmit } = useForm<IPreferencesForm>();
-
-  //   const onSubmit: SubmitHandler<IPreferencesForm> = (data) => {
-
-  //     onClose();
-  //   };
+  // TODO: Implement custom registration
+  // const { register, handleSubmit } = useForm<IProfileForm>();
+  // const onSubmit: SubmitHandler<IProfileForm> = (data) => {
+  //   onClose();
+  // };
 
   const { data: session } = useSession();
-
-  console.log(session);
 
   return (
     <Modal onClose={onClose}>
