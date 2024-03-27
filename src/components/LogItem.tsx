@@ -60,7 +60,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
 
       return { previousActivityLogs };
     },
-    onError: (_error, _taskID, context) => {
+    onError: (_error, _variables, context) => {
       // Rollback the optimistic update
       if (context?.previousActivityLogs != null) {
         setActivityLogs(context.previousActivityLogs.data);
@@ -72,37 +72,40 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
   });
 
   // Delete activityLog
-  // const { mutate: mutateActivityLogDelete } = useMutation({
-  //   mutationFn: async (activityLogID) => {
-  //     const URL =
-  //       `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.deleteActivityLog}`.replace(
-  //         ':activityLogID',
-  //         activityLogID,
-  //       );
-  //     return await axios.delete(URL);
-  //   },
-  //   onMutate: async (activityLogID: string) => {
-  //     await queryClient.cancelQueries({ queryKey: ['activity-logs'] });
+  const { mutate: mutateActivityLogDelete } = useMutation({
+    mutationFn: async (activityLogID) => {
+      const URL =
+        `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.deleteActivityLog}`.replace(
+          ':activityLogID',
+          activityLogID,
+        );
+      return await axios.delete(URL);
+    },
+    onMutate: async (activityLogID: string) => {
+      await queryClient.cancelQueries({ queryKey: ['activity-logs'] });
 
-  //     // Snapshot the previous value
-  //     const previousActivityLogs: { data: IActivityLog[] } | undefined =
-  //       queryClient.getQueryData(['activity-logs']);
+      // Snapshot the previous value
+      const previousActivityLogs: IActivityLog[] | undefined =
+        queryClient.getQueryData(['activity-logs']);
 
-  //     // Optimistically delete the activityLog from Zustand state
-  //     deleteActivityLog(activityLogID);
+      // Optimistically delete the activityLog from Zustand state
+      deleteActivityLog(activityLogID);
 
-  //     return { previousActivityLogs };
-  //   },
-  //   onError: (_error, _taskID, context) => {
-  //     // Rollback the optimistic update
-  //     if (context?.previousActivityLogs != null) {
-  //       setActivityLogs(context.previousActivityLogs.data);
-  //     }
-  //   },
-  //   onSettled: () => {
-  //     void queryClient.invalidateQueries({ queryKey: ['activity-logs'] });
-  //   },
-  // });
+      return { previousActivityLogs };
+    },
+    onError: (_error, _variables, context) => {
+      // Rollback the optimistic update
+      // TODO: Implement rollback based on error message.
+      // If 404 activity log not found, remove from zustand state.
+      // If 500, set state back to previous logs.
+      if (context?.previousActivityLogs != null) {
+        setActivityLogs(context.previousActivityLogs);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['activity-logs'] });
+    },
+  });
 
   const { ref } = register('logText');
 
@@ -173,7 +176,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              deleteActivityLog(log.id);
+              mutateActivityLogDelete(log.id);
               setOpen(false);
             }}
           >
