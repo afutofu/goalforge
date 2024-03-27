@@ -4,6 +4,10 @@ import React, { useState, type FC, useRef, useEffect } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Button } from './Button';
 import { useActivityLogStore } from '@/store/activityLog';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { activityLogEndpoint } from '@/api/endpoints';
+import { type IEditActivityLogMutation } from '@/api/responseTypes';
 
 interface ILogItem extends React.ComponentPropsWithoutRef<'div'> {
   log: IActivityLog;
@@ -23,7 +27,82 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
     },
   });
 
-  const { editActivityLog, deleteActivityLog } = useActivityLogStore();
+  const { setActivityLogs, editActivityLog, deleteActivityLog } =
+    useActivityLogStore();
+
+  const queryClient = useQueryClient();
+
+  // Edit activityLog
+  const { mutate: mutateActivityLogEdit } = useMutation({
+    mutationFn: async ({
+      activityLogID,
+      activityLog,
+    }: IEditActivityLogMutation) => {
+      const URL =
+        `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.editActivityLog}`.replace(
+          ':activityLogID',
+          activityLogID,
+        );
+      return await axios.put(URL, activityLog);
+    },
+    onMutate: async ({
+      activityLogID,
+      activityLog,
+    }: IEditActivityLogMutation) => {
+      await queryClient.cancelQueries({ queryKey: ['activity-logs'] });
+
+      // Snapshot the previous value
+      const previousActivityLogs: { data: IActivityLog[] } | undefined =
+        queryClient.getQueryData(['activity-logs']);
+
+      // Optimistically delete the activityLog from Zustand state
+      editActivityLog(activityLogID, activityLog);
+
+      return { previousActivityLogs };
+    },
+    onError: (_error, _taskID, context) => {
+      // Rollback the optimistic update
+      if (context?.previousActivityLogs != null) {
+        setActivityLogs(context.previousActivityLogs.data);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['activity-logs'] });
+    },
+  });
+
+  // Delete activityLog
+  // const { mutate: mutateActivityLogDelete } = useMutation({
+  //   mutationFn: async (activityLogID) => {
+  //     const URL =
+  //       `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.deleteActivityLog}`.replace(
+  //         ':activityLogID',
+  //         activityLogID,
+  //       );
+  //     return await axios.delete(URL);
+  //   },
+  //   onMutate: async (activityLogID: string) => {
+  //     await queryClient.cancelQueries({ queryKey: ['activity-logs'] });
+
+  //     // Snapshot the previous value
+  //     const previousActivityLogs: { data: IActivityLog[] } | undefined =
+  //       queryClient.getQueryData(['activity-logs']);
+
+  //     // Optimistically delete the activityLog from Zustand state
+  //     deleteActivityLog(activityLogID);
+
+  //     return { previousActivityLogs };
+  //   },
+  //   onError: (_error, _taskID, context) => {
+  //     // Rollback the optimistic update
+  //     if (context?.previousActivityLogs != null) {
+  //       setActivityLogs(context.previousActivityLogs.data);
+  //     }
+  //   },
+  //   onSettled: () => {
+  //     void queryClient.invalidateQueries({ queryKey: ['activity-logs'] });
+  //   },
+  // });
 
   const { ref } = register('logText');
 
@@ -34,8 +113,8 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
     };
 
     if (data.logText !== log.text) {
-      console.log('edit log', data);
-      editActivityLog(log.id, editedLog);
+      console.log('edit log', editedLog);
+      mutateActivityLogEdit({ activityLogID: log.id, activityLog: editedLog });
     }
 
     reset();
