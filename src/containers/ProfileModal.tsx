@@ -7,9 +7,9 @@ import React, { type FC } from 'react';
 // import { type IPreferences } from '@/types';
 
 import { Button } from '@/components/Button';
-import GoogleButton from 'react-google-button';
 import { Header } from '@/components/Header';
 import { Modal } from '@/components/Modal';
+import GoogleButton from 'react-google-button';
 
 interface IProfileModal {
   onClose: () => void;
@@ -30,6 +30,8 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
   // };
 
   const { data: session } = useSession();
+
+  console.log(session);
 
   return (
     <Modal onClose={onClose}>
@@ -55,6 +57,17 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
                 });
               }}
             />
+            {/* <Button
+              className="!w-full p-3"
+              onClick={async (e) => {
+                e.currentTarget.style.pointerEvents = 'none';
+                void signIn('google').catch(() => {
+                  e.currentTarget.style.pointerEvents = 'auto';
+                });
+              }}
+            >
+              Sign in with Google
+            </Button> */}
             <hr className="w-full mt-5 border-primary"></hr>
           </>
         )}
