@@ -45,7 +45,7 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
           Profile
         </Header>
 
-        {/* Sign In */}
+        {/* Sign In / Register */}
         {session == null && (
           <>
             <GoogleButton

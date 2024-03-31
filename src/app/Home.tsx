@@ -21,7 +21,11 @@ import WeekTaskList from '@/containers/WeekTaskList';
 import YearTaskList from '@/containers/YearTaskList';
 import { useQuery } from '@tanstack/react-query';
 import { type IActivityLog, type ITask } from '@/types';
-import { taskEndpoint, activityLogEndpoint } from '@/api/endpoints';
+import {
+  taskEndpoint,
+  activityLogEndpoint,
+  authEndpoint,
+} from '@/api/endpoints';
 import axios from 'axios';
 import { useTaskStore } from '@/store/task';
 import utc from 'dayjs/plugin/utc';
@@ -66,6 +70,23 @@ const Home = () => {
     }
     return '/icons/profile.svg';
   }, [session]);
+
+  // Fetch and initialize task data from the API
+  // eslint-disable-next-line prettier/prettier
+  const { data: fetchUserToken, isSuccess: isFetchTokenSuccess } = useQuery<{token: string}>({
+    queryKey: ['userToken', session],
+    queryFn: async () =>
+      await axios
+        // eslint-disable-next-line prettier/prettier
+        .post<{token:string}>(`${process.env.NEXT_PUBLIC_API_URL}${authEndpoint.oauthSignin}`, {email:session?.user?.email, name:session?.user?.name, sign_in_type: 'google'})
+        .then((res) => res.data),
+  });
+
+  useEffect(() => {
+    if (isFetchTokenSuccess && fetchUserToken != null) {
+      localStorage.setItem('userToken', fetchUserToken.token);
+    }
+  }, [isFetchTokenSuccess]);
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier

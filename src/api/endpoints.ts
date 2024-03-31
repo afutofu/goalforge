@@ -21,3 +21,7 @@ export const activityLogEndpoint = {
 
   deleteActivityLog: '/api/v1/activity-logs/:activityLogID',
 };
+
+export const authEndpoint = {
+  oauthSignin: '/api/v1/auth/oauth-signin',
+};
