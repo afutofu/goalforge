@@ -20,7 +20,7 @@ interface IProvider {
 export const Provider: FC<IProvider> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider>{children}</SessionProvider>
+      <SessionProvider refetchOnWindowFocus={false}>{children}</SessionProvider>
     </QueryClientProvider>
   );
 };
