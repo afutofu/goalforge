@@ -52,11 +52,11 @@ const WeekTaskList = () => {
 
   const onAddTask = (taskName: string) => {
     const newTask: ITask = {
-      id: uuidv4(),
-      name: taskName,
-      completed: false,
-      period: 2,
-      createdAt: dayjs().toDate(),
+      TaskID: uuidv4(),
+      Name: taskName,
+      Completed: false,
+      Period: 2,
+      CreatedAt: dayjs().toDate(),
     };
 
     mutateWeekTaskAdd(newTask);

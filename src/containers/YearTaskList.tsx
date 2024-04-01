@@ -52,11 +52,11 @@ const YearTaskList = () => {
 
   const onAddTask = (taskName: string) => {
     const newTask: ITask = {
-      id: uuidv4(),
-      name: taskName,
-      completed: false,
-      period: 4,
-      createdAt: dayjs().toDate(),
+      TaskID: uuidv4(),
+      Name: taskName,
+      Completed: false,
+      Period: 4,
+      CreatedAt: dayjs().toDate(),
     };
 
     mutateYearTaskAdd(newTask);

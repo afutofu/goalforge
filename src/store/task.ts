@@ -64,17 +64,17 @@ export const useTaskStore = create<ITaskStore>()(
         const yearTasks: ITask[] = [];
 
         tasks.forEach((task) => {
-          if (task.period === 1) {
-            dayTasks.push(task);
+          if (Number(task.Period) === 1) {
+            dayTasks.unshift(task);
           }
-          if (task.period === 2) {
-            weekTasks.push(task);
+          if (Number(task.Period) === 2) {
+            weekTasks.unshift(task);
           }
-          if (task.period === 3) {
-            monthTasks.push(task);
+          if (Number(task.Period) === 3) {
+            monthTasks.unshift(task);
           }
-          if (task.period === 4) {
-            yearTasks.push(task);
+          if (Number(task.Period) === 4) {
+            yearTasks.unshift(task);
           }
         });
 
@@ -135,7 +135,7 @@ export const useTaskStore = create<ITaskStore>()(
         const currentTasks = get().dayTasks;
         set({
           dayTasks: currentTasks.map((task) => {
-            if (task.id === taskID) {
+            if (task.TaskID === taskID) {
               return editedTask;
             }
             return task;
@@ -146,7 +146,7 @@ export const useTaskStore = create<ITaskStore>()(
         const currentTasks = get().weekTasks;
         set({
           weekTasks: currentTasks.map((task) => {
-            if (task.id === taskID) {
+            if (task.TaskID === taskID) {
               return editedTask;
             }
             return task;
@@ -157,7 +157,7 @@ export const useTaskStore = create<ITaskStore>()(
         const currentTasks = get().monthTasks;
         set({
           monthTasks: currentTasks.map((task) => {
-            if (task.id === taskID) {
+            if (task.TaskID === taskID) {
               return editedTask;
             }
             return task;
@@ -168,7 +168,7 @@ export const useTaskStore = create<ITaskStore>()(
         const currentTasks = get().yearTasks;
         set({
           yearTasks: currentTasks.map((task) => {
-            if (task.id === taskID) {
+            if (task.TaskID === taskID) {
               return editedTask;
             }
             return task;
@@ -179,19 +179,27 @@ export const useTaskStore = create<ITaskStore>()(
       // Delete tasks
       deleteDayTask: (taskID: string) => {
         const currentTasks = get().dayTasks;
-        set({ dayTasks: currentTasks.filter((task) => task.id !== taskID) });
+        set({
+          dayTasks: currentTasks.filter((task) => task.TaskID !== taskID),
+        });
       },
       deleteWeekTask: (taskID: string) => {
         const currentTasks = get().weekTasks;
-        set({ weekTasks: currentTasks.filter((task) => task.id !== taskID) });
+        set({
+          weekTasks: currentTasks.filter((task) => task.TaskID !== taskID),
+        });
       },
       deleteMonthTask: (taskID: string) => {
         const currentTasks = get().monthTasks;
-        set({ monthTasks: currentTasks.filter((task) => task.id !== taskID) });
+        set({
+          monthTasks: currentTasks.filter((task) => task.TaskID !== taskID),
+        });
       },
       deleteYearTask: (taskID: string) => {
         const currentTasks = get().yearTasks;
-        set({ yearTasks: currentTasks.filter((task) => task.id !== taskID) });
+        set({
+          yearTasks: currentTasks.filter((task) => task.TaskID !== taskID),
+        });
       },
     }),
     { name: 'taskStore' },

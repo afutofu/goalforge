@@ -33,21 +33,21 @@ export const TodoItem: FC<ITodoItem> = ({
   const toggleComplete = () => {
     const editedTask: ITask = {
       ...task,
-      completed: !task.completed,
+      Completed: !task.Completed,
     };
 
-    onEditTask(task.id, editedTask);
+    onEditTask(task.TaskID, editedTask);
   };
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     const editedTask: ITask = {
       ...task,
-      name: data.taskName,
+      Name: data.taskName,
     };
 
-    if (data.taskName !== task.name) {
+    if (data.taskName !== task.Name) {
       console.log('edit task', data);
-      onEditTask(task.id, editedTask);
+      onEditTask(task.TaskID, editedTask);
     }
 
     reset();
@@ -56,7 +56,7 @@ export const TodoItem: FC<ITodoItem> = ({
 
   useEffect(() => {
     if (open && inputRef.current !== null) inputRef.current.focus();
-    setValue('taskName', task.name);
+    setValue('taskName', task.Name);
   }, [open]);
 
   return (
@@ -80,15 +80,15 @@ export const TodoItem: FC<ITodoItem> = ({
           className={clsx(
             'p-4 rounded-full mr-3 transition',
             {
-              'bg-secondary hover:opacity-70': task.completed,
+              'bg-secondary hover:opacity-70': task.Completed,
             },
             {
-              'bg-primary-light hover:bg-purple-300': !task.completed,
+              'bg-primary-light hover:bg-purple-300': !task.Completed,
             },
           )}
           onClick={toggleComplete}
         />
-        <span className="text-sm text-black font-bold">{task.name}</span>
+        <span className="text-sm text-black font-bold">{task.Name}</span>
         <KebabMenu
           className="opacity-0 group-hover:opacity-100"
           onClick={() => {
@@ -123,7 +123,7 @@ export const TodoItem: FC<ITodoItem> = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onDeleteTask(task.id);
+              onDeleteTask(task.TaskID);
               setOpen(false);
             }}
           >
