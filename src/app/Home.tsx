@@ -26,7 +26,7 @@ import {
   activityLogEndpoint,
   authEndpoint,
 } from '@/api/endpoints';
-import axios from 'axios';
+import { api } from '@/api/api';
 import { useTaskStore } from '@/store/task';
 import utc from 'dayjs/plugin/utc';
 
@@ -62,6 +62,8 @@ const Home = () => {
 
   const { data: session } = useSession();
 
+  console.log(session);
+
   const { setTasks } = useTaskStore();
 
   const profileImgSrc: string = useMemo(() => {
@@ -76,7 +78,7 @@ const Home = () => {
   const { data: fetchUserToken, isSuccess: isFetchTokenSuccess } = useQuery<{token: string}>({
     queryKey: ['userToken', session],
     queryFn: async () =>
-      await axios
+      await api
         // eslint-disable-next-line prettier/prettier
         .post<{token:string}>(`${process.env.NEXT_PUBLIC_API_URL}${authEndpoint.oauthSignin}`, {email:session?.user?.email, name:session?.user?.name, sign_in_type: 'google'})
         .then((res) => res.data),
@@ -91,9 +93,9 @@ const Home = () => {
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
   const { data: allTasksQuery, isSuccess: isFetchTasksSucess } = useQuery<ITask[]>({
-    queryKey: ['tasks'],
+    queryKey: ['tasks', fetchUserToken],
     queryFn: async () =>
-      await axios
+      await api
         // eslint-disable-next-line prettier/prettier
         .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`)
         .then((res) => res.data),
@@ -108,9 +110,9 @@ const Home = () => {
   // Fetch and initialize acitivity log from the API
   const { data: allActivityLogsQuery, isSuccess: isFetchActivityLogsSuccess } =
     useQuery<IActivityLog[]>({
-      queryKey: ['activity-logs'],
+      queryKey: ['activity-logs', fetchUserToken],
       queryFn: async () =>
-        await axios
+        await api
           // eslint-disable-next-line prettier/prettier
           .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
           .then((res) => res.data),

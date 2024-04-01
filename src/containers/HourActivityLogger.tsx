@@ -2,7 +2,7 @@ import { activityLogEndpoint } from '@/api/endpoints';
 import { useActivityLogStore } from '@/store/activityLog';
 import { type IActivityLog } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/api/api';
 import dayjs, { type Dayjs } from 'dayjs';
 import React, { type FC, useRef, useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -43,7 +43,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
   // Add task
   const { mutate: mutateDayTaskAdd } = useMutation({
     mutationFn: async (newTask) => {
-      return await axios.post(
+      return await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.addLog}`,
         newTask,
       );

@@ -5,7 +5,7 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Button } from './Button';
 import { useActivityLogStore } from '@/store/activityLog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { api } from '@/api/api';
 import { activityLogEndpoint } from '@/api/endpoints';
 import { type IEditActivityLogMutation } from '@/api/responseTypes';
 
@@ -43,7 +43,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
           ':activityLogID',
           activityLogID,
         );
-      return await axios.put(URL, activityLog);
+      return await api.put(URL, activityLog);
     },
     onMutate: async ({
       activityLogID,
@@ -79,7 +79,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
           ':activityLogID',
           activityLogID,
         );
-      return await axios.delete(URL);
+      return await api.delete(URL);
     },
     onMutate: async (activityLogID: string) => {
       await queryClient.cancelQueries({ queryKey: ['activity-logs'] });

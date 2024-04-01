@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from './TodoList';
 import { type ITask } from '@/types';
 import { taskEndpoint } from '@/api/endpoints';
-import axios from 'axios';
+import { api } from '@/api/api';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { type IEditTaskMutation } from '@/api/responseTypes';
@@ -20,7 +20,7 @@ const DayTaskList = () => {
   // Add task
   const { mutate: mutateDayTaskAdd } = useMutation({
     mutationFn: async (newTask) => {
-      return await axios.post(
+      return await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.addTask}`,
         newTask,
       );
@@ -69,7 +69,7 @@ const DayTaskList = () => {
           ':taskID',
           taskID,
         );
-      return await axios.put(URL, task);
+      return await api.put(URL, task);
     },
     onMutate: async ({ taskID, task }: IEditTaskMutation) => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
@@ -103,7 +103,7 @@ const DayTaskList = () => {
           ':taskID',
           taskID,
         );
-      return await axios.delete(URL);
+      return await api.delete(URL);
     },
     onMutate: async (taskID: string) => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
