@@ -53,7 +53,7 @@ export const useActivityLogStore = create<IActivityLogStore>()(
         const currentactivityLog = get().activityLogs;
         set({
           activityLogs: currentactivityLog.map((activityLog) => {
-            if (activityLog.id === activityLogID) {
+            if (activityLog.ActivityLogID === activityLogID) {
               return editedActivityLog;
             }
             return activityLog;
@@ -66,7 +66,7 @@ export const useActivityLogStore = create<IActivityLogStore>()(
         const currentactivityLog = get().activityLogs;
         set({
           activityLogs: currentactivityLog.filter(
-            (activityLog) => activityLog.id !== activityLogID,
+            (activityLog) => activityLog.ActivityLogID !== activityLogID,
           ),
         });
 
