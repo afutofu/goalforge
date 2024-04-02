@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/api/api';
 import { activityLogEndpoint } from '@/api/endpoints';
 import { type IEditActivityLogMutation } from '@/api/responseTypes';
+import { useSession } from 'next-auth/react';
 
 interface ILogItem extends React.ComponentPropsWithoutRef<'div'> {
   log: IActivityLog;
@@ -20,6 +21,7 @@ interface IFormInput {
 export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const { data: session } = useSession();
 
   const { register, handleSubmit, reset, setValue } = useForm<IFormInput>({
     defaultValues: {
@@ -116,11 +118,14 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
     };
 
     if (data.logText !== log.Text) {
-      console.log('edit log', editedLog);
-      mutateActivityLogEdit({
-        activityLogID: log.ActivityLogID,
-        activityLog: editedLog,
-      });
+      if (session?.user != null) {
+        mutateActivityLogEdit({
+          activityLogID: log.ActivityLogID,
+          activityLog: editedLog,
+        });
+      } else {
+        editActivityLog(log.ActivityLogID, editedLog);
+      }
     }
 
     reset();
@@ -179,7 +184,11 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              mutateActivityLogDelete(log.ActivityLogID);
+              if (session?.user != null) {
+                mutateActivityLogDelete(log.ActivityLogID);
+              } else {
+                deleteActivityLog(log.ActivityLogID);
+              }
               setOpen(false);
             }}
           >

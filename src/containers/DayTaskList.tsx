@@ -10,12 +10,15 @@ import { api } from '@/api/api';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { type IEditTaskMutation } from '@/api/responseTypes';
+import { useSession } from 'next-auth/react';
 
 const DayTaskList = () => {
   const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
+
+  const { data: session } = useSession();
 
   // Add task
   const { mutate: mutateDayTaskAdd } = useMutation({
@@ -58,7 +61,11 @@ const DayTaskList = () => {
       CreatedAt: dayjs().toDate(),
     };
 
-    mutateDayTaskAdd(newTask);
+    if (session?.user != null) {
+      mutateDayTaskAdd(newTask);
+    } else {
+      addDayTask(newTask);
+    }
   };
 
   // Edit task
@@ -136,10 +143,18 @@ const DayTaskList = () => {
       <TodoList
         tasks={dayTasks}
         onEditTask={(taskID: string, task: ITask) => {
-          mutateDayTaskEdit({ taskID, task });
+          if (session?.user != null) {
+            mutateDayTaskEdit({ taskID, task });
+          } else {
+            editDayTask(taskID, task);
+          }
         }}
         onDeleteTask={(taskID: string) => {
-          mutateDayTaskDelete(taskID);
+          if (session?.user != null) {
+            mutateDayTaskDelete(taskID);
+          } else {
+            deleteDayTask(taskID);
+          }
         }}
       />
     </div>

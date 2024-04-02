@@ -11,12 +11,15 @@ import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { type IEditTaskMutation } from '@/api/responseTypes';
+import { useSession } from 'next-auth/react';
 
 const YearTaskList = () => {
   const { yearTasks, setTasks, addYearTask, editYearTask, deleteYearTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
+
+  const { data: session } = useSession();
 
   // Add task
   const { mutate: mutateYearTaskAdd } = useMutation({
@@ -59,7 +62,11 @@ const YearTaskList = () => {
       CreatedAt: dayjs().toDate(),
     };
 
-    mutateYearTaskAdd(newTask);
+    if (session?.user != null) {
+      mutateYearTaskAdd(newTask);
+    } else {
+      addYearTask(newTask);
+    }
   };
 
   // Edit task
@@ -139,10 +146,18 @@ const YearTaskList = () => {
       <TodoList
         tasks={yearTasks}
         onEditTask={(taskID: string, task: ITask) => {
-          mutateYearTaskEdit({ taskID, task });
+          if (session?.user != null) {
+            mutateYearTaskEdit({ taskID, task });
+          } else {
+            editYearTask(taskID, task);
+          }
         }}
         onDeleteTask={(taskID: string) => {
-          mutateYearTaskDelete(taskID);
+          if (session?.user != null) {
+            mutateYearTaskDelete(taskID);
+          } else {
+            deleteYearTask(taskID);
+          }
         }}
         containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
       />

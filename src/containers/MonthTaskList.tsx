@@ -11,12 +11,15 @@ import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { type IEditTaskMutation } from '@/api/responseTypes';
+import { useSession } from 'next-auth/react';
 
 const MonthTaskList = () => {
   const { monthTasks, setTasks, addMonthTask, editMonthTask, deleteMonthTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
+
+  const { data: session } = useSession();
 
   // Add task
   const { mutate: mutateMonthTaskAdd } = useMutation({
@@ -59,7 +62,11 @@ const MonthTaskList = () => {
       CreatedAt: dayjs().toDate(),
     };
 
-    mutateMonthTaskAdd(newTask);
+    if (session?.user != null) {
+      mutateMonthTaskAdd(newTask);
+    } else {
+      addMonthTask(newTask);
+    }
   };
 
   // Edit task
@@ -137,10 +144,18 @@ const MonthTaskList = () => {
       <TodoList
         tasks={monthTasks}
         onEditTask={(taskID: string, task: ITask) => {
-          mutateMonthTaskEdit({ taskID, task });
+          if (session?.user != null) {
+            mutateMonthTaskEdit({ taskID, task });
+          } else {
+            editMonthTask(taskID, task);
+          }
         }}
         onDeleteTask={(taskID: string) => {
-          mutateMonthTaskDelete(taskID);
+          if (session?.user != null) {
+            mutateMonthTaskDelete(taskID);
+          } else {
+            deleteMonthTask(taskID);
+          }
         }}
         containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
       />

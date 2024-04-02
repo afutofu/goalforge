@@ -97,6 +97,7 @@ const Home = () => {
         .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`)
         .then((res) => res.data),
     retry: false,
+    enabled: fetchUserToken?.token !== undefined,
   });
 
   useEffect(() => {
@@ -115,6 +116,7 @@ const Home = () => {
           .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
           .then((res) => res.data),
       retry: false,
+      enabled: fetchUserToken?.token !== undefined,
     });
 
   useEffect(() => {
