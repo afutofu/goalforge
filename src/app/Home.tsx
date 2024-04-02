@@ -82,6 +82,7 @@ const Home = () => {
         // eslint-disable-next-line prettier/prettier
         .post<{token:string}>(`${process.env.NEXT_PUBLIC_API_URL}${authEndpoint.oauthSignin}`, {email:session?.user?.email, name:session?.user?.name, sign_in_type: 'google'})
         .then((res) => res.data),
+    retry: false,
   });
 
   useEffect(() => {
@@ -99,6 +100,7 @@ const Home = () => {
         // eslint-disable-next-line prettier/prettier
         .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`)
         .then((res) => res.data),
+    retry: false,
   });
 
   useEffect(() => {
@@ -116,6 +118,7 @@ const Home = () => {
           // eslint-disable-next-line prettier/prettier
           .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
           .then((res) => res.data),
+      retry: false,
     });
 
   useEffect(() => {
