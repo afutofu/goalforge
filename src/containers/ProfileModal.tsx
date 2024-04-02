@@ -85,9 +85,13 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
             <Button
               onClick={async (e) => {
                 e.currentTarget.disabled = true;
-                void signOut().catch(() => {
-                  e.currentTarget.disabled = false;
-                });
+                void signOut()
+                  .then(() => {
+                    localStorage.removeItem('userToken');
+                  })
+                  .catch(() => {
+                    e.currentTarget.disabled = false;
+                  });
               }}
             >
               Sign out
