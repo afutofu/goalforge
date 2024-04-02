@@ -15,7 +15,7 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
   const activityLogsToday = useMemo(() => {
     const logsToday = [];
     for (let i = 0; i < activityLogs.length; i++) {
-      if (today.day() !== dayjs(activityLogs[i].createdAt).day()) {
+      if (today.day() !== dayjs(activityLogs[i].CreatedAt).day()) {
         break;
       }
       logsToday.push(activityLogs[i]);
@@ -42,9 +42,9 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
 
     return activityLogsToday.map((log) => {
       let newHour = false;
-      if (dayjs(log.createdAt).hour() !== latestHour) {
+      if (dayjs(log.CreatedAt).hour() !== latestHour) {
         newHour = true;
-        latestHour = dayjs(log.createdAt).hour();
+        latestHour = dayjs(log.CreatedAt).hour();
       }
 
       const header = (
@@ -69,7 +69,7 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
       first = false;
 
       return (
-        <div key={log.id}>
+        <div key={log.ActivityLogID}>
           {headerWithSpacing}
           <LogItem log={log} />
         </div>
