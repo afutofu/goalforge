@@ -62,8 +62,6 @@ const Home = () => {
 
   const { data: session } = useSession();
 
-  // console.log(session);
-
   const { setTasks } = useTaskStore();
 
   const profileImgSrc: string = useMemo(() => {
@@ -75,21 +73,18 @@ const Home = () => {
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
-  const { data: fetchUserToken, isSuccess: isFetchTokenSuccess } = useQuery<{token: string}>({
+  const { data: fetchUserToken } = useQuery<{token: string}>({
     queryKey: ['userToken', session],
     queryFn: async () =>
       await api
         // eslint-disable-next-line prettier/prettier
         .post<{token:string}>(`${process.env.NEXT_PUBLIC_API_URL}${authEndpoint.oauthSignin}`, {email:session?.user?.email, name:session?.user?.name, sign_in_type: 'google'})
-        .then((res) => res.data),
+        .then((res) => {
+          localStorage.setItem('userToken', res.data.token);
+          return res.data;
+        }),
     retry: false,
   });
-
-  useEffect(() => {
-    if (isFetchTokenSuccess && fetchUserToken != null) {
-      localStorage.setItem('userToken', fetchUserToken.token);
-    }
-  }, [isFetchTokenSuccess]);
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
@@ -98,7 +93,7 @@ const Home = () => {
     queryFn: async () =>
       await api
         // eslint-disable-next-line prettier/prettier
-        .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`)
+        .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`, { headers: {'Content-Type': 'application/json', 'x-auth-token': fetchUserToken?.token}})
         .then((res) => res.data),
     retry: false,
   });
@@ -116,7 +111,7 @@ const Home = () => {
       queryFn: async () =>
         await api
           // eslint-disable-next-line prettier/prettier
-          .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
+          .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`, { headers: {'Content-Type': 'application/json', 'x-auth-token': fetchUserToken?.token}})
           .then((res) => res.data),
       retry: false,
     });
