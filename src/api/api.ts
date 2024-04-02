@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const api = axios.create({
+const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -11,3 +11,11 @@ export const api = axios.create({
         : '',
   },
 });
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('userToken');
+  config.headers['x-auth-token'] = token;
+  return config;
+});
+
+export { api };

@@ -79,21 +79,22 @@ const Home = () => {
       await api
         // eslint-disable-next-line prettier/prettier
         .post<{token:string}>(`${process.env.NEXT_PUBLIC_API_URL}${authEndpoint.oauthSignin}`, {email:session?.user?.email, name:session?.user?.name, sign_in_type: 'google'})
-        .then((res) => {
-          localStorage.setItem('userToken', res.data.token);
-          return res.data;
-        }),
+        .then((res) => res.data),
     retry: false,
   });
+
+  useEffect(() => {
+    localStorage.setItem('userToken', fetchUserToken?.token ?? '');
+  }, [fetchUserToken?.token]);
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
   const { data: allTasksQuery, isSuccess: isFetchTasksSucess } = useQuery<ITask[]>({
-    queryKey: ['tasks', fetchUserToken],
+    queryKey: ['tasks', fetchUserToken?.token],
     queryFn: async () =>
       await api
         // eslint-disable-next-line prettier/prettier
-        .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`, { headers: {'Content-Type': 'application/json', 'x-auth-token': fetchUserToken?.token}})
+        .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`)
         .then((res) => res.data),
     retry: false,
   });
@@ -107,11 +108,11 @@ const Home = () => {
   // Fetch and initialize acitivity log from the API
   const { data: allActivityLogsQuery, isSuccess: isFetchActivityLogsSuccess } =
     useQuery<IActivityLog[]>({
-      queryKey: ['activity-logs', fetchUserToken],
+      queryKey: ['activity-logs', fetchUserToken?.token],
       queryFn: async () =>
         await api
           // eslint-disable-next-line prettier/prettier
-          .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`, { headers: {'Content-Type': 'application/json', 'x-auth-token': fetchUserToken?.token}})
+          .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
           .then((res) => res.data),
       retry: false,
     });
