@@ -24,10 +24,7 @@ const YearTaskList = () => {
   // Add task
   const { mutate: mutateYearTaskAdd } = useMutation({
     mutationFn: async (newTask) => {
-      return await api.post(
-        `${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.addTask}`,
-        newTask,
-      );
+      return await api.post(`${taskEndpoint.addTask}`, newTask);
     },
     onMutate: async (newTask: ITask) => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
@@ -72,11 +69,7 @@ const YearTaskList = () => {
   // Edit task
   const { mutate: mutateYearTaskEdit } = useMutation({
     mutationFn: async ({ taskID, task }: IEditTaskMutation) => {
-      const URL =
-        `${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.editTask}`.replace(
-          ':taskID',
-          taskID,
-        );
+      const URL = `${taskEndpoint.editTask}`.replace(':taskID', taskID);
       return await api.put(URL, task);
     },
     onMutate: async ({ taskID, task }: IEditTaskMutation) => {
@@ -108,11 +101,7 @@ const YearTaskList = () => {
   // Delete task
   const { mutate: mutateYearTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
-      const URL =
-        `${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.deleteTask}`.replace(
-          ':taskID',
-          taskID,
-        );
+      const URL = `${taskEndpoint.deleteTask}`.replace(':taskID', taskID);
       return await api.delete(URL);
     },
     onMutate: async (taskID: string) => {

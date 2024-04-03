@@ -45,10 +45,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
   // Add activity log
   const { mutate: mutateActivityLogAdd } = useMutation({
     mutationFn: async (newTask) => {
-      return await api.post(
-        `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.addLog}`,
-        newTask,
-      );
+      return await api.post(`${activityLogEndpoint.addLog}`, newTask);
     },
     onMutate: async (newTask: IActivityLog) => {
       await queryClient.cancelQueries({ queryKey: ['activity-logs'] });

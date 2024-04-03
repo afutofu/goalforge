@@ -78,7 +78,7 @@ const Home = () => {
     queryFn: async () =>
       await api
         // eslint-disable-next-line prettier/prettier
-        .post<{token:string}>(`${process.env.NEXT_PUBLIC_API_URL}${authEndpoint.oauthSignin}`, {email:session?.user?.email, name:session?.user?.name, sign_in_type: 'google'})
+        .post<{token:string}>(`${authEndpoint.oauthSignin}`, {email:session?.user?.email, name:session?.user?.name, sign_in_type: 'google'})
         .then((res) => res.data),
     retry: false,
   });
@@ -94,7 +94,7 @@ const Home = () => {
     queryFn: async () =>
       await api
         // eslint-disable-next-line prettier/prettier
-        .get<ITask[]>(`${process.env.NEXT_PUBLIC_API_URL}${taskEndpoint.getAll}`)
+        .get<ITask[]>(`${taskEndpoint.getAll}`)
         .then((res) => res.data),
     retry: false,
     enabled: fetchUserToken?.token !== undefined,
@@ -113,7 +113,7 @@ const Home = () => {
       queryFn: async () =>
         await api
           // eslint-disable-next-line prettier/prettier
-          .get<IActivityLog[]>(`${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
+          .get<IActivityLog[]>(`${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
           .then((res) => res.data),
       retry: false,
       enabled: fetchUserToken?.token !== undefined,
@@ -126,7 +126,7 @@ const Home = () => {
   }, [isFetchActivityLogsSuccess]);
 
   return (
-    <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white">
+    <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white xl:px-18 2xl:px-36">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
 
       {openPreferencesModal && (

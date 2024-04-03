@@ -40,11 +40,10 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
       activityLogID,
       activityLog,
     }: IEditActivityLogMutation) => {
-      const URL =
-        `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.editActivityLog}`.replace(
-          ':activityLogID',
-          activityLogID,
-        );
+      const URL = `${activityLogEndpoint.editActivityLog}`.replace(
+        ':activityLogID',
+        activityLogID,
+      );
       return await api.put(URL, activityLog);
     },
     onMutate: async ({
@@ -76,11 +75,10 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
   // Delete activityLog
   const { mutate: mutateActivityLogDelete } = useMutation({
     mutationFn: async (activityLogID) => {
-      const URL =
-        `${process.env.NEXT_PUBLIC_API_URL}${activityLogEndpoint.deleteActivityLog}`.replace(
-          ':activityLogID',
-          activityLogID,
-        );
+      const URL = `${activityLogEndpoint.deleteActivityLog}`.replace(
+        ':activityLogID',
+        activityLogID,
+      );
       return await api.delete(URL);
     },
     onMutate: async (activityLogID: string) => {
