@@ -27,7 +27,7 @@ export const TodoList: FC<ITodoList> = ({
       {tasks.map((task, i) => {
         return (
           <TodoItem
-            key={task.id}
+            key={task.TaskID}
             task={task}
             onEditTask={onEditTask}
             onDeleteTask={onDeleteTask}
