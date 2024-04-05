@@ -18,6 +18,7 @@ Open source repository to develop GoalForge. A tool to assist in micro and macro
 - Task timer and graph to record time for each tasks
 - Associate tasks with each other (multiple tasks can be under the same category)
 - Theme selection (Beige, Dark)
+- Separate UI for trickle down tasks
 
 ## Getting Started
 
