@@ -210,17 +210,17 @@ const Home = () => {
 
       {/* Right / Macro Section */}
       <Section className="!grid grid-rows-3 grid-cols-1 gap-y-4 z-20">
-        <div className="">
+        <div className="relative h-full overflow-hidden">
           <Header>{`Year Tasks - ${date.format('YYYY')}`}</Header>
           <YearTaskList />
         </div>
 
-        <div className="">
+        <div className="relative h-full overflow-hidden">
           <Header>{`Month Tasks - ${date.format('MMMM')}`}</Header>
           <MonthTaskList />
         </div>
 
-        <div className="">
+        <div className="relative h-full overflow-hidden">
           <Header>
             {`Week Tasks - Week ${Math.ceil((date.date() / date.daysInMonth()) * 4)}`}
           </Header>

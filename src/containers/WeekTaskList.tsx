@@ -127,7 +127,7 @@ const WeekTaskList = () => {
   });
 
   return (
-    <div>
+    <div className="relative h-full">
       <AddTaskInput onAddTaskName={onAddTask}>+ Add Week Task</AddTaskInput>
       <Separator />
       <TodoList

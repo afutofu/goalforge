@@ -127,7 +127,7 @@ const MonthTaskList = () => {
   });
 
   return (
-    <div>
+    <div className="relative h-full">
       <AddTaskInput onAddTaskName={onAddTask}>+ Add Month Task</AddTaskInput>
       <Separator />
       <TodoList
