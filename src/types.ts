@@ -17,3 +17,9 @@ export interface IPreferences {
   shortBreakLength: Date;
   longBreakLength: Date;
 }
+
+export interface IUser {
+  Name: string;
+  Email: string;
+  Image: string;
+}

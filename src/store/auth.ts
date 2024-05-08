@@ -1,13 +1,10 @@
+import { type IUser } from '@/types';
 import { create } from 'zustand';
 
 interface IAuthStore {
   isAuth: boolean;
-  user: {
-    name: string,
-    email: string,
-    image: string,
-  } | null;
-  setUser: (user: { name: string, email: string, image: string }) => void;
+  user: IUser | null;
+  setUser: (user: IUser) => void;
   setAuth: (isAuth: boolean) => void;
 }
 

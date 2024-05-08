@@ -1,15 +1,22 @@
 // import dayjs from 'dayjs';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import React, { type FC } from 'react';
 // import { useForm, type SubmitHandler } from 'react-hook-form';
 
 // import { usePreferencesStore } from '@/store/preferences';
 // import { type IPreferences } from '@/types';
 
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/Button';
 import { Header } from '@/components/Header';
 import { Modal } from '@/components/Modal';
 import GoogleButton from 'react-google-button';
+import { api } from '@/api/api';
+import { authEndpoint } from '@/api/endpoints';
+import {
+  type IAxiosResponse,
+  type IOAuthSigninResponse,
+} from '@/api/responseTypes';
 
 interface IProfileModal {
   onClose: () => void;
@@ -30,6 +37,8 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
   // };
 
   const { data: session } = useSession();
+
+  const router = useRouter();
 
   console.log(session);
 
@@ -52,9 +61,20 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
               className="!w-full"
               onClick={async (e) => {
                 e.currentTarget.style.pointerEvents = 'none';
-                void signIn('google').catch(() => {
-                  e.currentTarget.style.pointerEvents = 'auto';
-                });
+                await api
+                  .get(authEndpoint.login_google)
+                  .then((res: IAxiosResponse<IOAuthSigninResponse>) => {
+                    console.log(res.data.auth_url);
+                    console.log(e);
+                    // e.currentTarget.style.pointerEvents = 'auto';
+                    router.push(res.data.auth_url);
+                  })
+                  .catch((err: any) => {
+                    console.log(err);
+                  });
+                // void signIn('google').catch(() => {
+                //   e.currentTarget.style.pointerEvents = 'auto';
+                // });
               }}
             />
             {/* <Button
