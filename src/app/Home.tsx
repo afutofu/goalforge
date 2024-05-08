@@ -90,22 +90,23 @@ const Home = () => {
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
-  const { data: fetchUser } = useQuery<{user: IUser}>({
-    queryKey: ['user', isAuth],
+  const { data: fetchedUser } = useQuery<IUser>({
+    queryKey: ['user'],
     queryFn: async () =>
       await api
         // eslint-disable-next-line prettier/prettier
-        .get<{user:IUser}>(`${authEndpoint.fetch_user}`,)
+        .get<IUser>(`${authEndpoint.fetch_user}`)
         .then((res) => res.data),
     retry: false,
   });
 
   useEffect(() => {
-    if (fetchUser?.user != null) {
-      setAuth(fetchUser?.user != null);
-      setUser(fetchUser?.user);
+    // console.log(fetchedUser);
+    if (fetchedUser != null) {
+      setAuth(fetchedUser != null);
+      setUser(fetchedUser);
     }
-  }, [fetchUser?.user, setAuth, setUser]);
+  }, [fetchedUser, setAuth, setUser]);
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier

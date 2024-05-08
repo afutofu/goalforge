@@ -25,5 +25,5 @@ export const activityLogEndpoint = {
 export const authEndpoint = {
   oauthSignin: '/api/v1/auth/oauth-signin',
   login_google: '/api/v1/auth/google',
-  fetch_user: '/api/v1/auth/user',
+  fetch_user: '/api/v1/auth/fetch-user',
 };
