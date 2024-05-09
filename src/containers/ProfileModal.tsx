@@ -1,5 +1,5 @@
 // import dayjs from 'dayjs';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import React, { type FC } from 'react';
 // import { useForm, type SubmitHandler } from 'react-hook-form';
 
@@ -17,6 +17,7 @@ import {
   type IAxiosResponse,
   type IOAuthSigninResponse,
 } from '@/api/responseTypes';
+import { useAuthStore } from '@/store/auth';
 
 interface IProfileModal {
   onClose: () => void;
@@ -36,11 +37,10 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
   //   onClose();
   // };
 
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
+  const { isAuth, user } = useAuthStore();
   const router = useRouter();
-
-  console.log(session);
 
   return (
     <Modal onClose={onClose}>
@@ -55,7 +55,7 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
         </Header>
 
         {/* Sign In / Register */}
-        {session == null && (
+        {!isAuth && (
           <>
             <GoogleButton
               className="!w-full"
@@ -64,8 +64,8 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
                 await api
                   .get(authEndpoint.login_google)
                   .then((res: IAxiosResponse<IOAuthSigninResponse>) => {
-                    console.log(res.data.auth_url);
-                    console.log(e);
+                    // console.log(res.data.auth_url);
+                    // console.log(e);
                     // e.currentTarget.style.pointerEvents = 'auto';
                     router.push(res.data.auth_url);
                   })
@@ -95,13 +95,13 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
         {/* Login with email and password later */}
 
         {/* Sign Out */}
-        {session?.user != null && (
+        {isAuth && user !== null && (
           <>
             <p className="font-bold mb-3">Logged in as</p>
             <p>Name:</p>
-            <p className="mb-3">{session.user.name}</p>
+            <p className="mb-3">{user.Name}</p>
             <p>Email:</p>
-            <p className="mb-5">{session.user.email}</p>
+            <p className="mb-5">{user.Email}</p>
             <Button
               onClick={async (e) => {
                 e.currentTarget.disabled = true;
