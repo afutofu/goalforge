@@ -7,7 +7,7 @@ export interface IAxiosResponse<T> {
 export interface IAxiosError {
   response: {
     data: {
-      message: string,
+      error: string,
     },
   };
 }

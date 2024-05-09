@@ -31,6 +31,7 @@ import { useTaskStore } from '@/store/task';
 import utc from 'dayjs/plugin/utc';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'next/navigation';
+import { type IAxiosError } from '@/api/responseTypes';
 
 dayjs.extend(utc);
 
@@ -81,8 +82,8 @@ const Home = () => {
   const { setTasks } = useTaskStore();
 
   const profileImgSrc: string = useMemo(() => {
-    console.log(user);
-    if (user != null) {
+    // console.log(user);
+    if (user?.Image != null) {
       return user.Image + '';
     }
     return '/icons/profile.svg';
@@ -110,41 +111,59 @@ const Home = () => {
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
-  const { data: allTasksQuery, isSuccess: isFetchTasksSucess } = useQuery<ITask[]>({
+  const { data: allTasksQuery, isSuccess: isFetchTasksSucess, error: isFetchTasksError } = useQuery<ITask[]>({
     queryKey: ['tasks', isAuth],
     queryFn: async () =>
       await api
-        // eslint-disable-next-line prettier/prettier
         .get<ITask[]>(`${taskEndpoint.getAll}`)
-        .then((res) => res.data),
+        .then((res) => res.data)
+        .catch((err: IAxiosError) => {
+          console.log(err);
+          throw new Error(err.response.data.error);
+        }),
     retry: false,
     enabled: isAuth !== undefined,
   });
 
   useEffect(() => {
+    if (isFetchTasksError !== null) {
+      setTasks([]);
+    }
+
     if (isFetchTasksSucess && allTasksQuery != null) {
       setTasks(allTasksQuery);
     }
-  }, [isFetchTasksSucess]);
+  }, [isFetchTasksSucess, isFetchTasksError]);
 
   // Fetch and initialize acitivity log from the API
-  const { data: allActivityLogsQuery, isSuccess: isFetchActivityLogsSuccess } =
-    useQuery<IActivityLog[]>({
-      queryKey: ['activity-logs', isAuth],
-      queryFn: async () =>
-        await api
-          // eslint-disable-next-line prettier/prettier
-          .get<IActivityLog[]>(`${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
-          .then((res) => res.data),
-      retry: false,
-      enabled: isAuth !== undefined,
-    });
+  const {
+    data: allActivityLogsQuery,
+    isSuccess: isFetchActivityLogsSuccess,
+    error: isFetchActivityLogsError,
+  } = useQuery<IActivityLog[]>({
+    queryKey: ['activity-logs', isAuth],
+    queryFn: async () =>
+      await api
+        .get<IActivityLog[]>(
+          `${activityLogEndpoint.getDay}?date=${date.utc().format()}`,
+        )
+        .then((res) => res.data)
+        .catch((err: IAxiosError) => {
+          throw new Error(err.response.data.error);
+        }),
+    retry: false,
+    enabled: isAuth !== undefined,
+  });
 
   useEffect(() => {
+    if (isFetchTasksError !== null) {
+      setActivityLogs([]);
+    }
+
     if (isFetchActivityLogsSuccess && allActivityLogsQuery != null) {
       setActivityLogs(allActivityLogsQuery);
     }
-  }, [isFetchActivityLogsSuccess]);
+  }, [isFetchActivityLogsSuccess, isFetchActivityLogsError]);
 
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white xl:px-18 2xl:px-36">
