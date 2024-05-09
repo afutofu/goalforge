@@ -74,7 +74,7 @@ const Home = () => {
         router.replace('/');
       }
     }
-  }, []);
+  });
 
   const { setTasks } = useTaskStore();
 
