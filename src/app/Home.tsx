@@ -2,6 +2,7 @@
 
 import React, { useState, type FC, useMemo, useEffect } from 'react';
 import dayjs from '../../dayjs-config';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import { Header } from '@/components/Header';
@@ -29,7 +30,7 @@ import { api } from '@/api/api';
 import { useTaskStore } from '@/store/task';
 import utc from 'dayjs/plugin/utc';
 import { useAuthStore } from '@/store/auth';
-import { useRouter } from 'next/navigation';
+
 import { type IAxiosError } from '@/api/responseTypes';
 
 dayjs.extend(utc);
@@ -63,18 +64,22 @@ const Home = () => {
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const { isAuth, user, setAuth, setUser } = useAuthStore();
 
   useEffect(() => {
-    if (localStorage.getItem('userToken') == null) {
-      const query = new URLSearchParams(window.location.search);
-      const token = query.get('jwt');
+    if (
+      localStorage.getItem('userToken') == null ||
+      localStorage.getItem('userToken') === ''
+    ) {
+      const token = searchParams.get('jwt');
       if (token != null) {
         localStorage.setItem('userToken', token);
         router.replace('/');
       }
     }
-  });
+  }, [router, searchParams]);
 
   const { setTasks } = useTaskStore();
 
