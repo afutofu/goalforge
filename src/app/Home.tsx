@@ -13,7 +13,6 @@ import { useActivityLogStore } from '@/store/activityLog';
 import { ActivityLogList } from '@/containers/ActivityLogList';
 import { PreferencesModal } from '@/containers/PreferencesModal';
 import { ProfileModal } from '@/containers/ProfileModal';
-import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import DayTaskList from '@/containers/DayTaskList';
 import MonthTaskList from '@/containers/MonthTaskList';
@@ -63,8 +62,6 @@ const Home = () => {
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
-  const { data: session } = useSession();
-
   const router = useRouter();
   const { isAuth, user, setAuth, setUser } = useAuthStore();
 
@@ -91,7 +88,7 @@ const Home = () => {
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
-  const { data: fetchedUser } = useQuery<IUser>({
+  const { data: fetchUserQuery } = useQuery<IUser>({
     queryKey: ['user'],
     queryFn: async () =>
       await api
@@ -102,12 +99,12 @@ const Home = () => {
   });
 
   useEffect(() => {
-    // console.log(fetchedUser);
-    if (fetchedUser != null) {
-      setAuth(fetchedUser != null);
-      setUser(fetchedUser);
+    // console.log(fetchUserQuery);
+    if (fetchUserQuery != null) {
+      setAuth(fetchUserQuery != null);
+      setUser(fetchUserQuery);
     }
-  }, [fetchedUser, setAuth, setUser]);
+  }, [fetchUserQuery, setAuth, setUser]);
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
@@ -163,7 +160,7 @@ const Home = () => {
     if (isFetchActivityLogsSuccess && allActivityLogsQuery != null) {
       setActivityLogs(allActivityLogsQuery);
     }
-  }, [isFetchActivityLogsSuccess, isFetchActivityLogsError]);
+  }, [isFetchActivityLogsSuccess, isFetchActivityLogsError, isFetchTasksError]);
 
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white xl:px-18 2xl:px-36">
@@ -216,7 +213,7 @@ const Home = () => {
               </button>
               <button
                 className={clsx(ICON_BUTTON_CLASSNAMES, {
-                  '!p-0 overflow-hidden': session != null,
+                  '!p-0 overflow-hidden': isAuth,
                 })}
                 onClick={() => {
                   setOpenProfileModal(true);

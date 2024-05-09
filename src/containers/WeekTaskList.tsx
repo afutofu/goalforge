@@ -11,7 +11,7 @@ import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { type IEditTaskMutation } from '@/api/responseTypes';
-import { useSession } from 'next-auth/react';
+import { useAuthStore } from '@/store/auth';
 
 const WeekTaskList = () => {
   const { weekTasks, setTasks, addWeekTask, editWeekTask, deleteWeekTask } =
@@ -19,7 +19,7 @@ const WeekTaskList = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: session } = useSession();
+  const { isAuth } = useAuthStore();
 
   // Add task
   const { mutate: mutateWeekTaskAdd } = useMutation({
@@ -59,7 +59,7 @@ const WeekTaskList = () => {
       CreatedAt: dayjs().toDate(),
     };
 
-    if (session?.user != null) {
+    if (isAuth) {
       mutateWeekTaskAdd(newTask);
     } else {
       addWeekTask(newTask);
@@ -133,14 +133,14 @@ const WeekTaskList = () => {
       <TodoList
         tasks={weekTasks}
         onEditTask={(taskID: string, task: ITask) => {
-          if (session?.user != null) {
+          if (isAuth) {
             mutateWeekTaskEdit({ taskID, task });
           } else {
             editWeekTask(taskID, task);
           }
         }}
         onDeleteTask={(taskID: string) => {
-          if (session?.user != null) {
+          if (isAuth) {
             mutateWeekTaskDelete(taskID);
           } else {
             deleteWeekTask(taskID);

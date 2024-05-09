@@ -8,7 +8,7 @@ import React, { type FC, useRef, useState, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 
 import { v4 as uuidv4 } from 'uuid';
-import { useSession } from 'next-auth/react';
+import { useAuthStore } from '@/store/auth';
 
 interface IHourActivityLogger {
   date: Dayjs;
@@ -23,7 +23,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
   const timer = useRef<Dayjs>(dayjs());
   const [time, setTime] = useState<string>(timer.current.format('hh:mm A'));
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
+  const { isAuth } = useAuthStore();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -81,7 +81,7 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
       CreatedAt: dayjs().utc().format(),
     };
 
-    if (session?.user != null) {
+    if (isAuth) {
       mutateActivityLogAdd(newActivityLog);
     } else {
       addActivityLog(newActivityLog);

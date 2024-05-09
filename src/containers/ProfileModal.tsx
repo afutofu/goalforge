@@ -36,8 +36,6 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
   //   onClose();
   // };
 
-  // const { data: session } = useSession();
-
   const { isAuth, user, logout } = useAuthStore();
   const router = useRouter();
 
