@@ -1,5 +1,4 @@
 // import dayjs from 'dayjs';
-import { signOut } from 'next-auth/react';
 import React, { type FC } from 'react';
 // import { useForm, type SubmitHandler } from 'react-hook-form';
 
@@ -39,7 +38,7 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
 
   // const { data: session } = useSession();
 
-  const { isAuth, user } = useAuthStore();
+  const { isAuth, user, logout } = useAuthStore();
   const router = useRouter();
 
   return (
@@ -105,9 +104,12 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
             <Button
               onClick={async (e) => {
                 e.currentTarget.disabled = true;
-                void signOut()
+                void api
+                  .post(authEndpoint.logout)
                   .then(() => {
                     localStorage.removeItem('userToken');
+                    logout();
+                    onClose();
                   })
                   .catch(() => {
                     e.currentTarget.disabled = false;

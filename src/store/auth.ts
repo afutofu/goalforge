@@ -6,6 +6,7 @@ interface IAuthStore {
   user: IUser | null;
   setUser: (user: IUser) => void;
   setAuth: (isAuth: boolean) => void;
+  logout: () => void;
 }
 
 export const useAuthStore = create<IAuthStore>((set, get) => ({
@@ -16,5 +17,8 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
   },
   setAuth: (isAuth) => {
     set({ isAuth });
+  },
+  logout: () => {
+    set({ isAuth: false, user: null });
   },
 }));
