@@ -10,7 +10,7 @@ import { api } from '@/api/api';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { type IEditTaskMutation } from '@/api/responseTypes';
-import { useSession } from 'next-auth/react';
+import { useAuthStore } from '@/store/auth';
 
 const DayTaskList = () => {
   const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
@@ -18,7 +18,7 @@ const DayTaskList = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: session } = useSession();
+  const { isAuth } = useAuthStore();
 
   // Add task
   const { mutate: mutateDayTaskAdd } = useMutation({
@@ -58,7 +58,7 @@ const DayTaskList = () => {
       CreatedAt: dayjs().toDate(),
     };
 
-    if (session?.user != null) {
+    if (isAuth) {
       mutateDayTaskAdd(newTask);
     } else {
       addDayTask(newTask);
@@ -132,14 +132,14 @@ const DayTaskList = () => {
       <TodoList
         tasks={dayTasks}
         onEditTask={(taskID: string, task: ITask) => {
-          if (session?.user != null) {
+          if (isAuth) {
             mutateDayTaskEdit({ taskID, task });
           } else {
             editDayTask(taskID, task);
           }
         }}
         onDeleteTask={(taskID: string) => {
-          if (session?.user != null) {
+          if (isAuth) {
             mutateDayTaskDelete(taskID);
           } else {
             deleteDayTask(taskID);

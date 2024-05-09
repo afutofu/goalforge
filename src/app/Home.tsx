@@ -13,14 +13,13 @@ import { useActivityLogStore } from '@/store/activityLog';
 import { ActivityLogList } from '@/containers/ActivityLogList';
 import { PreferencesModal } from '@/containers/PreferencesModal';
 import { ProfileModal } from '@/containers/ProfileModal';
-import { useSession } from 'next-auth/react';
 import clsx from 'clsx';
 import DayTaskList from '@/containers/DayTaskList';
 import MonthTaskList from '@/containers/MonthTaskList';
 import WeekTaskList from '@/containers/WeekTaskList';
 import YearTaskList from '@/containers/YearTaskList';
 import { useQuery } from '@tanstack/react-query';
-import { type IActivityLog, type ITask } from '@/types';
+import { type IUser, type IActivityLog, type ITask } from '@/types';
 import {
   taskEndpoint,
   activityLogEndpoint,
@@ -29,6 +28,9 @@ import {
 import { api } from '@/api/api';
 import { useTaskStore } from '@/store/task';
 import utc from 'dayjs/plugin/utc';
+import { useAuthStore } from '@/store/auth';
+import { useRouter } from 'next/navigation';
+import { type IAxiosError } from '@/api/responseTypes';
 
 dayjs.extend(utc);
 
@@ -60,70 +62,105 @@ const Home = () => {
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
-  const { data: session } = useSession();
+  const router = useRouter();
+  const { isAuth, user, setAuth, setUser } = useAuthStore();
+
+  useEffect(() => {
+    if (localStorage.getItem('userToken') == null) {
+      const query = new URLSearchParams(window.location.search);
+      const token = query.get('jwt');
+      if (token != null) {
+        localStorage.setItem('userToken', token);
+        router.replace('/');
+      }
+    }
+  }, []);
 
   const { setTasks } = useTaskStore();
 
   const profileImgSrc: string = useMemo(() => {
-    if (session?.user != null) {
-      return session.user.image + '';
+    // console.log(user);
+    if (user?.Image != null) {
+      return user.Image + '';
     }
     return '/icons/profile.svg';
-  }, [session]);
+  }, [isAuth, user]);
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
-  const { data: fetchUserToken } = useQuery<{token: string}>({
-    queryKey: ['userToken', session],
+  const { data: fetchUserQuery } = useQuery<IUser>({
+    queryKey: ['user'],
     queryFn: async () =>
       await api
         // eslint-disable-next-line prettier/prettier
-        .post<{token:string}>(`${authEndpoint.oauthSignin}`, {email:session?.user?.email, name:session?.user?.name, sign_in_type: 'google'})
+        .get<IUser>(`${authEndpoint.fetch_user}`)
         .then((res) => res.data),
     retry: false,
   });
 
   useEffect(() => {
-    localStorage.setItem('userToken', fetchUserToken?.token ?? '');
-  }, [fetchUserToken?.token]);
+    // console.log(fetchUserQuery);
+    if (fetchUserQuery != null) {
+      setAuth(fetchUserQuery != null);
+      setUser(fetchUserQuery);
+    }
+  }, [fetchUserQuery, setAuth, setUser]);
 
   // Fetch and initialize task data from the API
   // eslint-disable-next-line prettier/prettier
-  const { data: allTasksQuery, isSuccess: isFetchTasksSucess } = useQuery<ITask[]>({
-    queryKey: ['tasks', fetchUserToken?.token],
+  const { data: allTasksQuery, isSuccess: isFetchTasksSucess, error: isFetchTasksError } = useQuery<ITask[]>({
+    queryKey: ['tasks', isAuth],
     queryFn: async () =>
       await api
-        // eslint-disable-next-line prettier/prettier
         .get<ITask[]>(`${taskEndpoint.getAll}`)
-        .then((res) => res.data),
+        .then((res) => res.data)
+        .catch((err: IAxiosError) => {
+          console.log(err);
+          throw new Error(err.response.data.error);
+        }),
     retry: false,
-    enabled: fetchUserToken?.token !== undefined,
+    enabled: isAuth !== undefined,
   });
 
   useEffect(() => {
+    if (isFetchTasksError !== null) {
+      setTasks([]);
+    }
+
     if (isFetchTasksSucess && allTasksQuery != null) {
       setTasks(allTasksQuery);
     }
-  }, [isFetchTasksSucess]);
+  }, [isFetchTasksSucess, isFetchTasksError]);
 
   // Fetch and initialize acitivity log from the API
-  const { data: allActivityLogsQuery, isSuccess: isFetchActivityLogsSuccess } =
-    useQuery<IActivityLog[]>({
-      queryKey: ['activity-logs', fetchUserToken?.token],
-      queryFn: async () =>
-        await api
-          // eslint-disable-next-line prettier/prettier
-          .get<IActivityLog[]>(`${activityLogEndpoint.getDay}?date=${date.utc().format()}`)
-          .then((res) => res.data),
-      retry: false,
-      enabled: fetchUserToken?.token !== undefined,
-    });
+  const {
+    data: allActivityLogsQuery,
+    isSuccess: isFetchActivityLogsSuccess,
+    error: isFetchActivityLogsError,
+  } = useQuery<IActivityLog[]>({
+    queryKey: ['activity-logs', isAuth],
+    queryFn: async () =>
+      await api
+        .get<IActivityLog[]>(
+          `${activityLogEndpoint.getDay}?date=${date.utc().format()}`,
+        )
+        .then((res) => res.data)
+        .catch((err: IAxiosError) => {
+          throw new Error(err.response.data.error);
+        }),
+    retry: false,
+    enabled: isAuth !== undefined,
+  });
 
   useEffect(() => {
+    if (isFetchTasksError !== null) {
+      setActivityLogs([]);
+    }
+
     if (isFetchActivityLogsSuccess && allActivityLogsQuery != null) {
       setActivityLogs(allActivityLogsQuery);
     }
-  }, [isFetchActivityLogsSuccess]);
+  }, [isFetchActivityLogsSuccess, isFetchActivityLogsError, isFetchTasksError]);
 
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white xl:px-18 2xl:px-36">
@@ -176,7 +213,7 @@ const Home = () => {
               </button>
               <button
                 className={clsx(ICON_BUTTON_CLASSNAMES, {
-                  '!p-0 overflow-hidden': session != null,
+                  '!p-0 overflow-hidden': isAuth,
                 })}
                 onClick={() => {
                   setOpenProfileModal(true);

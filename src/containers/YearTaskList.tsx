@@ -11,7 +11,7 @@ import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { type IEditTaskMutation } from '@/api/responseTypes';
-import { useSession } from 'next-auth/react';
+import { useAuthStore } from '@/store/auth';
 
 const YearTaskList = () => {
   const { yearTasks, setTasks, addYearTask, editYearTask, deleteYearTask } =
@@ -19,7 +19,7 @@ const YearTaskList = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: session } = useSession();
+  const { isAuth } = useAuthStore();
 
   // Add task
   const { mutate: mutateYearTaskAdd } = useMutation({
@@ -59,7 +59,7 @@ const YearTaskList = () => {
       CreatedAt: dayjs().toDate(),
     };
 
-    if (session?.user != null) {
+    if (isAuth) {
       mutateYearTaskAdd(newTask);
     } else {
       addYearTask(newTask);
@@ -135,14 +135,14 @@ const YearTaskList = () => {
       <TodoList
         tasks={yearTasks}
         onEditTask={(taskID: string, task: ITask) => {
-          if (session?.user != null) {
+          if (isAuth) {
             mutateYearTaskEdit({ taskID, task });
           } else {
             editYearTask(taskID, task);
           }
         }}
         onDeleteTask={(taskID: string) => {
-          if (session?.user != null) {
+          if (isAuth) {
             mutateYearTaskDelete(taskID);
           } else {
             deleteYearTask(taskID);

@@ -1,15 +1,22 @@
 // import dayjs from 'dayjs';
-import { signIn, signOut, useSession } from 'next-auth/react';
 import React, { type FC } from 'react';
 // import { useForm, type SubmitHandler } from 'react-hook-form';
 
 // import { usePreferencesStore } from '@/store/preferences';
 // import { type IPreferences } from '@/types';
 
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/Button';
 import { Header } from '@/components/Header';
 import { Modal } from '@/components/Modal';
 import GoogleButton from 'react-google-button';
+import { api } from '@/api/api';
+import { authEndpoint } from '@/api/endpoints';
+import {
+  type IAxiosResponse,
+  type IOAuthSigninResponse,
+} from '@/api/responseTypes';
+import { useAuthStore } from '@/store/auth';
 
 interface IProfileModal {
   onClose: () => void;
@@ -29,9 +36,8 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
   //   onClose();
   // };
 
-  const { data: session } = useSession();
-
-  console.log(session);
+  const { isAuth, user, logout } = useAuthStore();
+  const router = useRouter();
 
   return (
     <Modal onClose={onClose}>
@@ -46,15 +52,26 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
         </Header>
 
         {/* Sign In / Register */}
-        {session == null && (
+        {!isAuth && (
           <>
             <GoogleButton
               className="!w-full"
               onClick={async (e) => {
                 e.currentTarget.style.pointerEvents = 'none';
-                void signIn('google').catch(() => {
-                  e.currentTarget.style.pointerEvents = 'auto';
-                });
+                await api
+                  .get(authEndpoint.login_google)
+                  .then((res: IAxiosResponse<IOAuthSigninResponse>) => {
+                    // console.log(res.data.auth_url);
+                    // console.log(e);
+                    // e.currentTarget.style.pointerEvents = 'auto';
+                    router.push(res.data.auth_url);
+                  })
+                  .catch((err: any) => {
+                    console.log(err);
+                  });
+                // void signIn('google').catch(() => {
+                //   e.currentTarget.style.pointerEvents = 'auto';
+                // });
               }}
             />
             {/* <Button
@@ -75,19 +92,22 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
         {/* Login with email and password later */}
 
         {/* Sign Out */}
-        {session?.user != null && (
+        {isAuth && user !== null && (
           <>
             <p className="font-bold mb-3">Logged in as</p>
             <p>Name:</p>
-            <p className="mb-3">{session.user.name}</p>
+            <p className="mb-3">{user.Name}</p>
             <p>Email:</p>
-            <p className="mb-5">{session.user.email}</p>
+            <p className="mb-5">{user.Email}</p>
             <Button
               onClick={async (e) => {
                 e.currentTarget.disabled = true;
-                void signOut()
+                void api
+                  .post(authEndpoint.logout)
                   .then(() => {
                     localStorage.removeItem('userToken');
+                    logout();
+                    onClose();
                   })
                   .catch(() => {
                     e.currentTarget.disabled = false;
