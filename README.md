@@ -60,10 +60,10 @@ bun dev
 
 ## Built With
 
-- NextJS - Frontend framework
-- Tailwind - Styling
-- Zustand - Manage app state
-- React Query - Manage API calls
+- NextJS
+- Tailwind
+- Zustand
+- React Query
 
 ## Authors
 
