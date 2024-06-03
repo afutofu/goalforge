@@ -66,14 +66,14 @@ const Home = () => {
   const { isAuth, user, setAuth, setUser } = useAuthStore();
 
   useEffect(() => {
-    if (localStorage.getItem('userToken') == null) {
-      const query = new URLSearchParams(window.location.search);
-      const token = query.get('jwt');
-      if (token != null || token === '') {
-        localStorage.setItem('userToken', token);
-        router.replace('/');
-      }
+    // if (localStorage.getItem('userToken') == null) {
+    const query = new URLSearchParams(window.location.search);
+    const token = query.get('jwt');
+    if (token != null || token === '') {
+      localStorage.setItem('userToken', token);
+      router.replace('/');
     }
+    // }
   }, [router]);
 
   const { setTasks } = useTaskStore();
