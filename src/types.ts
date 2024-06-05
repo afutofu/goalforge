@@ -1,9 +1,9 @@
 export interface ITask {
-  TaskID: string;
-  Name: string;
-  Completed: boolean;
-  Period?: number;
-  CreatedAt: Date;
+  id: string;
+  text: string;
+  completed: boolean;
+  period?: number;
+  createdAt: Date;
 }
 
 export interface IActivityLog {
