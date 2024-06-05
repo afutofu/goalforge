@@ -44,29 +44,29 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
 
   // Add activity log
   const { mutate: mutateActivityLogAdd } = useMutation({
-    mutationFn: async (newTask) => {
-      return await api.post(`${activityLogEndpoint.addLog}`, newTask);
+    mutationFn: async (newActivityLog) => {
+      return await api.post(`${activityLogEndpoint.addLog}`, newActivityLog);
     },
-    onMutate: async (newTask: IActivityLog) => {
+    onMutate: async (newActivityLog: IActivityLog) => {
       await queryClient.cancelQueries({ queryKey: ['activity-logs'] });
 
       // Snapshot the previous value
-      const previousTasks: IActivityLog[] | undefined =
+      const previousActivityLogs: IActivityLog[] | undefined =
         queryClient.getQueryData(['activity-logs']);
 
-      // Optimistically delete the task from Zustand state
-      addActivityLog(newTask);
+      // Optimistically add the activity log to Zustand state
+      addActivityLog(newActivityLog);
 
       inputRef.current?.blur();
 
-      return { previousTasks };
+      return { previousActivityLogs };
     },
-    onError: (_error, _newTask, context) => {
+    onError: (_error, _newActivityLog, context) => {
       // Rollback the optimistic update
       inputRef.current?.focus();
 
-      if (context?.previousTasks != null) {
-        setActivityLogs(context.previousTasks);
+      if (context?.previousActivityLogs != null) {
+        setActivityLogs(context.previousActivityLogs);
       }
     },
     onSettled: () => {
