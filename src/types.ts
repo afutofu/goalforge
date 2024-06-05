@@ -19,7 +19,8 @@ export interface IPreferences {
 }
 
 export interface IUser {
-  Name: string;
-  Email: string;
-  Image: string;
+  id: string;
+  name: string;
+  email: string;
+  image: string;
 }

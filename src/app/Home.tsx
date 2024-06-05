@@ -80,8 +80,8 @@ const Home = () => {
 
   const profileImgSrc: string = useMemo(() => {
     // console.log(user);
-    if (user?.Image != null) {
-      return user.Image + '';
+    if (user?.image != null) {
+      return user.image + '';
     }
     return '/icons/profile.svg';
   }, [isAuth, user]);

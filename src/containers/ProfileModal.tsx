@@ -96,9 +96,9 @@ export const ProfileModal: FC<IProfileModal> = ({ onClose }) => {
           <>
             <p className="font-bold mb-3">Logged in as</p>
             <p>Name:</p>
-            <p className="mb-3">{user.Name}</p>
+            <p className="mb-3">{user.name}</p>
             <p>Email:</p>
-            <p className="mb-5">{user.Email}</p>
+            <p className="mb-5">{user.email}</p>
             <Button
               onClick={async (e) => {
                 e.currentTarget.disabled = true;
