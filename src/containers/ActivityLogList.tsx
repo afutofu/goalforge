@@ -12,6 +12,7 @@ interface IActivityLogList {
 export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
   const today = dayjs();
 
+  // Get all activity logs that were created today
   const activityLogsToday = useMemo(() => {
     const logsToday = [];
     for (let i = 0; i < activityLogs.length; i++) {
@@ -36,18 +37,22 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
     }
   };
 
-  const activityLogListWithHour = useMemo(() => {
+  const activityLogListWithHour: React.JSX.Element[] = useMemo(() => {
     let latestHour: number = -1;
     let first: boolean = true;
 
     return activityLogsToday.map((log) => {
       let newHour = false;
-      if (dayjs(log.createdAt).hour() !== latestHour) {
+      // dayjs localizes the time (in UTC) to the user's timezone
+      const logHour = dayjs(log.createdAt).hour();
+
+      // If the log was created in a different hour, display the hour header
+      if (logHour !== latestHour) {
         newHour = true;
-        latestHour = dayjs(log.createdAt).hour();
+        latestHour = logHour;
       }
 
-      const header = (
+      const hourHeader = (
         <Header className="!mb-2" titleClassName="!text-md !font-medium !mb-2">
           {timePM(latestHour)}
         </Header>
@@ -55,11 +60,11 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
 
       const headerWithSpacing = newHour ? (
         first ? (
-          header
+          hourHeader
         ) : (
           <>
             <Separator />
-            {header}
+            {hourHeader}
           </>
         )
       ) : (
