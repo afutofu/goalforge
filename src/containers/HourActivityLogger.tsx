@@ -76,9 +76,9 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     const newActivityLog: IActivityLog = {
-      ActivityLogID: uuidv4(),
-      Text: data.activityName,
-      CreatedAt: dayjs().utc().format(),
+      id: uuidv4(),
+      text: data.activityName,
+      createdAt: dayjs().utc().format(),
     };
 
     if (isAuth) {

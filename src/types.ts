@@ -7,9 +7,9 @@ export interface ITask {
 }
 
 export interface IActivityLog {
-  ActivityLogID: string;
-  Text: string;
-  CreatedAt: string;
+  id: string;
+  text: string;
+  createdAt: string;
 }
 
 export interface IPreferences {
