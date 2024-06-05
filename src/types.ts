@@ -1,15 +1,15 @@
 export interface ITask {
-  TaskID: string;
-  Name: string;
-  Completed: boolean;
-  Period?: number;
-  CreatedAt: Date;
+  id: string;
+  text: string;
+  completed: boolean;
+  period?: number;
+  createdAt: Date;
 }
 
 export interface IActivityLog {
-  ActivityLogID: string;
-  Text: string;
-  CreatedAt: string;
+  id: string;
+  text: string;
+  createdAt: string;
 }
 
 export interface IPreferences {
@@ -19,7 +19,8 @@ export interface IPreferences {
 }
 
 export interface IUser {
-  Name: string;
-  Email: string;
-  Image: string;
+  id: string;
+  name: string;
+  email: string;
+  image: string;
 }

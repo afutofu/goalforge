@@ -51,11 +51,11 @@ const DayTaskList = () => {
 
   const onAddTask = (taskName: string) => {
     const newTask: ITask = {
-      TaskID: uuidv4(),
-      Name: taskName,
-      Completed: false,
-      Period: 1,
-      CreatedAt: dayjs().toDate(),
+      id: uuidv4(),
+      text: taskName,
+      completed: false,
+      period: 1,
+      createdAt: dayjs().toDate(),
     };
 
     if (isAuth) {

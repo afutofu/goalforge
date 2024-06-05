@@ -52,11 +52,11 @@ const MonthTaskList = () => {
 
   const onAddTask = (taskName: string) => {
     const newTask: ITask = {
-      TaskID: uuidv4(),
-      Name: taskName,
-      Completed: false,
-      Period: 3,
-      CreatedAt: dayjs().toDate(),
+      id: uuidv4(),
+      text: taskName,
+      completed: false,
+      period: 3,
+      createdAt: dayjs().toDate(),
     };
 
     if (isAuth) {

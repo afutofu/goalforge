@@ -25,7 +25,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
 
   const { register, handleSubmit, reset, setValue } = useForm<IFormInput>({
     defaultValues: {
-      logText: log.Text,
+      logText: log.text,
     },
   });
 
@@ -112,17 +112,17 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     const editedLog: IActivityLog = {
       ...log,
-      Text: data.logText,
+      text: data.logText,
     };
 
-    if (data.logText !== log.Text) {
+    if (data.logText !== log.text) {
       if (isAuth) {
         mutateActivityLogEdit({
-          activityLogID: log.ActivityLogID,
+          activityLogID: log.id,
           activityLog: editedLog,
         });
       } else {
-        editActivityLog(log.ActivityLogID, editedLog);
+        editActivityLog(log.id, editedLog);
       }
     }
 
@@ -132,7 +132,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
 
   useEffect(() => {
     if (open && inputRef.current !== null) inputRef.current.focus();
-    setValue('logText', log.Text);
+    setValue('logText', log.text);
   }, [open]);
 
   return (
@@ -153,7 +153,7 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
           setOpen(true);
         }}
       >
-        {log.Text}
+        {log.text}
       </span>
       <form
         className={clsx(
@@ -183,9 +183,9 @@ export const LogItem: FC<ILogItem> = ({ log, ...props }) => {
               e.preventDefault();
               e.stopPropagation();
               if (isAuth) {
-                mutateActivityLogDelete(log.ActivityLogID);
+                mutateActivityLogDelete(log.id);
               } else {
-                deleteActivityLog(log.ActivityLogID);
+                deleteActivityLog(log.id);
               }
               setOpen(false);
             }}
