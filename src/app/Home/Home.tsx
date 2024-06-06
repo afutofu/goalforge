@@ -1,23 +1,23 @@
 'use client';
 
 import React, { useState, type FC, useMemo, useEffect } from 'react';
-import dayjs from '../../dayjs-config';
+import dayjs from '../../../dayjs-config';
 import Image from 'next/image';
 
 import { Header } from '@/components/Header';
-import { Timer } from '@/containers/Timer';
+import { Timer } from '@/app/Home/Timer';
 import { Separator } from '@/components/Separator';
 // import { TaskGraph } from '@/containers/TaskGraph';
-import { HourActivityLogger } from '@/containers/HourActivityLogger';
+import { HourActivityLogger } from '@/app/Home/HourActivityLogger';
 import { useActivityLogStore } from '@/store/activityLog';
-import { ActivityLogList } from '@/containers/ActivityLogList';
-import { PreferencesModal } from '@/containers/PreferencesModal';
-import { ProfileModal } from '@/containers/ProfileModal';
+import { ActivityLogList } from '@/app/Home/ActivityLogList';
+import { PreferencesModal } from '@/app/Home/PreferencesModal';
+import { ProfileModal } from '@/app/Home/ProfileModal';
 import clsx from 'clsx';
-import DayTaskList from '@/containers/DayTaskList';
-import MonthTaskList from '@/containers/MonthTaskList';
-import WeekTaskList from '@/containers/WeekTaskList';
-import YearTaskList from '@/containers/YearTaskList';
+import DayTaskList from '@/app/Home/DayTaskList';
+import MonthTaskList from '@/app/Home/MonthTaskList';
+import WeekTaskList from '@/app/Home/WeekTaskList';
+import YearTaskList from '@/app/Home/YearTaskList';
 import { useQuery } from '@tanstack/react-query';
 import { type IUser, type IActivityLog, type ITask } from '@/types';
 import {
@@ -55,7 +55,7 @@ const Section: FC<SectionProps> = ({ children, className }) => {
 const ICON_BUTTON_CLASSNAMES =
   'w-7 h-7 bg-white rounded-md p-1 pointer-cursor border-white border-[1px] hover:border-primary hover:bg-primary-light transition';
 
-const Home = () => {
+export const Home = () => {
   const date = dayjs();
 
   const { activityLogs, setActivityLogs } = useActivityLogStore();
@@ -267,5 +267,3 @@ const Home = () => {
     </main>
   );
 };
-
-export default Home;

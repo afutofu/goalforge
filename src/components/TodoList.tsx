@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 import { type ITask } from '@/types';
-import { TodoItem } from '@/components/TodoItem';
+import { TodoItem } from './TodoItem';
 
 interface ITodoList {
   tasks: ITask[];
