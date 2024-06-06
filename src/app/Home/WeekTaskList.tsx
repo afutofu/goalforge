@@ -3,17 +3,18 @@ import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { TodoList } from './TodoList';
+import { TodoList } from '@/components/TodoList';
 import { type ITask } from '@/types';
 import { taskEndpoint } from '@/api/endpoints';
 import { api } from '@/api/api';
-import { v4 as uuidv4 } from 'uuid';
+import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 import { type IEditTaskMutation } from '@/api/responseTypes';
 import { useAuthStore } from '@/store/auth';
 
-const DayTaskList = () => {
-  const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
+const WeekTaskList = () => {
+  const { weekTasks, setTasks, addWeekTask, editWeekTask, deleteWeekTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
@@ -21,7 +22,7 @@ const DayTaskList = () => {
   const { isAuth } = useAuthStore();
 
   // Add task
-  const { mutate: mutateDayTaskAdd } = useMutation({
+  const { mutate: mutateWeekTaskAdd } = useMutation({
     mutationFn: async (newTask) => {
       return await api.post(`${taskEndpoint.addTask}`, newTask);
     },
@@ -34,7 +35,7 @@ const DayTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      addDayTask(newTask);
+      addWeekTask(newTask);
 
       return { previousTasks };
     },
@@ -54,19 +55,19 @@ const DayTaskList = () => {
       id: uuidv4(),
       text: taskName,
       completed: false,
-      period: 1,
+      period: 2,
       createdAt: dayjs().toDate(),
     };
 
     if (isAuth) {
-      mutateDayTaskAdd(newTask);
+      mutateWeekTaskAdd(newTask);
     } else {
-      addDayTask(newTask);
+      addWeekTask(newTask);
     }
   };
 
   // Edit task
-  const { mutate: mutateDayTaskEdit } = useMutation({
+  const { mutate: mutateWeekTaskEdit } = useMutation({
     mutationFn: async ({ taskID, task }: IEditTaskMutation) => {
       const URL = `${taskEndpoint.editTask}`.replace(':taskID', taskID);
       return await api.put(URL, task);
@@ -80,7 +81,7 @@ const DayTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      editDayTask(taskID, task);
+      editWeekTask(taskID, task);
 
       return { previousTasks };
     },
@@ -96,7 +97,7 @@ const DayTaskList = () => {
   });
 
   // Delete task
-  const { mutate: mutateDayTaskDelete } = useMutation({
+  const { mutate: mutateWeekTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
       const URL = `${taskEndpoint.deleteTask}`.replace(':taskID', taskID);
       return await api.delete(URL);
@@ -110,7 +111,7 @@ const DayTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      deleteDayTask(taskID);
+      deleteWeekTask(taskID);
 
       return { previousTasks };
     },
@@ -126,28 +127,29 @@ const DayTaskList = () => {
   });
 
   return (
-    <div>
-      <AddTaskInput onAddTaskName={onAddTask}>+ Add Day Task</AddTaskInput>
+    <div className="relative h-full">
+      <AddTaskInput onAddTaskName={onAddTask}>+ Add Week Task</AddTaskInput>
       <Separator />
       <TodoList
-        tasks={dayTasks}
+        tasks={weekTasks}
         onEditTask={(taskID: string, task: ITask) => {
           if (isAuth) {
-            mutateDayTaskEdit({ taskID, task });
+            mutateWeekTaskEdit({ taskID, task });
           } else {
-            editDayTask(taskID, task);
+            editWeekTask(taskID, task);
           }
         }}
         onDeleteTask={(taskID: string) => {
           if (isAuth) {
-            mutateDayTaskDelete(taskID);
+            mutateWeekTaskDelete(taskID);
           } else {
-            deleteDayTask(taskID);
+            deleteWeekTask(taskID);
           }
         }}
+        containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
       />
     </div>
   );
 };
 
-export default DayTaskList;
+export default WeekTaskList;

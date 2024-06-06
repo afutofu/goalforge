@@ -3,7 +3,7 @@ import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { TodoList } from './TodoList';
+import { TodoList } from '@/components/TodoList';
 import { type ITask } from '@/types';
 import { taskEndpoint } from '@/api/endpoints';
 import { api } from '@/api/api';
@@ -13,8 +13,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { type IEditTaskMutation } from '@/api/responseTypes';
 import { useAuthStore } from '@/store/auth';
 
-const MonthTaskList = () => {
-  const { monthTasks, setTasks, addMonthTask, editMonthTask, deleteMonthTask } =
+const YearTaskList = () => {
+  const { yearTasks, setTasks, addYearTask, editYearTask, deleteYearTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
@@ -22,7 +22,7 @@ const MonthTaskList = () => {
   const { isAuth } = useAuthStore();
 
   // Add task
-  const { mutate: mutateMonthTaskAdd } = useMutation({
+  const { mutate: mutateYearTaskAdd } = useMutation({
     mutationFn: async (newTask) => {
       return await api.post(`${taskEndpoint.addTask}`, newTask);
     },
@@ -35,7 +35,7 @@ const MonthTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      addMonthTask(newTask);
+      addYearTask(newTask);
 
       return { previousTasks };
     },
@@ -55,33 +55,33 @@ const MonthTaskList = () => {
       id: uuidv4(),
       text: taskName,
       completed: false,
-      period: 3,
+      period: 4,
       createdAt: dayjs().toDate(),
     };
 
     if (isAuth) {
-      mutateMonthTaskAdd(newTask);
+      mutateYearTaskAdd(newTask);
     } else {
-      addMonthTask(newTask);
+      addYearTask(newTask);
     }
   };
 
   // Edit task
-  const { mutate: mutateMonthTaskEdit } = useMutation({
+  const { mutate: mutateYearTaskEdit } = useMutation({
     mutationFn: async ({ taskID, task }: IEditTaskMutation) => {
       const URL = `${taskEndpoint.editTask}`.replace(':taskID', taskID);
       return await api.put(URL, task);
     },
     onMutate: async ({ taskID, task }: IEditTaskMutation) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      await queryClient.cancelQueries({ queryKey: [{ queryKey: ['tasks'] }] });
 
       // Snapshot the previous value
       const previousTasks: ITask[] | undefined = queryClient.getQueryData([
-        'tasks',
+        { queryKey: ['tasks'] },
       ]);
 
       // Optimistically delete the task from Zustand state
-      editMonthTask(taskID, task);
+      editYearTask(taskID, task);
 
       return { previousTasks };
     },
@@ -92,12 +92,14 @@ const MonthTaskList = () => {
       }
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      void queryClient.invalidateQueries({
+        queryKey: [{ queryKey: ['tasks'] }],
+      });
     },
   });
 
   // Delete task
-  const { mutate: mutateMonthTaskDelete } = useMutation({
+  const { mutate: mutateYearTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
       const URL = `${taskEndpoint.deleteTask}`.replace(':taskID', taskID);
       return await api.delete(URL);
@@ -111,7 +113,7 @@ const MonthTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      deleteMonthTask(taskID);
+      deleteYearTask(taskID);
 
       return { previousTasks };
     },
@@ -128,22 +130,22 @@ const MonthTaskList = () => {
 
   return (
     <div className="relative h-full">
-      <AddTaskInput onAddTaskName={onAddTask}>+ Add Month Task</AddTaskInput>
+      <AddTaskInput onAddTaskName={onAddTask}>+ Add Year Task</AddTaskInput>
       <Separator />
       <TodoList
-        tasks={monthTasks}
+        tasks={yearTasks}
         onEditTask={(taskID: string, task: ITask) => {
           if (isAuth) {
-            mutateMonthTaskEdit({ taskID, task });
+            mutateYearTaskEdit({ taskID, task });
           } else {
-            editMonthTask(taskID, task);
+            editYearTask(taskID, task);
           }
         }}
         onDeleteTask={(taskID: string) => {
           if (isAuth) {
-            mutateMonthTaskDelete(taskID);
+            mutateYearTaskDelete(taskID);
           } else {
-            deleteMonthTask(taskID);
+            deleteYearTask(taskID);
           }
         }}
         containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
@@ -152,4 +154,4 @@ const MonthTaskList = () => {
   );
 };
 
-export default MonthTaskList;
+export default YearTaskList;

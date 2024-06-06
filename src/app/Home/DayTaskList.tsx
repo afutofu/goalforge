@@ -3,18 +3,17 @@ import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { TodoList } from './TodoList';
+import { TodoList } from '@/components/TodoList';
 import { type ITask } from '@/types';
 import { taskEndpoint } from '@/api/endpoints';
 import { api } from '@/api/api';
-import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
-import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 import { type IEditTaskMutation } from '@/api/responseTypes';
 import { useAuthStore } from '@/store/auth';
 
-const WeekTaskList = () => {
-  const { weekTasks, setTasks, addWeekTask, editWeekTask, deleteWeekTask } =
+const DayTaskList = () => {
+  const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
@@ -22,7 +21,7 @@ const WeekTaskList = () => {
   const { isAuth } = useAuthStore();
 
   // Add task
-  const { mutate: mutateWeekTaskAdd } = useMutation({
+  const { mutate: mutateDayTaskAdd } = useMutation({
     mutationFn: async (newTask) => {
       return await api.post(`${taskEndpoint.addTask}`, newTask);
     },
@@ -35,7 +34,7 @@ const WeekTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      addWeekTask(newTask);
+      addDayTask(newTask);
 
       return { previousTasks };
     },
@@ -55,19 +54,19 @@ const WeekTaskList = () => {
       id: uuidv4(),
       text: taskName,
       completed: false,
-      period: 2,
+      period: 1,
       createdAt: dayjs().toDate(),
     };
 
     if (isAuth) {
-      mutateWeekTaskAdd(newTask);
+      mutateDayTaskAdd(newTask);
     } else {
-      addWeekTask(newTask);
+      addDayTask(newTask);
     }
   };
 
   // Edit task
-  const { mutate: mutateWeekTaskEdit } = useMutation({
+  const { mutate: mutateDayTaskEdit } = useMutation({
     mutationFn: async ({ taskID, task }: IEditTaskMutation) => {
       const URL = `${taskEndpoint.editTask}`.replace(':taskID', taskID);
       return await api.put(URL, task);
@@ -81,7 +80,7 @@ const WeekTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      editWeekTask(taskID, task);
+      editDayTask(taskID, task);
 
       return { previousTasks };
     },
@@ -97,7 +96,7 @@ const WeekTaskList = () => {
   });
 
   // Delete task
-  const { mutate: mutateWeekTaskDelete } = useMutation({
+  const { mutate: mutateDayTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
       const URL = `${taskEndpoint.deleteTask}`.replace(':taskID', taskID);
       return await api.delete(URL);
@@ -111,7 +110,7 @@ const WeekTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      deleteWeekTask(taskID);
+      deleteDayTask(taskID);
 
       return { previousTasks };
     },
@@ -127,29 +126,28 @@ const WeekTaskList = () => {
   });
 
   return (
-    <div className="relative h-full">
-      <AddTaskInput onAddTaskName={onAddTask}>+ Add Week Task</AddTaskInput>
+    <div>
+      <AddTaskInput onAddTaskName={onAddTask}>+ Add Day Task</AddTaskInput>
       <Separator />
       <TodoList
-        tasks={weekTasks}
+        tasks={dayTasks}
         onEditTask={(taskID: string, task: ITask) => {
           if (isAuth) {
-            mutateWeekTaskEdit({ taskID, task });
+            mutateDayTaskEdit({ taskID, task });
           } else {
-            editWeekTask(taskID, task);
+            editDayTask(taskID, task);
           }
         }}
         onDeleteTask={(taskID: string) => {
           if (isAuth) {
-            mutateWeekTaskDelete(taskID);
+            mutateDayTaskDelete(taskID);
           } else {
-            deleteWeekTask(taskID);
+            deleteDayTask(taskID);
           }
         }}
-        containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
       />
     </div>
   );
 };
 
-export default WeekTaskList;
+export default DayTaskList;
