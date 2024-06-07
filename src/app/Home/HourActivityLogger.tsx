@@ -29,7 +29,8 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
 
   const { ref } = register('activityName');
 
-  const { setActivityLogs, addActivityLog } = useActivityLogStore();
+  const { setActivityLogs, addActivityLog, editActivityLog } =
+    useActivityLogStore();
 
   useEffect(() => {
     const timerInterval = setInterval(() => {
@@ -69,7 +70,12 @@ export const HourActivityLogger: FC<IHourActivityLogger> = ({ date }) => {
         setActivityLogs(context.previousActivityLogs);
       }
     },
-    onSettled: () => {
+    onSuccess: (data, activityLog) => {
+      if (data == null) return;
+      const activityLogFromResponse: IActivityLog = data.data;
+
+      // When success, replace the activity log in Zustand state with the response data (id is different from backend)
+      editActivityLog(activityLog.id, activityLogFromResponse);
       void queryClient.invalidateQueries({ queryKey: ['activity-logs'] });
     },
   });
