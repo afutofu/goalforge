@@ -45,7 +45,12 @@ const MonthTaskList = () => {
         setTasks(context.previousTasks);
       }
     },
-    onSuccess: () => {
+    onSuccess: (data, task) => {
+      if (data == null) return;
+      const taskFromResponse: ITask = data.data;
+
+      // When success, replace the task in Zustand state with the response data (id is different from backend)
+      editMonthTask(task.id, taskFromResponse);
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });

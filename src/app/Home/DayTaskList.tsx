@@ -44,7 +44,13 @@ const DayTaskList = () => {
         setTasks(context.previousTasks);
       }
     },
-    onSettled: () => {
+    onSuccess: (data, task) => {
+      if (data == null) return;
+      const taskFromResponse: ITask = data.data;
+
+      // When success, replace the task in Zustand state with the response data (id is different from backend)
+      editDayTask(task.id, taskFromResponse);
+
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
@@ -79,7 +85,7 @@ const DayTaskList = () => {
         'tasks',
       ]);
 
-      // Optimistically delete the task from Zustand state
+      // Optimistically edit the task from Zustand state
       editDayTask(taskID, task);
 
       return { previousTasks };
@@ -120,7 +126,7 @@ const DayTaskList = () => {
         setTasks(context.previousTasks);
       }
     },
-    onSettled: () => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
