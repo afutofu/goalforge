@@ -59,6 +59,7 @@ export const Home = () => {
   const date = dayjs();
 
   const { activityLogs, setActivityLogs } = useActivityLogStore();
+  const [openTasksModal, setOpenTasksModal] = useState(false);
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
@@ -132,7 +133,7 @@ export const Home = () => {
     }
   }, [isFetchTasksSucess, isFetchTasksError]);
 
-  // Fetch and initialize acitivity log from the API
+  // Fetch and initialize acitivity logs from the API
   const {
     data: allActivityLogsQuery,
     isSuccess: isFetchActivityLogsSuccess,
@@ -166,6 +167,14 @@ export const Home = () => {
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white xl:px-18 2xl:px-36">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
 
+      {openTasksModal && (
+        <PreferencesModal
+          onClose={() => {
+            setOpenTasksModal(false);
+          }}
+        />
+      )}
+
       {openPreferencesModal && (
         <PreferencesModal
           onClose={() => {
@@ -196,6 +205,22 @@ export const Home = () => {
           <div className="flex justify-between items-center">
             <p>GoalForge</p>
             <div className="flex items-center">
+              {/*  */}
+              <button
+                className={ICON_BUTTON_CLASSNAMES + ' mr-3'}
+                onClick={() => {
+                  setOpenTasksModal(true);
+                }}
+              >
+                <Image
+                  src="/icons/tasks.svg"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ width: '100%', height: 'auto' }} // optional
+                  alt="Icon of tasks"
+                />
+              </button>
               <button
                 className={ICON_BUTTON_CLASSNAMES + ' mr-3'}
                 onClick={() => {
@@ -208,7 +233,7 @@ export const Home = () => {
                   height={0}
                   sizes="100vw"
                   style={{ width: '100%', height: 'auto' }} // optional
-                  alt="Picture of the author"
+                  alt="Icon of preferences"
                 />
               </button>
               <button

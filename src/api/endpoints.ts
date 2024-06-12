@@ -12,6 +12,16 @@ export const taskEndpoint = {
   deleteTask: '/api/v1/tasks/:taskID',
 };
 
+export const categoryEndpoint = {
+  getAll: '/api/v1/categories',
+
+  addCategory: '/api/v1/categories',
+
+  editCategory: '/api/v1/categories/:categoryID',
+
+  deleteCategory: '/api/v1/categories/:categoryID',
+};
+
 export const activityLogEndpoint = {
   getDay: '/api/v1/activity-logs',
 
