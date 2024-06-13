@@ -19,11 +19,17 @@ import MonthTaskList from '@/app/Home/Lists/MonthTaskList';
 import WeekTaskList from '@/app/Home/Lists/WeekTaskList';
 import YearTaskList from '@/app/Home/Lists/YearTaskList';
 import { useQuery } from '@tanstack/react-query';
-import { type IUser, type IActivityLog, type ITask } from '@/types';
+import {
+  type IUser,
+  type IActivityLog,
+  type ITask,
+  type ICategory,
+} from '@/types';
 import {
   taskEndpoint,
   activityLogEndpoint,
   authEndpoint,
+  categoryEndpoint,
 } from '@/api/endpoints';
 import { api } from '@/api/api';
 import { useTaskStore } from '@/store/task';
@@ -31,6 +37,8 @@ import utc from 'dayjs/plugin/utc';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'next/navigation';
 import { type IAxiosError } from '@/api/responseTypes';
+import { CategoryModal } from './Modals/CategoryModal';
+import { useCategoryStore } from '@/store/category';
 
 dayjs.extend(utc);
 
@@ -58,6 +66,8 @@ const ICON_BUTTON_CLASSNAMES =
 export const Home = () => {
   const date = dayjs();
 
+  const { setTasks } = useTaskStore();
+  const { setCategories } = useCategoryStore();
   const { activityLogs, setActivityLogs } = useActivityLogStore();
   const [openTasksModal, setOpenTasksModal] = useState(false);
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
@@ -76,8 +86,6 @@ export const Home = () => {
     }
     // }
   }, [router]);
-
-  const { setTasks } = useTaskStore();
 
   const profileImgSrc: string = useMemo(() => {
     // console.log(user);
@@ -133,6 +141,32 @@ export const Home = () => {
     }
   }, [isFetchTasksSucess, isFetchTasksError]);
 
+  // Fetch and initialize category data from the API
+  // eslint-disable-next-line prettier/prettier
+  const { data: allCategoriesQuery, isSuccess: isFetchCategoriesSuccess, error: isFetchCategoriesError } = useQuery<ICategory[]>({
+    queryKey: ['categories', isAuth],
+    queryFn: async () =>
+      await api
+        .get<ICategory[]>(`${categoryEndpoint.getAll}`)
+        .then((res) => res.data)
+        .catch((err: IAxiosError) => {
+          console.log(err);
+          throw new Error(err.response.data.error);
+        }),
+    retry: false,
+    enabled: isAuth !== undefined,
+  });
+
+  useEffect(() => {
+    if (isFetchCategoriesError !== null) {
+      setCategories([]);
+    }
+
+    if (isFetchCategoriesSuccess && allCategoriesQuery != null) {
+      setCategories(allCategoriesQuery);
+    }
+  }, [isFetchCategoriesSuccess, isFetchCategoriesError]);
+
   // Fetch and initialize acitivity logs from the API
   const {
     data: allActivityLogsQuery,
@@ -168,7 +202,7 @@ export const Home = () => {
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
 
       {openTasksModal && (
-        <PreferencesModal
+        <CategoryModal
           onClose={() => {
             setOpenTasksModal(false);
           }}

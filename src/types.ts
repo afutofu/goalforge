@@ -6,6 +6,13 @@ export interface ITask {
   createdAt: Date;
 }
 
+export interface ICategory {
+  id: string;
+  name: string;
+  color: string;
+  createdAt: Date;
+}
+
 export interface IActivityLog {
   id: string;
   text: string;
