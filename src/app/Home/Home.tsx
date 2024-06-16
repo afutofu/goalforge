@@ -133,7 +133,65 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchTasksError !== null) {
-      setTasks([]);
+      const defaultTasks: ITask[] = [
+        {
+          id: '2',
+          text: 'Buy groceries',
+          completed: false,
+          period: 2,
+          createdAt: new Date(),
+        },
+        {
+          id: '3',
+          text: 'Walk the dog',
+          completed: false,
+          period: 1,
+          createdAt: new Date(),
+        },
+        {
+          id: '4',
+          text: 'Do the laundry',
+          completed: false,
+          period: 1,
+          createdAt: new Date(),
+        },
+        {
+          id: '5',
+          text: 'Clean the house',
+          completed: false,
+          period: 1,
+          createdAt: new Date(),
+        },
+        {
+          id: '6',
+          text: 'Work on project',
+          completed: false,
+          period: 2,
+          createdAt: new Date(),
+        },
+        {
+          id: '7',
+          text: 'Pay bills',
+          completed: false,
+          period: 3,
+          createdAt: new Date(),
+        },
+        {
+          id: '8',
+          text: 'Plan vacation',
+          completed: false,
+          period: 3,
+          createdAt: new Date(),
+        },
+        {
+          id: '9',
+          text: 'Review year',
+          completed: false,
+          period: 4,
+          createdAt: new Date(),
+        },
+      ];
+      setTasks(defaultTasks);
     }
 
     if (isFetchTasksSucess && allTasksQuery != null) {
@@ -189,7 +247,14 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchTasksError !== null) {
-      setActivityLogs([]);
+      const defaultActivityLogs: IActivityLog[] = [
+        {
+          id: '1',
+          text: 'Entered GoalForge as a guest user',
+          createdAt: new Date().toISOString(),
+        },
+      ];
+      setActivityLogs(defaultActivityLogs);
     }
 
     if (isFetchActivityLogsSuccess && allActivityLogsQuery != null) {
