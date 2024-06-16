@@ -103,7 +103,7 @@ export const CategoryModal: FC<ICategoryModal> = ({ onClose }) => {
                 onClose();
               }}
             >
-              Cancel
+              Close
             </button>
           </div>
         </form>
