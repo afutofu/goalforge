@@ -14,7 +14,7 @@ export const KebabMenu: FC<IKebabMenu> = ({ className, ...props }) => {
   return (
     <div
       className={
-        'group/kebab flex flex-col justify-between items-center bg-primary-light ml-auto h-7 w-7 p-1 rounded-lg cursor-pointer transition ' +
+        'group/kebab flex flex-col justify-between items-center bg-primary-light h-7 w-7 p-1 rounded-lg cursor-pointer transition ' +
         (className ?? '')
       }
       {...props}

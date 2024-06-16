@@ -2,6 +2,7 @@ export interface ITask {
   id: string;
   text: string;
   completed: boolean;
+  categories: ICategory[];
   period?: number;
   createdAt: Date;
 }

@@ -133,62 +133,128 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchTasksError !== null) {
+      const currentDate = new Date();
+
       const defaultTasks: ITask[] = [
         {
           id: '2',
           text: 'Buy groceries',
           completed: false,
           period: 2,
-          createdAt: new Date(),
+          categories: [
+            {
+              id: '1',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
         },
         {
           id: '3',
           text: 'Walk the dog',
           completed: false,
           period: 1,
-          createdAt: new Date(),
+          categories: [
+            {
+              id: '1',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
         },
         {
           id: '4',
           text: 'Do the laundry',
           completed: false,
           period: 1,
-          createdAt: new Date(),
+          categories: [
+            {
+              id: '1',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
         },
         {
           id: '5',
           text: 'Clean the house',
           completed: false,
           period: 1,
-          createdAt: new Date(),
+          categories: [
+            {
+              id: '1',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
         },
         {
           id: '6',
           text: 'Work on project',
           completed: false,
           period: 2,
-          createdAt: new Date(),
+          categories: [
+            {
+              id: '1',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
         },
         {
           id: '7',
           text: 'Pay bills',
           completed: false,
           period: 3,
-          createdAt: new Date(),
+          categories: [
+            {
+              id: '1',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
         },
         {
           id: '8',
           text: 'Plan vacation',
           completed: false,
           period: 3,
-          createdAt: new Date(),
+          categories: [
+            {
+              id: '1',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
         },
         {
           id: '9',
           text: 'Review year',
           completed: false,
           period: 4,
-          createdAt: new Date(),
+          categories: [
+            {
+              id: '1',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
         },
       ];
       setTasks(defaultTasks);
