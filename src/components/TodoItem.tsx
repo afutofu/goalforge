@@ -59,7 +59,20 @@ export const TodoItem: FC<ITodoItem> = ({
     setValue('taskName', task.text);
   }, [open]);
 
+  const foregroundColor = (backgroundColor: string): 'white' | 'black' => {
+    const r = parseInt(backgroundColor.slice(1, 3), 16);
+    const g = parseInt(backgroundColor.slice(3, 5), 16);
+    const b = parseInt(backgroundColor.slice(5, 7), 16);
+
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    return brightness > 125 ? 'black' : 'white';
+  };
+
+  // console.log(task);
+
   return (
+    // Todo Item when its closed
     <div
       className={clsx(
         'bg-white',
@@ -89,6 +102,17 @@ export const TodoItem: FC<ITodoItem> = ({
           onClick={toggleComplete}
         />
         <span className="text-sm text-black font-bold">{task.text}</span>
+        <div className="flex items-center ml-auto mr-1">
+          {task.categories?.map((category) => {
+            return (
+              <div
+                key={category.id}
+                className="ml-2 w-3 h-3 rounded-full"
+                style={{ backgroundColor: category.color }}
+              />
+            );
+          })}
+        </div>
         <KebabMenu
           className="opacity-0 group-hover:opacity-100"
           onClick={() => {
@@ -96,6 +120,7 @@ export const TodoItem: FC<ITodoItem> = ({
           }}
         />
       </div>
+      {/* Todo Item when its opened: */}
       <form
         className={clsx(
           'cursor-auto text-black flex flex-col items-start px-4 py-5 w-full z-20',
@@ -117,6 +142,22 @@ export const TodoItem: FC<ITodoItem> = ({
             }
           }}
         />
+        <div className="flex mb-3">
+          {task.categories?.map((category) => {
+            return (
+              <span
+                key={category.id}
+                className="py-1 px-2 rounded-xl mr-2"
+                style={{
+                  backgroundColor: category.color,
+                  color: foregroundColor(category.color),
+                }}
+              >
+                {category.name}
+              </span>
+            );
+          })}
+        </div>
         <div className="flex justify-between items-center w-full">
           <button
             className="mr-4 hover:underline text-gray-400"
