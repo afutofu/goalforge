@@ -4,7 +4,7 @@ import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from '@/components/TodoList';
-import { type ITask } from '@/types';
+import { type ICategory, type ITask } from '@/types';
 import { taskEndpoint } from '@/api/endpoints';
 import { api } from '@/api/api';
 import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
@@ -55,12 +55,19 @@ const WeekTaskList = () => {
     },
   });
 
-  const onAddTask = (taskName: string) => {
+  const onAddTask = ({
+    taskName,
+    categories,
+  }: {
+    taskName: string,
+    categories: ICategory[],
+  }) => {
     const newTask: ITask = {
       id: uuidv4(),
       text: taskName,
+      categories,
       completed: false,
-      period: 2,
+      period: 1,
       createdAt: dayjs().toDate(),
     };
 
@@ -133,7 +140,7 @@ const WeekTaskList = () => {
 
   return (
     <div className="relative h-full">
-      <AddTaskInput onAddTaskName={onAddTask}>+ Add Week Task</AddTaskInput>
+      <AddTaskInput onAddTask={onAddTask}>+ Add Week Task</AddTaskInput>
       <Separator />
       <TodoList
         tasks={weekTasks}
