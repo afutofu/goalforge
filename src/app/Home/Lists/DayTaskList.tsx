@@ -4,7 +4,7 @@ import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from '@/components/TodoList';
-import { type ITask } from '@/types';
+import { type ICategory, type ITask } from '@/types';
 import { taskEndpoint } from '@/api/endpoints';
 import { api } from '@/api/api';
 import { v4 as uuidv4 } from 'uuid';
@@ -55,10 +55,17 @@ const DayTaskList = () => {
     },
   });
 
-  const onAddTask = (taskName: string) => {
+  const onAddTask = ({
+    taskName,
+    categories,
+  }: {
+    taskName: string,
+    categories: ICategory[],
+  }) => {
     const newTask: ITask = {
       id: uuidv4(),
       text: taskName,
+      categories,
       completed: false,
       period: 1,
       createdAt: dayjs().toDate(),
@@ -133,7 +140,7 @@ const DayTaskList = () => {
 
   return (
     <div>
-      <AddTaskInput onAddTaskName={onAddTask}>+ Add Day Task</AddTaskInput>
+      <AddTaskInput onAddTask={onAddTask}>+ Add Day Task</AddTaskInput>
       <Separator />
       <TodoList
         tasks={dayTasks}
