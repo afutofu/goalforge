@@ -93,11 +93,11 @@ export const AddTaskInput: FC<IAddTodoButton> = ({
             {categories.map((category) => {
               return (
                 <option key={category.id} value={category.id} className="p-2">
-                  <div>{category.name}</div>
-                  <div
+                  {category.name}
+                  {/* <div
                     className="w-[15px] h-[15px] border-[1px] border-black"
                     style={{ background: category.color }}
-                  ></div>
+                  ></div> */}
                 </option>
               );
             })}
