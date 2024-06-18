@@ -1,4 +1,4 @@
-import { type IActivityLog, type ITask } from '@/types';
+import { type ICategory, type IActivityLog, type ITask } from '@/types';
 
 export interface IAxiosResponse<T> {
   data: T;
@@ -19,6 +19,11 @@ export interface IOAuthSigninResponse {
 export interface IEditTaskMutation {
   taskID: string;
   task: ITask;
+}
+
+export interface IEditCategoryMutation {
+  categoryID: string;
+  category: ICategory;
 }
 
 export interface IEditActivityLogMutation {

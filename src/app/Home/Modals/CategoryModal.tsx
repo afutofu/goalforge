@@ -3,6 +3,7 @@ import { categoryEndpoint } from '@/api/endpoints';
 import { Button } from '@/components/Button';
 import { Header } from '@/components/Header';
 import { Modal } from '@/components/Modal';
+import { CategoryItem } from '@/components/CategoryItem';
 import { useAuthStore } from '@/store/auth';
 import { useCategoryStore } from '@/store/category';
 import { type ICategory } from '@/types';
@@ -103,7 +104,7 @@ export const CategoryModal: FC<ICategoryModal> = ({ onClose }) => {
   return (
     <Modal onClose={onClose}>
       <div
-        className="bg-white z-10 flex flex-col p-8 py-6 shadow-xl rounded-lg w-1/5 text-black"
+        className="bg-white z-10 flex flex-col p-8 py-6 shadow-xl rounded-lg w-1/4 text-black"
         onClick={(e) => {
           e.stopPropagation();
         }}
@@ -115,16 +116,17 @@ export const CategoryModal: FC<ICategoryModal> = ({ onClose }) => {
           {/* Display list of categories */}
           <div className="flex flex-col">
             {categories.map((category) => (
-              <div
-                key={category.id}
-                className="flex justify-between items-center"
-              >
-                <div>{category.name}</div>
-                <div
-                  className="w-[15px] h-[15px] border-[1px] border-black"
-                  style={{ background: category.color }}
-                ></div>
-              </div>
+              <CategoryItem key={category.id} category={category} />
+              // <div
+              //   key={category.id}
+              //   className="flex justify-between items-center"
+              // >
+              //   <div>{category.name}</div>
+              //   <div
+              //     className="w-[15px] h-[15px] border-[1px] border-black"
+              //     style={{ background: category.color }}
+              //   ></div>
+              // </div>
             ))}
             <div className="w-full flex mt-3 align-center">
               <input
