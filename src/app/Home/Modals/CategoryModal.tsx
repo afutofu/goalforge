@@ -1,10 +1,17 @@
+import { api } from '@/api/api';
+import { categoryEndpoint } from '@/api/endpoints';
 import { Button } from '@/components/Button';
 import { Header } from '@/components/Header';
 import { Modal } from '@/components/Modal';
+import { useAuthStore } from '@/store/auth';
 import { useCategoryStore } from '@/store/category';
+import { type ICategory } from '@/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 // import { ICategory } from '@/types';
 import React, { type FC } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ICategoryModal {
   onClose: () => void;
@@ -16,7 +23,10 @@ interface ICategoryForm {
 }
 
 export const CategoryModal: FC<ICategoryModal> = ({ onClose }) => {
-  const { categories } = useCategoryStore();
+  const { categories, setCategories, addCategory, editCategory } =
+    useCategoryStore();
+
+  const { isAuth } = useAuthStore();
 
   const { register, handleSubmit, watch } = useForm<ICategoryForm>({
     defaultValues: {
@@ -27,32 +37,68 @@ export const CategoryModal: FC<ICategoryModal> = ({ onClose }) => {
 
   const watchName = watch('name', '');
 
+  const queryClient = useQueryClient();
+
+  // Add category
+  const { mutate: mutateAddCategory } = useMutation({
+    mutationFn: async (newCategory) => {
+      return await api.post(`${categoryEndpoint.addCategory}`, newCategory);
+    },
+    onMutate: async (newTask: ICategory) => {
+      await queryClient.cancelQueries({ queryKey: ['categories'] });
+
+      // Snapshot the previous value
+      const previousTasks: ICategory[] | undefined = queryClient.getQueryData([
+        'categories',
+      ]);
+
+      // Optimistically delete the category from Zustand state
+      addCategory(newTask);
+
+      return { previousTasks };
+    },
+    onError: (_error, _newTask, context) => {
+      // Rollback the optimistic update
+      if (context?.previousTasks != null) {
+        setCategories(context.previousTasks);
+      }
+    },
+    onSuccess: (data, category) => {
+      if (data == null) return;
+      const categoryFromResponse: ICategory = data.data;
+
+      // When success, replace the category in Zustand state with the response data (id is different from backend)
+      editCategory(category.id, categoryFromResponse);
+
+      void queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+  });
+
   const onSubmit: SubmitHandler<ICategoryForm> = (data) => {
-    // const timerCategory = {
-    //   pomodoroLength: dayjs()
-    //     .set('minute', data.pomodoroLength)
-    //     .set('second', 0)
-    //     .toDate(),
-    //   shortBreakLength: dayjs()
-    //     .set('minute', data.shortBreakLength)
-    //     .set('second', 0)
-    //     .toDate(),
-    //   longBreakLength: dayjs()
-    //     .set('minute', data.longBreakLength)
-    //     .set('second', 0)
-    //     .toDate(),
-    // };
+    console.log(data);
 
-    // const newCategory: ICategory = {
-    //   ...preferences,
-    //   ...timerCategory,
-    // };
+    if (data.name.length === 0) return;
+    if (data.color.length === 0) return;
 
-    // setCategory(newCategory);
-    onClose();
+    const { name, color } = data;
+
+    const newTask: ICategory = {
+      id: uuidv4(),
+      name,
+      color,
+      createdAt: dayjs().toDate(),
+    };
+
+    if (isAuth) {
+      mutateAddCategory(newTask);
+    } else {
+      addCategory(newTask);
+    }
+
+    // onClose();
   };
 
-  console.log(watchName);
+  // console.log(watchName);
 
   return (
     <Modal onClose={onClose}>
