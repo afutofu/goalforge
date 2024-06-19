@@ -144,8 +144,8 @@ export const Home = () => {
           categories: [
             {
               id: '1',
-              color: '#FF0000',
-              name: 'Health',
+              color: '#00FF00',
+              name: 'Personal',
               createdAt: currentDate,
             },
           ],
@@ -159,6 +159,12 @@ export const Home = () => {
           categories: [
             {
               id: '1',
+              color: '#00FF00',
+              name: 'Personal',
+              createdAt: currentDate,
+            },
+            {
+              id: '2',
               color: '#FF0000',
               name: 'Health',
               createdAt: currentDate,
@@ -168,12 +174,12 @@ export const Home = () => {
         },
         {
           id: '4',
-          text: 'Do the laundry',
+          text: 'Exercise',
           completed: false,
           period: 1,
           categories: [
             {
-              id: '1',
+              id: '2',
               color: '#FF0000',
               name: 'Health',
               createdAt: currentDate,
@@ -189,8 +195,8 @@ export const Home = () => {
           categories: [
             {
               id: '1',
-              color: '#FF0000',
-              name: 'Health',
+              color: '#00FF00',
+              name: 'Personal',
               createdAt: currentDate,
             },
           ],
@@ -203,9 +209,9 @@ export const Home = () => {
           period: 2,
           categories: [
             {
-              id: '1',
-              color: '#FF0000',
-              name: 'Health',
+              id: '3',
+              color: '#0000FF',
+              name: 'Work',
               createdAt: currentDate,
             },
           ],
@@ -219,8 +225,8 @@ export const Home = () => {
           categories: [
             {
               id: '1',
-              color: '#FF0000',
-              name: 'Health',
+              color: '#00FF00',
+              name: 'Personal',
               createdAt: currentDate,
             },
           ],
@@ -234,8 +240,8 @@ export const Home = () => {
           categories: [
             {
               id: '1',
-              color: '#FF0000',
-              name: 'Health',
+              color: '#00FF00',
+              name: 'Personal',
               createdAt: currentDate,
             },
           ],
@@ -249,8 +255,8 @@ export const Home = () => {
           categories: [
             {
               id: '1',
-              color: '#FF0000',
-              name: 'Health',
+              color: '#00FF00',
+              name: 'Personal',
               createdAt: currentDate,
             },
           ],
@@ -283,7 +289,28 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchCategoriesError !== null) {
-      setCategories([]);
+      const currentDate = new Date();
+      const defaultCategories: ICategory[] = [
+        {
+          id: '1',
+          color: '#00FF00',
+          name: 'Personal',
+          createdAt: currentDate,
+        },
+        {
+          id: '2',
+          color: '#FF0000',
+          name: 'Health',
+          createdAt: currentDate,
+        },
+        {
+          id: '3',
+          color: '#0000FF',
+          name: 'Work',
+          createdAt: currentDate,
+        },
+      ];
+      setCategories(defaultCategories);
     }
 
     if (isFetchCategoriesSuccess && allCategoriesQuery != null) {
