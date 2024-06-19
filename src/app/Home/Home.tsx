@@ -10,20 +10,26 @@ import { Separator } from '@/components/Separator';
 // import { TaskGraph } from '@/containers/TaskGraph';
 import { HourActivityLogger } from '@/app/Home/HourActivityLogger';
 import { useActivityLogStore } from '@/store/activityLog';
-import { ActivityLogList } from '@/app/Home/ActivityLogList';
-import { PreferencesModal } from '@/app/Home/PreferencesModal';
-import { ProfileModal } from '@/app/Home/ProfileModal';
+import { ActivityLogList } from '@/app/Home/Lists/ActivityLogList';
+import { PreferencesModal } from '@/app/Home/Modals/PreferencesModal';
+import { ProfileModal } from '@/app/Home/Modals/ProfileModal';
 import clsx from 'clsx';
-import DayTaskList from '@/app/Home/DayTaskList';
-import MonthTaskList from '@/app/Home/MonthTaskList';
-import WeekTaskList from '@/app/Home/WeekTaskList';
-import YearTaskList from '@/app/Home/YearTaskList';
+import DayTaskList from '@/app/Home/Lists/DayTaskList';
+import MonthTaskList from '@/app/Home/Lists/MonthTaskList';
+import WeekTaskList from '@/app/Home/Lists/WeekTaskList';
+import YearTaskList from '@/app/Home/Lists/YearTaskList';
 import { useQuery } from '@tanstack/react-query';
-import { type IUser, type IActivityLog, type ITask } from '@/types';
+import {
+  type IUser,
+  type IActivityLog,
+  type ITask,
+  type ICategory,
+} from '@/types';
 import {
   taskEndpoint,
   activityLogEndpoint,
   authEndpoint,
+  categoryEndpoint,
 } from '@/api/endpoints';
 import { api } from '@/api/api';
 import { useTaskStore } from '@/store/task';
@@ -31,6 +37,8 @@ import utc from 'dayjs/plugin/utc';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'next/navigation';
 import { type IAxiosError } from '@/api/responseTypes';
+import { CategoryModal } from './Modals/CategoryModal';
+import { useCategoryStore } from '@/store/category';
 
 dayjs.extend(utc);
 
@@ -58,7 +66,10 @@ const ICON_BUTTON_CLASSNAMES =
 export const Home = () => {
   const date = dayjs();
 
+  const { setTasks } = useTaskStore();
+  const { setCategories } = useCategoryStore();
   const { activityLogs, setActivityLogs } = useActivityLogStore();
+  const [openTasksModal, setOpenTasksModal] = useState(false);
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
@@ -75,8 +86,6 @@ export const Home = () => {
     }
     // }
   }, [router]);
-
-  const { setTasks } = useTaskStore();
 
   const profileImgSrc: string = useMemo(() => {
     // console.log(user);
@@ -124,7 +133,137 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchTasksError !== null) {
-      setTasks([]);
+      const currentDate = new Date();
+
+      const defaultTasks: ITask[] = [
+        {
+          id: '2',
+          text: 'Buy groceries',
+          completed: false,
+          period: 2,
+          categories: [
+            {
+              id: '1',
+              color: '#00FF00',
+              name: 'Personal',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '3',
+          text: 'Walk the dog',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '1',
+              color: '#00FF00',
+              name: 'Personal',
+              createdAt: currentDate,
+            },
+            {
+              id: '2',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '4',
+          text: 'Exercise',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '2',
+              color: '#FF0000',
+              name: 'Health',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '5',
+          text: 'Clean the house',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '1',
+              color: '#00FF00',
+              name: 'Personal',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '6',
+          text: 'Work on project',
+          completed: false,
+          period: 2,
+          categories: [
+            {
+              id: '3',
+              color: '#0000FF',
+              name: 'Work',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '7',
+          text: 'Pay bills',
+          completed: false,
+          period: 3,
+          categories: [
+            {
+              id: '1',
+              color: '#00FF00',
+              name: 'Personal',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '8',
+          text: 'Plan vacation',
+          completed: false,
+          period: 3,
+          categories: [
+            {
+              id: '1',
+              color: '#00FF00',
+              name: 'Personal',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '9',
+          text: 'Review year',
+          completed: false,
+          period: 4,
+          categories: [
+            {
+              id: '1',
+              color: '#00FF00',
+              name: 'Personal',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+      ];
+      setTasks(defaultTasks);
     }
 
     if (isFetchTasksSucess && allTasksQuery != null) {
@@ -132,7 +271,54 @@ export const Home = () => {
     }
   }, [isFetchTasksSucess, isFetchTasksError]);
 
-  // Fetch and initialize acitivity log from the API
+  // Fetch and initialize category data from the API
+  // eslint-disable-next-line prettier/prettier
+  const { data: allCategoriesQuery, isSuccess: isFetchCategoriesSuccess, error: isFetchCategoriesError } = useQuery<ICategory[]>({
+    queryKey: ['categories', isAuth],
+    queryFn: async () =>
+      await api
+        .get<ICategory[]>(`${categoryEndpoint.getAll}`)
+        .then((res) => res.data)
+        .catch((err: IAxiosError) => {
+          console.log(err);
+          throw new Error(err.response.data.error);
+        }),
+    retry: false,
+    enabled: isAuth !== undefined,
+  });
+
+  useEffect(() => {
+    if (isFetchCategoriesError !== null) {
+      const currentDate = new Date();
+      const defaultCategories: ICategory[] = [
+        {
+          id: '1',
+          color: '#00FF00',
+          name: 'Personal',
+          createdAt: currentDate,
+        },
+        {
+          id: '2',
+          color: '#FF0000',
+          name: 'Health',
+          createdAt: currentDate,
+        },
+        {
+          id: '3',
+          color: '#0000FF',
+          name: 'Work',
+          createdAt: currentDate,
+        },
+      ];
+      setCategories(defaultCategories);
+    }
+
+    if (isFetchCategoriesSuccess && allCategoriesQuery != null) {
+      setCategories(allCategoriesQuery);
+    }
+  }, [isFetchCategoriesSuccess, isFetchCategoriesError]);
+
+  // Fetch and initialize acitivity logs from the API
   const {
     data: allActivityLogsQuery,
     isSuccess: isFetchActivityLogsSuccess,
@@ -154,7 +340,14 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchTasksError !== null) {
-      setActivityLogs([]);
+      const defaultActivityLogs: IActivityLog[] = [
+        {
+          id: '1',
+          text: 'Entered GoalForge as a guest user',
+          createdAt: new Date().toISOString(),
+        },
+      ];
+      setActivityLogs(defaultActivityLogs);
     }
 
     if (isFetchActivityLogsSuccess && allActivityLogsQuery != null) {
@@ -165,6 +358,14 @@ export const Home = () => {
   return (
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white xl:px-18 2xl:px-36">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
+
+      {openTasksModal && (
+        <CategoryModal
+          onClose={() => {
+            setOpenTasksModal(false);
+          }}
+        />
+      )}
 
       {openPreferencesModal && (
         <PreferencesModal
@@ -196,6 +397,22 @@ export const Home = () => {
           <div className="flex justify-between items-center">
             <p>GoalForge</p>
             <div className="flex items-center">
+              {/*  */}
+              <button
+                className={ICON_BUTTON_CLASSNAMES + ' mr-3'}
+                onClick={() => {
+                  setOpenTasksModal(true);
+                }}
+              >
+                <Image
+                  src="/icons/tasks.svg"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ width: '100%', height: 'auto' }} // optional
+                  alt="Icon of tasks"
+                />
+              </button>
               <button
                 className={ICON_BUTTON_CLASSNAMES + ' mr-3'}
                 onClick={() => {
@@ -208,7 +425,7 @@ export const Home = () => {
                   height={0}
                   sizes="100vw"
                   style={{ width: '100%', height: 'auto' }} // optional
-                  alt="Picture of the author"
+                  alt="Icon of preferences"
                 />
               </button>
               <button

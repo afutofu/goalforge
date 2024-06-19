@@ -2,7 +2,15 @@ export interface ITask {
   id: string;
   text: string;
   completed: boolean;
+  categories: ICategory[];
   period?: number;
+  createdAt: Date;
+}
+
+export interface ICategory {
+  id: string;
+  name: string;
+  color: string;
   createdAt: Date;
 }
 

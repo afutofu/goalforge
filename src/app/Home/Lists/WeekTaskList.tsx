@@ -4,7 +4,7 @@ import { useTaskStore } from '@/store/task';
 import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from '@/components/TodoList';
-import { type ITask } from '@/types';
+import { type ICategory, type ITask } from '@/types';
 import { taskEndpoint } from '@/api/endpoints';
 import { api } from '@/api/api';
 import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
@@ -13,8 +13,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { type IEditTaskMutation } from '@/api/responseTypes';
 import { useAuthStore } from '@/store/auth';
 
-const MonthTaskList = () => {
-  const { monthTasks, setTasks, addMonthTask, editMonthTask, deleteMonthTask } =
+const WeekTaskList = () => {
+  const { weekTasks, setTasks, addWeekTask, editWeekTask, deleteWeekTask } =
     useTaskStore();
 
   const queryClient = useQueryClient();
@@ -22,7 +22,7 @@ const MonthTaskList = () => {
   const { isAuth } = useAuthStore();
 
   // Add task
-  const { mutate: mutateMonthTaskAdd } = useMutation({
+  const { mutate: mutateWeekTaskAdd } = useMutation({
     mutationFn: async (newTask) => {
       return await api.post(`${taskEndpoint.addTask}`, newTask);
     },
@@ -35,7 +35,7 @@ const MonthTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      addMonthTask(newTask);
+      addWeekTask(newTask);
 
       return { previousTasks };
     },
@@ -50,29 +50,36 @@ const MonthTaskList = () => {
       const taskFromResponse: ITask = data.data;
 
       // When success, replace the task in Zustand state with the response data (id is different from backend)
-      editMonthTask(task.id, taskFromResponse);
+      editWeekTask(task.id, taskFromResponse);
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 
-  const onAddTask = (taskName: string) => {
+  const onAddTask = ({
+    taskName,
+    categories,
+  }: {
+    taskName: string,
+    categories: ICategory[],
+  }) => {
     const newTask: ITask = {
       id: uuidv4(),
       text: taskName,
+      categories,
       completed: false,
-      period: 3,
+      period: 1,
       createdAt: dayjs().toDate(),
     };
 
     if (isAuth) {
-      mutateMonthTaskAdd(newTask);
+      mutateWeekTaskAdd(newTask);
     } else {
-      addMonthTask(newTask);
+      addWeekTask(newTask);
     }
   };
 
   // Edit task
-  const { mutate: mutateMonthTaskEdit } = useMutation({
+  const { mutate: mutateWeekTaskEdit } = useMutation({
     mutationFn: async ({ taskID, task }: IEditTaskMutation) => {
       const URL = `${taskEndpoint.editTask}`.replace(':taskID', taskID);
       return await api.put(URL, task);
@@ -86,7 +93,7 @@ const MonthTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      editMonthTask(taskID, task);
+      editWeekTask(taskID, task);
 
       return { previousTasks };
     },
@@ -102,7 +109,7 @@ const MonthTaskList = () => {
   });
 
   // Delete task
-  const { mutate: mutateMonthTaskDelete } = useMutation({
+  const { mutate: mutateWeekTaskDelete } = useMutation({
     mutationFn: async (taskID) => {
       const URL = `${taskEndpoint.deleteTask}`.replace(':taskID', taskID);
       return await api.delete(URL);
@@ -116,7 +123,7 @@ const MonthTaskList = () => {
       ]);
 
       // Optimistically delete the task from Zustand state
-      deleteMonthTask(taskID);
+      deleteWeekTask(taskID);
 
       return { previousTasks };
     },
@@ -126,29 +133,29 @@ const MonthTaskList = () => {
         setTasks(context.previousTasks);
       }
     },
-    onSuccess: () => {
+    onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 
   return (
     <div className="relative h-full">
-      <AddTaskInput onAddTaskName={onAddTask}>+ Add Month Task</AddTaskInput>
+      <AddTaskInput onAddTask={onAddTask}>+ Add Week Task</AddTaskInput>
       <Separator />
       <TodoList
-        tasks={monthTasks}
+        tasks={weekTasks}
         onEditTask={(taskID: string, task: ITask) => {
           if (isAuth) {
-            mutateMonthTaskEdit({ taskID, task });
+            mutateWeekTaskEdit({ taskID, task });
           } else {
-            editMonthTask(taskID, task);
+            editWeekTask(taskID, task);
           }
         }}
         onDeleteTask={(taskID: string) => {
           if (isAuth) {
-            mutateMonthTaskDelete(taskID);
+            mutateWeekTaskDelete(taskID);
           } else {
-            deleteMonthTask(taskID);
+            deleteWeekTask(taskID);
           }
         }}
         containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
@@ -157,4 +164,4 @@ const MonthTaskList = () => {
   );
 };
 
-export default MonthTaskList;
+export default WeekTaskList;

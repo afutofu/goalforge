@@ -11,15 +11,21 @@ interface IActivityLogList {
 
 export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
   const today = dayjs();
+  const sameDate = (date1: dayjs.Dayjs, date2: dayjs.Dayjs): boolean => {
+    return (
+      date1.year() === date2.year() &&
+      date1.month() === date2.month() &&
+      date1.day() === date2.day()
+    );
+  };
 
   // Get all activity logs that were created today
   const activityLogsToday = useMemo(() => {
     const logsToday = [];
     for (let i = 0; i < activityLogs.length; i++) {
-      if (today.day() !== dayjs(activityLogs[i].createdAt).day()) {
-        break;
+      if (sameDate(today, dayjs(activityLogs[i].createdAt))) {
+        logsToday.push(activityLogs[i]);
       }
-      logsToday.push(activityLogs[i]);
     }
     return logsToday;
   }, [activityLogs, today]);
@@ -40,6 +46,8 @@ export const ActivityLogList: FC<IActivityLogList> = ({ activityLogs }) => {
   const activityLogListWithHour: React.JSX.Element[] = useMemo(() => {
     let latestHour: number = -1;
     let first: boolean = true;
+
+    // console.log(activityLogsToday);
 
     return activityLogsToday.map((log) => {
       let newHour = false;
