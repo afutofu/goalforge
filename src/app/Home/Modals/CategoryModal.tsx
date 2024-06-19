@@ -29,7 +29,7 @@ export const CategoryModal: FC<ICategoryModal> = ({ onClose }) => {
 
   const { isAuth } = useAuthStore();
 
-  const { register, handleSubmit, watch } = useForm<ICategoryForm>({
+  const { register, handleSubmit, watch, reset } = useForm<ICategoryForm>({
     defaultValues: {
       name: '',
       color: '#000000',
@@ -76,8 +76,6 @@ export const CategoryModal: FC<ICategoryModal> = ({ onClose }) => {
   });
 
   const onSubmit: SubmitHandler<ICategoryForm> = (data) => {
-    console.log(data);
-
     if (data.name.length === 0) return;
     if (data.color.length === 0) return;
 
@@ -96,7 +94,7 @@ export const CategoryModal: FC<ICategoryModal> = ({ onClose }) => {
       addCategory(newTask);
     }
 
-    // onClose();
+    reset();
   };
 
   // console.log(watchName);
