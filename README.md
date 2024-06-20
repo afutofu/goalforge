@@ -16,11 +16,11 @@ API respository: [goalforge-api](https://github.com/afutofu/goalforge-api)
 - Day, Week, Month, and Year task lists (center and right)
 - Hour activity logger (on the left)
 - Login using Google OAuth to save state
+- Associate tasks with each other (multiple tasks can be under the same category)
 
 ## Future implementations
 
-- Task timer and graph to record time for each tasks
-- Associate tasks with each other (multiple tasks can be under the same category)
+- Task timer and graph to record time for each task category
 - Theme selection (Beige, Dark)
 - Separate UI for trickle down tasks
 
