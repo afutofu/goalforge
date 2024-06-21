@@ -44,8 +44,12 @@ export const TodoList: FC<ITodoList> = ({
     taskName: string,
     categories: string,
   }> = (data) => {
-    console.log(data, categories);
     const taskName = data.taskName;
+    // "No Category" is the default category with an id of 0
+    if (data.categories === undefined || data.categories === '') {
+      data.categories = '0';
+    }
+
     const filteredCategories = categories.filter((category) => {
       return data.categories === category.id.toString();
     });
