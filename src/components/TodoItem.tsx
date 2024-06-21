@@ -97,12 +97,9 @@ export const TodoItem: FC<ITodoItem> = ({
       )}
     >
       <div
-        className={clsx(
-          'group px-3 py-2 pr-5 flex items-center cursor-pointer',
-          {
-            hidden: open,
-          },
-        )}
+        className={clsx('group px-3 py-2 pr-5 flex items-center', {
+          hidden: open,
+        })}
       >
         <div
           className={clsx(
@@ -117,12 +114,12 @@ export const TodoItem: FC<ITodoItem> = ({
           onClick={toggleComplete}
         />
         <span className="text-sm text-black font-bold">{task.text}</span>
-        <div className="flex items-center ml-auto mr-1">
+        <div className="flex items-center ml-auto mr-2">
           {task.categories?.map((category) => {
             return (
               <div
                 key={category.id}
-                className="ml-2 w-3 h-3 rounded-full"
+                className="ml-1 w-3 h-3 rounded-full"
                 style={{ backgroundColor: category.color }}
               />
             );
