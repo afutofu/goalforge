@@ -18,7 +18,7 @@ export const defaultTasks: ITask[] = [
     period: 2,
     categories: [
       {
-        id: '1',
+        id: '2',
         color: '#00FF00',
         name: 'Personal',
         createdAt: currentDate,
@@ -27,19 +27,19 @@ export const defaultTasks: ITask[] = [
     createdAt: currentDate,
   },
   {
-    id: '3',
+    id: '4',
     text: 'Walk the dog',
     completed: false,
     period: 1,
     categories: [
       {
-        id: '1',
+        id: '2',
         color: '#00FF00',
         name: 'Personal',
         createdAt: currentDate,
       },
       {
-        id: '2',
+        id: '3',
         color: '#FF0000',
         name: 'Health',
         createdAt: currentDate,
@@ -54,7 +54,7 @@ export const defaultTasks: ITask[] = [
     period: 1,
     categories: [
       {
-        id: '2',
+        id: '3',
         color: '#FF0000',
         name: 'Health',
         createdAt: currentDate,
@@ -69,7 +69,7 @@ export const defaultTasks: ITask[] = [
     period: 1,
     categories: [
       {
-        id: '1',
+        id: '2',
         color: '#00FF00',
         name: 'Personal',
         createdAt: currentDate,
@@ -84,7 +84,7 @@ export const defaultTasks: ITask[] = [
     period: 2,
     categories: [
       {
-        id: '3',
+        id: '4',
         color: '#0000FF',
         name: 'Work',
         createdAt: currentDate,
@@ -99,7 +99,7 @@ export const defaultTasks: ITask[] = [
     period: 3,
     categories: [
       {
-        id: '1',
+        id: '2',
         color: '#00FF00',
         name: 'Personal',
         createdAt: currentDate,
@@ -114,7 +114,7 @@ export const defaultTasks: ITask[] = [
     period: 3,
     categories: [
       {
-        id: '1',
+        id: '2',
         color: '#00FF00',
         name: 'Personal',
         createdAt: currentDate,
@@ -129,7 +129,7 @@ export const defaultTasks: ITask[] = [
     period: 4,
     categories: [
       {
-        id: '1',
+        id: '2',
         color: '#00FF00',
         name: 'Personal',
         createdAt: currentDate,
@@ -141,25 +141,25 @@ export const defaultTasks: ITask[] = [
 
 export const defaultCategories: ICategory[] = [
   {
-    id: '0',
+    id: '1',
     color: '#FFFFFF',
     name: 'No Category',
     createdAt: currentDate,
   },
   {
-    id: '1',
+    id: '2',
     color: '#00FF00',
     name: 'Personal',
     createdAt: currentDate,
   },
   {
-    id: '2',
+    id: '3',
     color: '#FF0000',
     name: 'Health',
     createdAt: currentDate,
   },
   {
-    id: '3',
+    id: '4',
     color: '#0000FF',
     name: 'Work',
     createdAt: currentDate,
@@ -168,7 +168,7 @@ export const defaultCategories: ICategory[] = [
 
 export const defaultActivityLogs: IActivityLog[] = [
   {
-    id: '1',
+    id: '2',
     text: 'Entered GoalForge as a guest user',
     createdAt: currentDate.toString(),
   },
