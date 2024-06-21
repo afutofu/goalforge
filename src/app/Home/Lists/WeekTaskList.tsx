@@ -1,7 +1,7 @@
 import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from '@/components/TodoList';
 import { type ICategory, type ITask } from '@/types';
@@ -16,6 +16,8 @@ import { useAuthStore } from '@/store/auth';
 const WeekTaskList = () => {
   const { weekTasks, setTasks, addWeekTask, editWeekTask, deleteWeekTask } =
     useTaskStore();
+
+  const [openAddTask, setOpenAddTask] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
 
@@ -140,7 +142,9 @@ const WeekTaskList = () => {
 
   return (
     <div className="relative h-full">
-      <AddTaskInput onAddTask={onAddTask}>+ Add Week Task</AddTaskInput>
+      <AddTaskInput openAddTask={openAddTask} setOpenAddTask={setOpenAddTask}>
+        + Add Week Task
+      </AddTaskInput>
       <Separator />
       <TodoList
         tasks={weekTasks}
@@ -159,6 +163,9 @@ const WeekTaskList = () => {
           }
         }}
         containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
+        openAddTask={openAddTask}
+        setOpenAddTask={setOpenAddTask}
+        onAddTask={onAddTask}
       />
     </div>
   );

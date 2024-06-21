@@ -1,7 +1,7 @@
 import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from '@/components/TodoList';
 import { type ICategory, type ITask } from '@/types';
@@ -16,6 +16,8 @@ import { useAuthStore } from '@/store/auth';
 const YearTaskList = () => {
   const { yearTasks, setTasks, addYearTask, editYearTask, deleteYearTask } =
     useTaskStore();
+
+  const [openAddTask, setOpenAddTask] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
 
@@ -142,7 +144,9 @@ const YearTaskList = () => {
 
   return (
     <div className="relative h-full">
-      <AddTaskInput onAddTask={onAddTask}>+ Add Year Task</AddTaskInput>
+      <AddTaskInput openAddTask={openAddTask} setOpenAddTask={setOpenAddTask}>
+        + Add Year Task
+      </AddTaskInput>
       <Separator />
       <TodoList
         tasks={yearTasks}
@@ -161,6 +165,9 @@ const YearTaskList = () => {
           }
         }}
         containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
+        onAddTask={onAddTask}
+        openAddTask={openAddTask}
+        setOpenAddTask={setOpenAddTask}
       />
     </div>
   );
