@@ -22,7 +22,11 @@ API respository: [goalforge-api](https://github.com/afutofu/goalforge-api)
 
 - Task timer and graph to record time for each task category
 - Theme selection (Beige, Dark)
-- Separate UI for trickle down tasks
+- Navigating different dates (to see past & future planned tasks / activity logs)
+- Drag & drop list items
+- Dashboard page
+- Journal page
+- Google calendar integration
 
 ## Getting Started
 

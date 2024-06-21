@@ -1,7 +1,7 @@
 import { AddTaskInput } from '@/components/AddTaskInput';
 import { Separator } from '@/components/Separator';
 import { useTaskStore } from '@/store/task';
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from '@/components/TodoList';
 import { type ICategory, type ITask } from '@/types';
@@ -11,10 +11,13 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { type IEditTaskMutation } from '@/api/responseTypes';
 import { useAuthStore } from '@/store/auth';
+import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 
 const DayTaskList = () => {
   const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
     useTaskStore();
+
+  const [openAddTask, setOpenAddTask] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
 
@@ -139,8 +142,10 @@ const DayTaskList = () => {
   });
 
   return (
-    <div>
-      <AddTaskInput onAddTask={onAddTask}>+ Add Day Task</AddTaskInput>
+    <div className="relative h-full">
+      <AddTaskInput openAddTask={openAddTask} setOpenAddTask={setOpenAddTask}>
+        + Add Day Task
+      </AddTaskInput>
       <Separator />
       <TodoList
         tasks={dayTasks}
@@ -158,6 +163,10 @@ const DayTaskList = () => {
             deleteDayTask(taskID);
           }
         }}
+        containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
+        openAddTask={openAddTask}
+        setOpenAddTask={setOpenAddTask}
+        onAddTask={onAddTask}
       />
     </div>
   );

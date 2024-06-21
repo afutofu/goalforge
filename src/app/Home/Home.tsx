@@ -39,6 +39,11 @@ import { useRouter } from 'next/navigation';
 import { type IAxiosError } from '@/api/responseTypes';
 import { CategoryModal } from './Modals/CategoryModal';
 import { useCategoryStore } from '@/store/category';
+import {
+  defaultActivityLogs,
+  defaultCategories,
+  defaultTasks,
+} from '@/constants';
 
 dayjs.extend(utc);
 
@@ -133,136 +138,6 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchTasksError !== null) {
-      const currentDate = new Date();
-
-      const defaultTasks: ITask[] = [
-        {
-          id: '2',
-          text: 'Buy groceries',
-          completed: false,
-          period: 2,
-          categories: [
-            {
-              id: '1',
-              color: '#00FF00',
-              name: 'Personal',
-              createdAt: currentDate,
-            },
-          ],
-          createdAt: currentDate,
-        },
-        {
-          id: '3',
-          text: 'Walk the dog',
-          completed: false,
-          period: 1,
-          categories: [
-            {
-              id: '1',
-              color: '#00FF00',
-              name: 'Personal',
-              createdAt: currentDate,
-            },
-            {
-              id: '2',
-              color: '#FF0000',
-              name: 'Health',
-              createdAt: currentDate,
-            },
-          ],
-          createdAt: currentDate,
-        },
-        {
-          id: '4',
-          text: 'Exercise',
-          completed: false,
-          period: 1,
-          categories: [
-            {
-              id: '2',
-              color: '#FF0000',
-              name: 'Health',
-              createdAt: currentDate,
-            },
-          ],
-          createdAt: currentDate,
-        },
-        {
-          id: '5',
-          text: 'Clean the house',
-          completed: false,
-          period: 1,
-          categories: [
-            {
-              id: '1',
-              color: '#00FF00',
-              name: 'Personal',
-              createdAt: currentDate,
-            },
-          ],
-          createdAt: currentDate,
-        },
-        {
-          id: '6',
-          text: 'Work on project',
-          completed: false,
-          period: 2,
-          categories: [
-            {
-              id: '3',
-              color: '#0000FF',
-              name: 'Work',
-              createdAt: currentDate,
-            },
-          ],
-          createdAt: currentDate,
-        },
-        {
-          id: '7',
-          text: 'Pay bills',
-          completed: false,
-          period: 3,
-          categories: [
-            {
-              id: '1',
-              color: '#00FF00',
-              name: 'Personal',
-              createdAt: currentDate,
-            },
-          ],
-          createdAt: currentDate,
-        },
-        {
-          id: '8',
-          text: 'Plan vacation',
-          completed: false,
-          period: 3,
-          categories: [
-            {
-              id: '1',
-              color: '#00FF00',
-              name: 'Personal',
-              createdAt: currentDate,
-            },
-          ],
-          createdAt: currentDate,
-        },
-        {
-          id: '9',
-          text: 'Review year',
-          completed: false,
-          period: 4,
-          categories: [
-            {
-              id: '1',
-              color: '#00FF00',
-              name: 'Personal',
-              createdAt: currentDate,
-            },
-          ],
-          createdAt: currentDate,
-        },
-      ];
       setTasks(defaultTasks);
     }
 
@@ -289,27 +164,6 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchCategoriesError !== null) {
-      const currentDate = new Date();
-      const defaultCategories: ICategory[] = [
-        {
-          id: '1',
-          color: '#00FF00',
-          name: 'Personal',
-          createdAt: currentDate,
-        },
-        {
-          id: '2',
-          color: '#FF0000',
-          name: 'Health',
-          createdAt: currentDate,
-        },
-        {
-          id: '3',
-          color: '#0000FF',
-          name: 'Work',
-          createdAt: currentDate,
-        },
-      ];
       setCategories(defaultCategories);
     }
 
@@ -340,13 +194,6 @@ export const Home = () => {
 
   useEffect(() => {
     if (isFetchTasksError !== null) {
-      const defaultActivityLogs: IActivityLog[] = [
-        {
-          id: '1',
-          text: 'Entered GoalForge as a guest user',
-          createdAt: new Date().toISOString(),
-        },
-      ];
       setActivityLogs(defaultActivityLogs);
     }
 
@@ -458,8 +305,10 @@ export const Home = () => {
         <TaskGraph />
         <Separator /> */}
 
-        <Header>Day Tasks</Header>
-        <DayTaskList />
+        <div className="relative h-full overflow-hidden">
+          <Header>Day Tasks</Header>
+          <DayTaskList />
+        </div>
       </Section>
 
       {/* Right / Macro Section */}
