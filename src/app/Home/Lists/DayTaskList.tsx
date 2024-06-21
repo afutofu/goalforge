@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { type IEditTaskMutation } from '@/api/responseTypes';
 import { useAuthStore } from '@/store/auth';
+import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
 
 const DayTaskList = () => {
   const { dayTasks, setTasks, addDayTask, editDayTask, deleteDayTask } =
@@ -139,7 +140,7 @@ const DayTaskList = () => {
   });
 
   return (
-    <div>
+    <div className="relative h-full">
       <AddTaskInput onAddTask={onAddTask}>+ Add Day Task</AddTaskInput>
       <Separator />
       <TodoList
@@ -158,6 +159,7 @@ const DayTaskList = () => {
             deleteDayTask(taskID);
           }
         }}
+        containerStyle={{ maxHeight: MACRO_TODO_LIST_MAX_HEIGHT }}
       />
     </div>
   );

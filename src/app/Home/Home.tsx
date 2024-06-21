@@ -137,6 +137,96 @@ export const Home = () => {
 
       const defaultTasks: ITask[] = [
         {
+          id: '1',
+          text: 'Test Remove Later',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '0',
+              color: '#FFFFFF',
+              name: 'No Category',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '1',
+          text: 'Test Remove Later',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '0',
+              color: '#FFFFFF',
+              name: 'No Category',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '1',
+          text: 'Test Remove Later',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '0',
+              color: '#FFFFFF',
+              name: 'No Category',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '1',
+          text: 'Test Remove Later',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '0',
+              color: '#FFFFFF',
+              name: 'No Category',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '1',
+          text: 'Test Remove Later',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '0',
+              color: '#FFFFFF',
+              name: 'No Category',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
+          id: '1',
+          text: 'Test Remove Later',
+          completed: false,
+          period: 1,
+          categories: [
+            {
+              id: '0',
+              color: '#FFFFFF',
+              name: 'No Category',
+              createdAt: currentDate,
+            },
+          ],
+          createdAt: currentDate,
+        },
+        {
           id: '2',
           text: 'Buy groceries',
           completed: false,
@@ -291,6 +381,12 @@ export const Home = () => {
     if (isFetchCategoriesError !== null) {
       const currentDate = new Date();
       const defaultCategories: ICategory[] = [
+        {
+          id: '0',
+          color: '#FFFFFF',
+          name: 'No Category',
+          createdAt: currentDate,
+        },
         {
           id: '1',
           color: '#00FF00',
@@ -458,8 +554,10 @@ export const Home = () => {
         <TaskGraph />
         <Separator /> */}
 
-        <Header>Day Tasks</Header>
-        <DayTaskList />
+        <div className="relative h-full overflow-hidden">
+          <Header>Day Tasks</Header>
+          <DayTaskList />
+        </div>
       </Section>
 
       {/* Right / Macro Section */}
