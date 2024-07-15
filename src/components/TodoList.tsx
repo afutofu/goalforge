@@ -124,6 +124,8 @@ export const TodoList: FC<ITodoList> = ({
             className="mr-4 hover:underline"
             onClick={(e) => {
               e.stopPropagation();
+              e.preventDefault();
+              reset();
               setOpenAddTask(false);
             }}
           >
