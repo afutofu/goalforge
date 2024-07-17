@@ -22,6 +22,16 @@ export const categoryEndpoint = {
   deleteCategory: '/api/v1/categories/:categoryID',
 };
 
+export const goalEndpoint = {
+  getAll: '/api/v1/goals',
+
+  addGoal: '/api/v1/goals',
+
+  editGoal: '/api/v1/goals/:goalID',
+
+  deleteGoal: '/api/v1/goals/:goalID',
+};
+
 export const activityLogEndpoint = {
   getDay: '/api/v1/activity-logs',
 

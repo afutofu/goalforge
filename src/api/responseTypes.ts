@@ -1,4 +1,9 @@
-import { type ICategory, type IActivityLog, type ITask } from '@/types';
+import {
+  type ICategory,
+  type IActivityLog,
+  type ITask,
+  type IGoal,
+} from '@/types';
 
 export interface IAxiosResponse<T> {
   data: T;
@@ -24,6 +29,11 @@ export interface IEditTaskMutation {
 export interface IEditCategoryMutation {
   categoryID: string;
   category: ICategory;
+}
+
+export interface IEditGoalMutation {
+  goalID: string;
+  goal: IGoal;
 }
 
 export interface IEditActivityLogMutation {

@@ -16,7 +16,7 @@ export const defaultTasks: ITask[] = [
     text: 'Buy groceries',
     completed: false,
     period: 2,
-    categories: [
+    goals: [
       {
         id: '2',
         color: '#00FF00',
@@ -31,7 +31,7 @@ export const defaultTasks: ITask[] = [
     text: 'Walk the dog',
     completed: false,
     period: 1,
-    categories: [
+    goals: [
       {
         id: '2',
         color: '#00FF00',
@@ -52,7 +52,7 @@ export const defaultTasks: ITask[] = [
     text: 'Exercise',
     completed: false,
     period: 1,
-    categories: [
+    goals: [
       {
         id: '3',
         color: '#FF0000',
@@ -67,7 +67,7 @@ export const defaultTasks: ITask[] = [
     text: 'Clean the house',
     completed: false,
     period: 1,
-    categories: [
+    goals: [
       {
         id: '2',
         color: '#00FF00',
@@ -82,7 +82,7 @@ export const defaultTasks: ITask[] = [
     text: 'Work on project',
     completed: false,
     period: 2,
-    categories: [
+    goals: [
       {
         id: '4',
         color: '#0000FF',
@@ -97,7 +97,7 @@ export const defaultTasks: ITask[] = [
     text: 'Pay bills',
     completed: false,
     period: 3,
-    categories: [
+    goals: [
       {
         id: '2',
         color: '#00FF00',
@@ -112,7 +112,7 @@ export const defaultTasks: ITask[] = [
     text: 'Plan vacation',
     completed: false,
     period: 3,
-    categories: [
+    goals: [
       {
         id: '2',
         color: '#00FF00',
@@ -127,7 +127,7 @@ export const defaultTasks: ITask[] = [
     text: 'Review year',
     completed: false,
     period: 4,
-    categories: [
+    goals: [
       {
         id: '2',
         color: '#00FF00',

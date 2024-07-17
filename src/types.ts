@@ -2,12 +2,20 @@ export interface ITask {
   id: string;
   text: string;
   completed: boolean;
-  categories: ICategory[];
+  // categories: ICategory[];
+  goals: IGoal[];
   period?: number;
   createdAt: Date;
 }
 
 export interface ICategory {
+  id: string;
+  name: string;
+  color: string;
+  createdAt: Date;
+}
+
+export interface IGoal {
   id: string;
   name: string;
   color: string;
