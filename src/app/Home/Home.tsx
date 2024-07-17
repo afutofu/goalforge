@@ -23,12 +23,14 @@ import {
   type IUser,
   type IActivityLog,
   type ITask,
+  type IGoal,
   type ICategory,
 } from '@/types';
 import {
   taskEndpoint,
   activityLogEndpoint,
   authEndpoint,
+  goalEndpoint,
   categoryEndpoint,
 } from '@/api/endpoints';
 import { api } from '@/api/api';
@@ -38,12 +40,13 @@ import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'next/navigation';
 import { type IAxiosError } from '@/api/responseTypes';
 import { CategoryModal } from './Modals/CategoryModal';
-import { useCategoryStore } from '@/store/category';
 import {
   defaultActivityLogs,
   defaultCategories,
   defaultTasks,
 } from '@/constants';
+import { useGoalStore } from '@/store/goal';
+import { useCategoryStore } from '@/store/category';
 
 dayjs.extend(utc);
 
@@ -72,6 +75,7 @@ export const Home = () => {
   const date = dayjs();
 
   const { setTasks } = useTaskStore();
+  const { setGoals } = useGoalStore();
   const { setCategories } = useCategoryStore();
   const { activityLogs, setActivityLogs } = useActivityLogStore();
   const [openTasksModal, setOpenTasksModal] = useState(false);
@@ -145,6 +149,32 @@ export const Home = () => {
       setTasks(allTasksQuery);
     }
   }, [isFetchTasksSucess, isFetchTasksError]);
+
+  // Fetch and initialize goal data from the API
+  // eslint-disable-next-line prettier/prettier
+  const { data: queryAllGoals, isSuccess: isFetchGoalsSuccess, error: isFetchGoalsError } = useQuery<IGoal[]>({
+    queryKey: ['goals', isAuth],
+    queryFn: async () =>
+      await api
+        .get<IGoal[]>(`${goalEndpoint.getAll}`)
+        .then((res) => res.data)
+        .catch((err: IAxiosError) => {
+          console.log(err);
+          throw new Error(err.response.data.error);
+        }),
+    retry: false,
+    enabled: isAuth !== undefined,
+  });
+
+  useEffect(() => {
+    if (isFetchGoalsError !== null) {
+      setGoals(defaultCategories);
+    }
+
+    if (isFetchGoalsSuccess && queryAllGoals != null) {
+      setGoals(queryAllGoals);
+    }
+  }, [isFetchGoalsSuccess, isFetchGoalsError]);
 
   // Fetch and initialize category data from the API
   // eslint-disable-next-line prettier/prettier

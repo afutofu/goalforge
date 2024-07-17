@@ -3,12 +3,12 @@ import { type ICategory, type ITask } from '@/types';
 import { TodoItem } from './TodoItem';
 import { Button } from './Button';
 import clsx from 'clsx';
-import { useCategoryStore } from '@/store/category';
 import { type SubmitHandler, useForm } from 'react-hook-form';
+import { useGoalStore } from '@/store/goal';
 
 interface ITodoList {
   tasks: ITask[];
-  onAddTask: (task: { taskName: string, categories: ICategory[] }) => void;
+  onAddTask: (task: { taskName: string, goals: ICategory[] }) => void;
   onEditTask: (taskID: string, editedTask: ITask) => void;
   onDeleteTask: (taskID: string) => void;
   containerClass?: string;
@@ -33,30 +33,30 @@ export const TodoList: FC<ITodoList> = ({
 
   const { register, handleSubmit, reset } = useForm<{
     taskName: string,
-    categories: string,
+    goals: string,
   }>();
 
-  const { categories } = useCategoryStore();
+  const { goals } = useGoalStore();
 
   const { ref } = register('taskName');
 
   const onSubmit: SubmitHandler<{
     taskName: string,
-    categories: string,
+    goals: string,
   }> = (data) => {
     const taskName = data.taskName;
     // "No Category" is the default category with an id of 1
-    if (data.categories === undefined || data.categories === '') {
-      data.categories = '1';
+    if (data.goals === undefined || data.goals === '') {
+      data.goals = '1';
     }
 
-    const filteredCategories = categories.filter((category) => {
-      return data.categories === category.id.toString();
+    const filteredGoals = goals.filter((category) => {
+      return data.goals === category.id.toString();
     });
 
     const inputTask = {
       taskName,
-      categories: filteredCategories,
+      goals: filteredGoals,
     };
     // console.log(inputTask);
     onAddTask(inputTask);
@@ -106,14 +106,11 @@ export const TodoList: FC<ITodoList> = ({
           }}
         />
         <div className="mb-3">
-          <select
-            className="outline-none mb-3 w-full"
-            {...register('categories')}
-          >
-            {categories.map((category) => {
+          <select className="outline-none mb-3 w-full" {...register('goals')}>
+            {goals.map((goal) => {
               return (
-                <option key={category.id} value={category.id} className="p-2">
-                  {category.name}
+                <option key={goal.id} value={goal.id} className="p-2">
+                  {goal.name}
                 </option>
               );
             })}

@@ -1,11 +1,11 @@
 import React, { useState, type FC, useRef, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 
-import { type ICategory, type ITask } from '@/types';
+import { type IGoal, type ITask } from '@/types';
 import { KebabMenu } from './KebabMenu';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Button } from './Button';
-import { useCategoryStore } from '@/store/category';
+import { useGoalStore } from '@/store/goal';
 
 interface ITodoItem {
   task: ITask;
@@ -25,27 +25,24 @@ export const TodoItem: FC<ITodoItem> = ({
   className = '',
 }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [categoryDropdownOpen, setCategoryDropdownOpen] =
-    useState<boolean>(false);
-  const [taskCategories, setTaskCategories] = useState<ICategory[]>(
-    task.categories,
-  );
-  const { categories } = useCategoryStore();
+  const [goalDropdownOpen, setGoalDropdownOpen] = useState<boolean>(false);
+  const [taskGoals, setTaskGoals] = useState<IGoal[]>(task.goals);
+  const { goals } = useGoalStore();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { register, handleSubmit, reset, setValue } = useForm<IFormInput>();
-  const [isCategoryDirty, setIsCategoryDirty] = useState<boolean>(false);
+  const [isGoalDirty, setIsGoalDirty] = useState<boolean>(false);
 
   const { ref } = register('taskName');
 
-  const availableCategories = useMemo(() => {
-    return categories.filter((category) => {
-      return !taskCategories?.some((taskCategory) => {
-        return taskCategory.id === category.id;
+  const availableGoals = useMemo(() => {
+    return goals.filter((goal) => {
+      return !taskGoals?.some((taskGoal) => {
+        return taskGoal.id === goal.id;
       });
     });
-  }, [categories, taskCategories]);
+  }, [goals, taskGoals]);
 
   const toggleComplete = () => {
     const editedTask: ITask = {
@@ -60,10 +57,10 @@ export const TodoItem: FC<ITodoItem> = ({
     const editedTask: ITask = {
       ...task,
       text: data.taskName,
-      categories: taskCategories,
+      goals: taskGoals,
     };
 
-    if (data.taskName !== task.text || isCategoryDirty) {
+    if (data.taskName !== task.text || isGoalDirty) {
       onEditTask(task.id, editedTask);
     }
 
@@ -115,12 +112,12 @@ export const TodoItem: FC<ITodoItem> = ({
         />
         <span className="text-sm text-black font-bold">{task.text}</span>
         <div className="flex items-center ml-auto mr-2">
-          {task.categories?.map((category) => {
+          {task.goals?.map((goal) => {
             return (
               <div
-                key={category.id}
+                key={goal.id}
                 className="ml-1 w-3 h-3 rounded-full"
-                style={{ backgroundColor: category.color }}
+                style={{ backgroundColor: goal.color }}
               />
             );
           })}
@@ -141,7 +138,7 @@ export const TodoItem: FC<ITodoItem> = ({
         onSubmit={handleSubmit(onSubmit)}
         onClick={(e) => {
           e.stopPropagation();
-          setCategoryDropdownOpen(false);
+          setGoalDropdownOpen(false);
         }}
       >
         <input
@@ -159,43 +156,42 @@ export const TodoItem: FC<ITodoItem> = ({
           }}
         />
         <div className="flex flex-wrap mb-3 items-center">
-          {taskCategories?.map((category) => {
+          {taskGoals?.map((goal) => {
             return (
               <p
-                key={category.id}
+                key={goal.id}
                 className={clsx('py-1 px-2 rounded-xl mr-2 h-full mb-1', {
-                  'hover:line-through cursor-pointer':
-                    taskCategories.length > 1,
+                  'hover:line-through cursor-pointer': taskGoals.length > 1,
                 })}
                 style={{
-                  backgroundColor: category.color,
-                  color: foregroundColor(category.color),
+                  backgroundColor: goal.color,
+                  color: foregroundColor(goal.color),
                 }}
                 onClick={() => {
-                  if (taskCategories.length > 1) {
-                    setTaskCategories((prev) =>
-                      prev.filter((c) => c.id !== category.id),
+                  if (taskGoals.length > 1) {
+                    setTaskGoals((prev) =>
+                      prev.filter((c) => c.id !== goal.id),
                     );
                   }
-                  setIsCategoryDirty(true);
+                  setIsGoalDirty(true);
                 }}
               >
-                {category.name}
+                {goal.name}
               </p>
             );
           })}
-          {!categoryDropdownOpen && availableCategories.length > 0 && (
+          {!goalDropdownOpen && availableGoals.length > 0 && (
             <div
               className="h-[30px] w-[30px] flex justify-center items-center p-2 text-lg hover:color-primary cursor-pointer rounded-full bg-primary-light hover:bg-purple-300 transition-all duration-200 ease-in-out"
               onClick={(e) => {
                 e.stopPropagation();
-                setCategoryDropdownOpen(true);
+                setGoalDropdownOpen(true);
               }}
             >
               +
             </div>
           )}
-          {categoryDropdownOpen && (
+          {goalDropdownOpen && (
             <select
               className="outline-none"
               onClick={(e) => {
@@ -204,28 +200,28 @@ export const TodoItem: FC<ITodoItem> = ({
               onChange={(e) => {
                 const categoryID = e.target.value;
                 if (categoryID === '-1') return;
-                const category = availableCategories.find(
-                  (category) => parseInt(category.id) === parseInt(categoryID),
+                const goal = availableGoals.find(
+                  (goal) => parseInt(goal.id) === parseInt(categoryID),
                 );
-                if (category !== undefined) {
-                  setTaskCategories([...taskCategories, category]);
+                if (goal !== undefined) {
+                  setTaskGoals([...taskGoals, goal]);
                 }
-                setCategoryDropdownOpen(false);
-                if (!isCategoryDirty) setIsCategoryDirty(true);
+                setGoalDropdownOpen(false);
+                if (!isGoalDirty) setIsGoalDirty(true);
               }}
             >
               <option key={0} value={-1}>
-                {availableCategories.length === 0
-                  ? 'No categories available'
-                  : 'Select a category'}
+                {availableGoals.length === 0
+                  ? 'No goals available'
+                  : 'Select a goal'}
               </option>
-              {availableCategories.map((category) => {
+              {availableGoals.map((goal) => {
                 return (
-                  <option key={category.id} value={category.id} className="p-2">
-                    {category.name}
+                  <option key={goal.id} value={goal.id} className="p-2">
+                    {goal.name}
                     {/* <div
                     className="w-[15px] h-[15px] border-[1px] border-black"
-                    style={{ background: category.color }}
+                    style={{ background: goal.color }}
                   ></div> */}
                   </option>
                 );
@@ -241,8 +237,8 @@ export const TodoItem: FC<ITodoItem> = ({
               e.stopPropagation();
               onDeleteTask(task.id);
               setOpen(false);
-              setCategoryDropdownOpen(false);
-              setTaskCategories(task.categories);
+              setGoalDropdownOpen(false);
+              setTaskGoals(task.goals);
             }}
           >
             Delete
@@ -254,8 +250,8 @@ export const TodoItem: FC<ITodoItem> = ({
                 e.preventDefault();
                 e.stopPropagation();
                 setOpen(false);
-                setCategoryDropdownOpen(false);
-                setTaskCategories(task.categories);
+                setGoalDropdownOpen(false);
+                setTaskGoals(task.goals);
               }}
             >
               Cancel
