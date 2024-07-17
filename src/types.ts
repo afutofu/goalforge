@@ -2,7 +2,7 @@ export interface ITask {
   id: string;
   text: string;
   completed: boolean;
-  categories: ICategory[];
+  // categories: ICategory[];
   goals: IGoal[];
   period?: number;
   createdAt: Date;

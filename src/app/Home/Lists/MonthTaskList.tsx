@@ -4,7 +4,7 @@ import { useTaskStore } from '@/store/task';
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TodoList } from '@/components/TodoList';
-import { type ICategory, type ITask } from '@/types';
+import { type IGoal, type ITask } from '@/types';
 import { taskEndpoint } from '@/api/endpoints';
 import { api } from '@/api/api';
 import { MACRO_TODO_LIST_MAX_HEIGHT } from '@/constants';
@@ -59,15 +59,15 @@ const MonthTaskList = () => {
 
   const onAddTask = ({
     taskName,
-    categories,
+    goals,
   }: {
     taskName: string,
-    categories: ICategory[],
+    goals: IGoal[],
   }) => {
     const newTask: ITask = {
       id: uuidv4(),
       text: taskName,
-      categories,
+      goals,
       completed: false,
       period: 1,
       createdAt: dayjs().toDate(),
