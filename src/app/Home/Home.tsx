@@ -24,14 +24,14 @@ import {
   type IActivityLog,
   type ITask,
   type IGoal,
-  type ICategory,
+  // type ICategory,
 } from '@/types';
 import {
   taskEndpoint,
   activityLogEndpoint,
   authEndpoint,
   goalEndpoint,
-  categoryEndpoint,
+  // categoryEndpoint,
 } from '@/api/endpoints';
 import { api } from '@/api/api';
 import { useTaskStore } from '@/store/task';
@@ -39,14 +39,15 @@ import utc from 'dayjs/plugin/utc';
 import { useAuthStore } from '@/store/auth';
 import { useRouter } from 'next/navigation';
 import { type IAxiosError } from '@/api/responseTypes';
-import { CategoryModal } from './Modals/CategoryModal';
+// import { CategoryModal } from './Modals/CategoryModal';
 import {
   defaultActivityLogs,
   defaultCategories,
   defaultTasks,
 } from '@/constants';
 import { useGoalStore } from '@/store/goal';
-import { useCategoryStore } from '@/store/category';
+// import { useCategoryStore } from '@/store/category';
+import { GoalModal } from './Modals/GoalModal';
 
 dayjs.extend(utc);
 
@@ -76,9 +77,10 @@ export const Home = () => {
 
   const { setTasks } = useTaskStore();
   const { setGoals } = useGoalStore();
-  const { setCategories } = useCategoryStore();
+  // const { setCategories } = useCategoryStore();
   const { activityLogs, setActivityLogs } = useActivityLogStore();
-  const [openTasksModal, setOpenTasksModal] = useState(false);
+  // const [openTasksModal, setOpenTasksModal] = useState(false);
+  const [openGoalsModal, setOpenGoalsModal] = useState(false);
   const [openPreferencesModal, setOpenPreferencesModal] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
@@ -178,29 +180,33 @@ export const Home = () => {
 
   // Fetch and initialize category data from the API
   // eslint-disable-next-line prettier/prettier
-  const { data: allCategoriesQuery, isSuccess: isFetchCategoriesSuccess, error: isFetchCategoriesError } = useQuery<ICategory[]>({
-    queryKey: ['categories', isAuth],
-    queryFn: async () =>
-      await api
-        .get<ICategory[]>(`${categoryEndpoint.getAll}`)
-        .then((res) => res.data)
-        .catch((err: IAxiosError) => {
-          console.log(err);
-          throw new Error(err.response.data.error);
-        }),
-    retry: false,
-    enabled: isAuth !== undefined,
-  });
+  // const { data: allCategoriesQuery, isSuccess: isFetchCategoriesSuccess, error: isFetchCategoriesError } = useQuery<ICategory[]>({
+  //   queryKey: ['categories', isAuth],
+  //   queryFn: async () =>
+  //     await api
+  //       .get<ICategory[]>(`${categoryEndpoint.getAll}`)
+  //       .then((res) => res.data)
+  //       .catch((err: IAxiosError) => {
+  //         console.log(err);
+  //         throw new Error(err.response.data.error);
+  //       }),
+  //   retry: false,
+  //   enabled: isAuth !== undefined,
+  // });
 
-  useEffect(() => {
-    if (isFetchCategoriesError !== null) {
-      setCategories(defaultCategories);
-    }
+  // // When the fetch returns a reesponse,
+  // // set the categories depending on whether the fetch was successful or not
+  // useEffect(() => {
+  //   if (isFetchCategoriesError !== null) {
+  //     setCategories(defaultCategories);
+  //   }
 
-    if (isFetchCategoriesSuccess && allCategoriesQuery != null) {
-      setCategories(allCategoriesQuery);
-    }
-  }, [isFetchCategoriesSuccess, isFetchCategoriesError]);
+  //   if (isFetchCategoriesSuccess && allCategoriesQuery != null) {
+  //     setCategories(allCategoriesQuery);
+  //   }
+  // }, [isFetchCategoriesSuccess, isFetchCategoriesError]);
+
+  // Fetch and initialize acitivity logs from the API
 
   // Fetch and initialize acitivity logs from the API
   const {
@@ -222,6 +228,8 @@ export const Home = () => {
     enabled: isAuth !== undefined,
   });
 
+  // When the fetch returns a response,
+  // set the activity logs depending on whether the fetch was successful or not
   useEffect(() => {
     if (isFetchTasksError !== null) {
       setActivityLogs(defaultActivityLogs);
@@ -236,10 +244,18 @@ export const Home = () => {
     <main className="position flex min-h-screen max-w-full flex-row items-center justify-evenly bg-[url('/images/purplepatternbackground.png')] bg-cover text-white xl:px-18 2xl:px-36">
       <div className="absolute flex min-h-screen w-full flex-row items-center justify-evenly bg-primary opacity-50 z-10"></div>
 
-      {openTasksModal && (
+      {/* {openTasksModal && (
         <CategoryModal
           onClose={() => {
             setOpenTasksModal(false);
+          }}
+        />
+      )} */}
+
+      {openGoalsModal && (
+        <GoalModal
+          onClose={() => {
+            setOpenGoalsModal(false);
           }}
         />
       )}
@@ -278,7 +294,7 @@ export const Home = () => {
               <button
                 className={ICON_BUTTON_CLASSNAMES + ' mr-3'}
                 onClick={() => {
-                  setOpenTasksModal(true);
+                  setOpenGoalsModal(true);
                 }}
               >
                 <Image
