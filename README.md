@@ -75,4 +75,4 @@ bun dev
 
 ## Authors
 
-- Afuza - Designed UI/UX; Implemented design and state management.
+- Afuza - Implemented design and state management; Designed UI/UX.
