@@ -112,8 +112,7 @@ export const Home = () => {
     queryKey: ['user'],
     queryFn: async () =>
       await api
-        // eslint-disable-next-line prettier/prettier
-        .get<IUser>(`${authEndpoint.fetch_user}`)
+        .get<IUser>(`${authEndpoint.fetch_user}`, { timeout: 1000 })
         .then((res) => res.data),
     retry: false,
   });
@@ -132,7 +131,7 @@ export const Home = () => {
     queryKey: ['tasks', isAuth],
     queryFn: async () =>
       await api
-        .get<ITask[]>(`${taskEndpoint.getAll}`)
+        .get<ITask[]>(`${taskEndpoint.getAll}`, { timeout: 1000 })
         .then((res) => res.data)
         .catch((err: IAxiosError) => {
           console.log(err);
@@ -158,7 +157,7 @@ export const Home = () => {
     queryKey: ['goals', isAuth],
     queryFn: async () =>
       await api
-        .get<IGoal[]>(`${goalEndpoint.getAll}`)
+        .get<IGoal[]>(`${goalEndpoint.getAll}`, { timeout: 1000 })
         .then((res) => res.data)
         .catch((err: IAxiosError) => {
           console.log(err);
@@ -219,6 +218,7 @@ export const Home = () => {
       await api
         .get<IActivityLog[]>(
           `${activityLogEndpoint.getDay}?date=${date.utc().format()}`,
+          { timeout: 1000 },
         )
         .then((res) => res.data)
         .catch((err: IAxiosError) => {
